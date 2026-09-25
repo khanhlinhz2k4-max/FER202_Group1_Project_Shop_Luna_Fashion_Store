@@ -17,7 +17,7 @@ export default function LoginPage() {
     setErrorMsg('');
 
     if (!identifier.trim() || !password.trim()) {
-      setErrorMsg('Vui lòng nhập đầy đủ Email/Tên đăng nhập và Mật khẩu.');
+      setErrorMsg('Please enter both your Email/Username and Password.');
       return;
     }
 
@@ -92,7 +92,7 @@ export default function LoginPage() {
             {loginSuccess && (
               <div className="auth-alert success">
                 <CheckCircle size={18} />
-                <span>Đăng nhập thành công! Đang chuyển về Trang chủ...</span>
+                <span>Sign in successful! Redirecting to Home...</span>
               </div>
             )}
 
@@ -121,7 +121,7 @@ export default function LoginPage() {
                   <button 
                     type="button" 
                     className="forgot-pass-btn"
-                    onClick={() => alert('Demo: Chức năng khôi phục mật khẩu sẽ được hỗ trợ ở Phase 2.')}
+                    onClick={() => alert('Demo: Password recovery will be supported in Phase 2.')}
                   >
                     Forgot password?
                   </button>

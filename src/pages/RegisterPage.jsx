@@ -20,22 +20,22 @@ export default function RegisterPage() {
     setErrorMsg('');
 
     if (!fullName.trim() || !email.trim() || !username.trim() || !password.trim() || !confirmPassword.trim()) {
-      setErrorMsg('Vui lòng điền đầy đủ tất cả các trường thông tin.');
+      setErrorMsg('Please fill in all required fields.');
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMsg('Mật khẩu và xác nhận mật khẩu không khớp. Vui lòng kiểm tra lại.');
+      setErrorMsg('Passwords do not match. Please verify your password.');
       return;
     }
 
     if (password.length < 6) {
-      setErrorMsg('Mật khẩu phải có độ dài tối thiểu từ 6 ký tự.');
+      setErrorMsg('Password must be at least 6 characters long.');
       return;
     }
 
     if (!agreeTerms) {
-      setErrorMsg('Vui lòng tích đồng ý với Điều khoản & Chính sách của LUNE.');
+      setErrorMsg('Please accept the LUNE Terms of Service and Privacy Policy.');
       return;
     }
 
@@ -103,7 +103,7 @@ export default function RegisterPage() {
             {registerSuccess && (
               <div className="auth-alert success">
                 <CheckCircle size={18} />
-                <span>Đăng ký thành công! Đang chuyển sang trang Đăng nhập...</span>
+                <span>Account created successfully! Redirecting to Sign In...</span>
               </div>
             )}
 

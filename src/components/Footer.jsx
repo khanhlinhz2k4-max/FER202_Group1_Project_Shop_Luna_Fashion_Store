@@ -110,22 +110,22 @@ export default function Footer() {
               <h4 className="footer-heading">Collections</h4>
               <ul className="footer-links">
                 <li><a href="/#new-arrivals">Women's Wardrobe</a></li>
-                <li><a href="/#new-arrivals">Men's Tailoring</a></li>
-                <li><a href="/#new-arrivals">Runway 2026</a></li>
-                <li><a href="/#categories">All Categories</a></li>
-                <li><a href="/#philosophy">Natural Fibers</a></li>
+                <li><a href="/#new-arrivals">Men's Collection</a></li>
+                <li><a href="/#new-arrivals">New Arrivals</a></li>
+                <li><a href="/#categories">Product Categories</a></li>
+                <li><a href="/#about">About LUNE</a></li>
               </ul>
             </div>
 
-            {/* Column 3: Atelier & Account */}
+            {/* Column 3: Customer Care & Account */}
             <div className="footer-col">
-              <h4 className="footer-heading">Atelier & Account</h4>
+              <h4 className="footer-heading">Customer Care</h4>
               <ul className="footer-links">
                 <li><Link to="/login">Client Sign In</Link></li>
-                <li><Link to="/register">Create Atelier Account</Link></li>
-                <li><a href="/#philosophy">Our Philosophy</a></li>
-                <li><a href="/#new-arrivals">Spring Edition</a></li>
-                <li><Link to="/">Home Showroom</Link></li>
+                <li><Link to="/register">Create Account</Link></li>
+                <li><a href="/#about">Our Story</a></li>
+                <li><a href="/#about">Size & Fit Policy</a></li>
+                <li><Link to="/">Home Store</Link></li>
               </ul>
             </div>
 
@@ -133,7 +133,7 @@ export default function Footer() {
             <div className="footer-col newsletter-col">
               <h4 className="footer-heading">The LUNE Journal</h4>
               <p className="newsletter-desc">
-                Subscribe for private viewings, seasonal lookbooks, and invitations to our intimate salon presentations.
+                Subscribe for seasonal lookbooks, new drops, and exclusive member promotions.
               </p>
 
               {subscribed ? (
@@ -175,7 +175,7 @@ export default function Footer() {
             <span className="dot">·</span>
             <Link to="/register">Membership</Link>
             <span className="dot">·</span>
-            <a href="/#philosophy">Atelier Charter</a>
+            <a href="/#about">About Us</a>
           </div>
         </div>
       </div>
