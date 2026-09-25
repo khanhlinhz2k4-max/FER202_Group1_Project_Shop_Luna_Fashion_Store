@@ -43,8 +43,8 @@ export default function HomePage() {
                 <span>EXPLORE COLLECTION</span>
                 <ArrowRight size={15} />
               </a>
-              <a href="#philosophy" className="btn-secondary hero-btn-secondary">
-                <span>OUR PHILOSOPHY</span>
+              <a href="#about" className="btn-secondary hero-btn-secondary">
+                <span>ABOUT LUNE</span>
               </a>
             </div>
           </div>
@@ -105,85 +105,53 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. EDITORIAL BANNER SECTION */}
-      <section className="editorial-section">
-        <div className="editorial-banner">
-          <div className="editorial-img-wrap">
-            <img 
-              src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&q=85&w=2000" 
-              alt="LUNE Editorial Campaign" 
-              className="editorial-bg-image"
-            />
-            <div className="editorial-overlay"></div>
-          </div>
-
-          <div className="container editorial-container">
-            <div className="editorial-card">
-              <span className="editorial-tag">THE EDITORIAL CAMPAIGN</span>
-              <h2 className="editorial-quote">
-                "Designed for those who define their own style."
-              </h2>
-              <p className="editorial-text">
-                Every piece in the LUNE atelier begins with tactile touch. From bespoke French flax to Mongolian cashmere, our pieces are cut to drape effortlessly, celebrating modern poise and understated elegance.
-              </p>
-              <div className="editorial-cta">
-                <a href="#new-arrivals" className="btn-primary">
-                  <span>DISCOVER THE EDIT</span>
-                  <ArrowRight size={15} />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. BRAND HIGHLIGHT / STORY STRIP */}
-      <section id="philosophy" className="brand-story-strip">
+      {/* 4. ABOUT LUNE FASHION STORE */}
+      <section id="about" className="brand-story-strip">
         <div className="container">
           <div className="brand-story-grid">
             <div className="brand-story-media">
               <img 
-                src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&q=80&w=1200" 
-                alt="LUNE Atelier Craftsmanship"
+                src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1200" 
+                alt="LUNE Fashion Store Collection"
                 className="story-image"
                 loading="lazy"
               />
               <div className="story-badge">
-                <span className="story-badge-year">EST. 2026</span>
-                <span className="story-badge-text">PURE CRAFT</span>
+                <span className="story-badge-year">LUNE STORE</span>
+                <span className="story-badge-text">READY TO WEAR</span>
               </div>
             </div>
 
             <div className="brand-story-content">
-              <span className="eyebrow">THE LUNE PHILOSOPHY</span>
+              <span className="eyebrow">ABOUT LUNE FASHION STORE</span>
               <h2 className="story-title">
-                Warm Luxury Born From Quiet Confidence
+                Everyday Elegance, Modern Style
               </h2>
               <p className="story-paragraph">
-                We believe true sophistication doesn't shout. It whispers through the drape of raw silk, the warmth of earthy caramels, and the quiet precision of an immaculate seam.
+                LUNE Fashion Store curates modern ready-to-wear collections for both men and women. We focus on clean silhouettes, breathable fabrics, and versatile styling that transitions effortlessly from the workplace to weekend gatherings.
               </p>
               <p className="story-paragraph">
-                Every garment is thoughtfully created in limited batches to eliminate waste, honoring the artisans who pour their mastery into every stitch.
+                From tailored blazers and fluid slip dresses to relaxed knitwear and wide-leg trousers, every garment is thoughtfully selected to elevate your everyday wardrobe with ease and confidence.
               </p>
 
               <div className="story-stats">
                 <div className="stat-item">
                   <span className="stat-number">100%</span>
-                  <span className="stat-label">Natural Fibers</span>
+                  <span className="stat-label">Selected Fabrics</span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-number">Limited</span>
-                  <span className="stat-label">Numbered Editions</span>
+                  <span className="stat-number">Versatile</span>
+                  <span className="stat-label">Effortless Styling</span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-number">Carbon Neutral</span>
-                  <span className="stat-label">Sustainable Shipping</span>
+                  <span className="stat-number">30 Days</span>
+                  <span className="stat-label">Easy Exchanges</span>
                 </div>
               </div>
 
               <div className="story-action">
                 <Link to="/register" className="btn-secondary">
-                  <span>JOIN THE ATELIER</span>
+                  <span>CREATE AN ACCOUNT</span>
                   <ArrowRight size={15} />
                 </Link>
               </div>

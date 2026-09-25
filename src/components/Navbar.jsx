@@ -36,7 +36,7 @@ export default function Navbar() {
     { name: 'Home', path: '/' },
     { name: 'Categories', path: '/#categories' },
     { name: 'New Collection', path: '/#new-arrivals' },
-    { name: 'Philosophy', path: '/#philosophy' },
+    { name: 'About LUNE', path: '/#about' },
   ];
 
   return (
@@ -66,7 +66,7 @@ export default function Navbar() {
         {/* Brand Logo */}
         <Link to="/" className="brand-logo">
           <span className="brand-name">LUNE</span>
-          <span className="brand-tagline">PARIS · STUDIO</span>
+          <span className="brand-tagline">FASHION STORE</span>
         </Link>
 
         {/* Desktop Navigation Links */}
@@ -212,15 +212,15 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="mobile-nav-link"
               >
-                <span>Join The Atelier</span>
+                <span>Create Account</span>
                 <ArrowRight size={16} />
               </Link>
             </li>
           </ul>
 
           <div className="mobile-nav-footer">
-            <p className="mobile-contact-line">Private Client Services: atelier@lune-studio.com</p>
-            <p className="mobile-tagline">Timeless With A Twist — Edition 2026</p>
+            <p className="mobile-contact-line">Customer Care: support@lune-fashion.com</p>
+            <p className="mobile-tagline">LUNE Fashion Store — Edition 2026</p>
           </div>
         </div>
       </div>
