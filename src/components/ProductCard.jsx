@@ -1,14 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, Sparkles } from 'lucide-react';
 
 export default function ProductCard({ product }) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  // Sync initial wishlist state from localStorage
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('lune_wishlist') || '[]');
+      setIsWishlisted(stored.includes(product.id));
+    } catch (e) {
+      setIsWishlisted(false);
+    }
+  }, [product.id]);
+
   const toggleWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
+    try {
+      let stored = JSON.parse(localStorage.getItem('lune_wishlist') || '[]');
+      let nextState = false;
+      if (stored.includes(product.id)) {
+        stored = stored.filter(id => id !== product.id);
+        nextState = false;
+      } else {
+        stored.push(product.id);
+        nextState = true;
+      }
+      localStorage.setItem('lune_wishlist', JSON.stringify(stored));
+      setIsWishlisted(nextState);
+      // Dispatch custom event to notify Navbar immediately
+      window.dispatchEvent(new Event('lune_wishlist_updated'));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const imageSrc = isHovered && product.secondaryImage 

@@ -7,7 +7,8 @@ import {
   User, 
   Menu, 
   X, 
-  ArrowRight 
+  ArrowRight,
+  LogOut 
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -15,6 +16,9 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
@@ -25,11 +29,64 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change
+  // Sync wishlist count from localStorage and listen to real-time updates
+  useEffect(() => {
+    const syncWishlist = () => {
+      try {
+        const stored = JSON.parse(localStorage.getItem('lune_wishlist') || '[]');
+        setWishlistCount(stored.length);
+      } catch (e) {
+        setWishlistCount(0);
+      }
+    };
+
+    syncWishlist();
+    window.addEventListener('lune_wishlist_updated', syncWishlist);
+    return () => window.removeEventListener('lune_wishlist_updated', syncWishlist);
+  }, []);
+
+  // Sync user state and close menus on route change
   useEffect(() => {
     setMobileMenuOpen(false);
     setSearchOpen(false);
+    setUserMenuOpen(false);
+
+    try {
+      const isAuth = localStorage.getItem('lune_user_authenticated') === 'true';
+      const userName = localStorage.getItem('lune_user_name');
+      if (isAuth && userName) {
+        setCurrentUser(userName);
+      } else {
+        setCurrentUser(null);
+      }
+    } catch (e) {
+      setCurrentUser(null);
+    }
   }, [location]);
+
+  const getDisplayName = (name) => {
+    if (!name) return 'ACCOUNT';
+    const clean = name.trim();
+    if (
+      clean.toLowerCase().includes('apple') || 
+      clean.toLowerCase().includes('google') || 
+      clean.toLowerCase().includes('client') ||
+      clean.toLowerCase().includes('member')
+    ) {
+      return 'ACCOUNT';
+    }
+    return clean.split(' ')[0].toUpperCase();
+  };
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('lune_user_authenticated');
+      localStorage.removeItem('lune_user_name');
+      localStorage.removeItem('lune_user_email');
+    } catch (e) {}
+    setCurrentUser(null);
+    setUserMenuOpen(false);
+  };
 
   // Clean navigation anchors for Home page + routes for Login/Register
   const navLinks = [
@@ -105,14 +162,14 @@ export default function Navbar() {
             <Search size={19} strokeWidth={1.75} />
           </button>
 
-          {/* Wishlist */}
+          {/* Wishlist with live dynamic badge */}
           <button 
             className="action-btn" 
             aria-label="Wishlist"
-            onClick={() => alert('Wishlist is planned for Phase 2 development.')}
+            title={`Wishlist: ${wishlistCount} saved item${wishlistCount === 1 ? '' : 's'}`}
           >
             <Heart size={19} strokeWidth={1.75} />
-            <span className="action-badge">1</span>
+            {wishlistCount > 0 && <span className="action-badge">{wishlistCount}</span>}
           </button>
 
           {/* Shopping Bag / Cart */}
@@ -125,11 +182,50 @@ export default function Navbar() {
             <span className="action-badge">2</span>
           </button>
 
-          {/* User Account / Login */}
-          <Link to="/login" className="action-btn login-action" aria-label="User Account">
-            <User size={19} strokeWidth={1.75} />
-            <span className="login-text">LOGIN</span>
-          </Link>
+          {/* User Account / Login or Profile */}
+          {currentUser ? (
+            <div className="user-menu-container">
+              <button 
+                type="button" 
+                className="action-btn login-action"
+                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                aria-label="User Account Menu"
+              >
+                <User size={19} strokeWidth={1.75} />
+                <span className="login-text">{getDisplayName(currentUser)}</span>
+              </button>
+
+              {userMenuOpen && (
+                <>
+                  <div 
+                    className="dropdown-backdrop" 
+                    onClick={() => setUserMenuOpen(false)}
+                    style={{ position: 'fixed', inset: 0, zIndex: 90 }}
+                  />
+                  <div className="user-account-dropdown">
+                    <div className="dropdown-user-info">
+                      <span className="dropdown-tag">LUNE MEMBER</span>
+                      <span className="dropdown-name">{currentUser}</span>
+                    </div>
+                    <div className="dropdown-divider"></div>
+                    <button 
+                      type="button" 
+                      className="dropdown-logout-btn"
+                      onClick={handleLogout}
+                    >
+                      <LogOut size={14} />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <Link to="/login" className="action-btn login-action" aria-label="User Account">
+              <User size={19} strokeWidth={1.75} />
+              <span className="login-text">LOGIN</span>
+            </Link>
+          )}
         </div>
       </div>
 
