@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Search, 
   Heart, 
@@ -8,18 +8,21 @@ import {
   Menu, 
   X, 
   ArrowRight,
-  LogOut 
+  LogOut,
+  Shield,
+  Package
 } from 'lucide-react';
+import { useShop } from '../context/ShopContext';
 
 export default function Navbar() {
+  const { cartCount, openCart, wishlist, currentUser, logout, products } = useShop();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentUser, setCurrentUser] = useState(null);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [wishlistCount, setWishlistCount] = useState(0);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,68 +32,35 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Sync wishlist count from localStorage and listen to real-time updates
-  useEffect(() => {
-    const syncWishlist = () => {
-      try {
-        const stored = JSON.parse(localStorage.getItem('lune_wishlist') || '[]');
-        setWishlistCount(stored.length);
-      } catch (e) {
-        setWishlistCount(0);
-      }
-    };
-
-    syncWishlist();
-    window.addEventListener('lune_wishlist_updated', syncWishlist);
-    return () => window.removeEventListener('lune_wishlist_updated', syncWishlist);
-  }, []);
-
-  // Sync user state and close menus on route change
+  // Close menus on route change
   useEffect(() => {
     setMobileMenuOpen(false);
     setSearchOpen(false);
     setUserMenuOpen(false);
-
-    try {
-      const isAuth = localStorage.getItem('lune_user_authenticated') === 'true';
-      const userName = localStorage.getItem('lune_user_name');
-      if (isAuth && userName) {
-        setCurrentUser(userName);
-      } else {
-        setCurrentUser(null);
-      }
-    } catch (e) {
-      setCurrentUser(null);
-    }
   }, [location]);
 
-  const getDisplayName = (name) => {
-    if (!name) return 'ACCOUNT';
-    const clean = name.trim();
-    if (
-      clean.toLowerCase().includes('apple') || 
-      clean.toLowerCase().includes('google') || 
-      clean.toLowerCase().includes('client') ||
-      clean.toLowerCase().includes('member')
-    ) {
-      return 'ACCOUNT';
+  const handleSearchSubmit = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchOpen(false);
     }
-    return clean.split(' ')[0].toUpperCase();
   };
+
+  // Live search matched products preview (max 4)
+  const searchResults = searchQuery.trim()
+    ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 4)
+    : [];
 
   const handleLogout = () => {
-    try {
-      localStorage.removeItem('lune_user_authenticated');
-      localStorage.removeItem('lune_user_name');
-      localStorage.removeItem('lune_user_email');
-    } catch (e) {}
-    setCurrentUser(null);
+    logout();
     setUserMenuOpen(false);
+    navigate('/');
   };
 
-  // Clean navigation anchors for Home page + routes for Login/Register
+  // Clean navigation links
   const navLinks = [
     { name: 'Home', path: '/' },
+    { name: 'Shop All', path: '/shop' },
     { name: 'Categories', path: '/#categories' },
     { name: 'New Collection', path: '/#new-arrivals' },
     { name: 'About LUNE', path: '/#about' },
@@ -103,9 +73,9 @@ export default function Navbar() {
         <p>
           <span>SPRING / SUMMER 2026</span>
           <span className="announcement-divider">/</span>
-          <span>COMPLIMENTARY SHIPPING ON ORDERS OVER $150</span>
+          <span>COMPLIMENTARY SHIPPING ON ORDERS OVER $250</span>
           <span className="announcement-divider">/</span>
-          <a href="/#new-arrivals" className="announcement-link">DISCOVER THE RUNWAY</a>
+          <Link to="/shop" className="announcement-link">DISCOVER THE RUNWAY</Link>
         </p>
       </div>
 
@@ -130,7 +100,7 @@ export default function Navbar() {
         <nav className="desktop-nav" aria-label="Main Navigation">
           <ul className="nav-list">
             {navLinks.map((link) => {
-              const isHome = location.pathname === '/' && link.path === '/';
+              const isCurrent = location.pathname === link.path;
               return (
                 <li key={link.name} className="nav-item">
                   {link.path.startsWith('/#') ? (
@@ -140,7 +110,7 @@ export default function Navbar() {
                   ) : (
                     <Link 
                       to={link.path} 
-                      className={`nav-link ${isHome ? 'active' : ''}`}
+                      className={`nav-link ${isCurrent ? 'active' : ''}`}
                     >
                       {link.name}
                     </Link>
@@ -162,24 +132,25 @@ export default function Navbar() {
             <Search size={19} strokeWidth={1.75} />
           </button>
 
-          {/* Wishlist with live dynamic badge */}
-          <button 
+          {/* Wishlist Link */}
+          <Link 
+            to="/wishlist" 
             className="action-btn" 
             aria-label="Wishlist"
-            title={`Wishlist: ${wishlistCount} saved item${wishlistCount === 1 ? '' : 's'}`}
+            title={`Wishlist: ${wishlist.length} saved items`}
           >
             <Heart size={19} strokeWidth={1.75} />
-            {wishlistCount > 0 && <span className="action-badge">{wishlistCount}</span>}
-          </button>
+            {wishlist.length > 0 && <span className="action-badge">{wishlist.length}</span>}
+          </Link>
 
-          {/* Shopping Bag / Cart */}
+          {/* Shopping Bag / Cart Trigger */}
           <button 
             className="action-btn bag-btn" 
             aria-label="Shopping Bag"
-            onClick={() => alert('Shopping Bag is planned for Phase 2 development.')}
+            onClick={openCart}
           >
             <ShoppingBag size={19} strokeWidth={1.75} />
-            <span className="action-badge">2</span>
+            {cartCount > 0 && <span className="action-badge">{cartCount}</span>}
           </button>
 
           {/* User Account / Login or Profile */}
@@ -192,7 +163,9 @@ export default function Navbar() {
                 aria-label="User Account Menu"
               >
                 <User size={19} strokeWidth={1.75} />
-                <span className="login-text">{getDisplayName(currentUser)}</span>
+                <span className="login-text">
+                  {currentUser.role === 'admin' ? 'ADMIN' : currentUser.name.split(' ')[0].toUpperCase()}
+                </span>
               </button>
 
               {userMenuOpen && (
@@ -204,10 +177,37 @@ export default function Navbar() {
                   />
                   <div className="user-account-dropdown">
                     <div className="dropdown-user-info">
-                      <span className="dropdown-tag">LUNE MEMBER</span>
-                      <span className="dropdown-name">{currentUser}</span>
+                      <span className="dropdown-tag">
+                        {currentUser.role === 'admin' ? '🛡️ STORE ADMINISTRATOR' : 'LUNE MEMBER'}
+                      </span>
+                      <span className="dropdown-name">{currentUser.name}</span>
                     </div>
+
                     <div className="dropdown-divider"></div>
+
+                    {/* Admin Portal Link */}
+                    {currentUser.role === 'admin' && (
+                      <Link 
+                        to="/admin" 
+                        className="dropdown-link"
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#B45309', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <Shield size={16} /> Admin Portal
+                      </Link>
+                    )}
+
+                    <Link 
+                      to="/profile" 
+                      className="dropdown-link"
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#1C1917', textDecoration: 'none', fontSize: '0.85rem' }}
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <Package size={16} /> My Account & Orders
+                    </Link>
+
+                    <div className="dropdown-divider"></div>
+
                     <button 
                       type="button" 
                       className="dropdown-logout-btn"
@@ -229,16 +229,17 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Expandable Search Drawer */}
+      {/* Expandable Live Search Drawer */}
       {searchOpen && (
         <div className="search-bar-dropdown">
-          <div className="search-inner container">
+          <div className="search-inner container" style={{ position: 'relative' }}>
             <Search size={18} className="search-input-icon" />
             <input 
               type="text" 
-              placeholder="Search by piece, fabric, or collection..."
+              placeholder="Search products by title or category (Press Enter to view all)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchSubmit}
               autoFocus
             />
             <button 
@@ -248,6 +249,48 @@ export default function Navbar() {
             >
               <X size={18} />
             </button>
+
+            {/* Live Search Quick Results */}
+            {searchResults.length > 0 && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                backgroundColor: '#fff',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                border: '1px solid #E7E5E4',
+                marginTop: '8px',
+                padding: '12px 16px',
+                zIndex: 99
+              }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#78716C', marginBottom: '8px', textTransform: 'uppercase' }}>
+                  Quick Suggestions ({searchResults.length})
+                </div>
+                {searchResults.map(p => (
+                  <Link
+                    key={p.id}
+                    to={`/product/${p.id}`}
+                    onClick={() => setSearchOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '8px 0',
+                      borderBottom: '1px solid #F5EFE6',
+                      textDecoration: 'none',
+                      color: '#1C1917'
+                    }}
+                  >
+                    <img src={p.image} alt={p.name} style={{ width: '40px', height: '48px', objectFit: 'cover' }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.88rem', fontWeight: 500 }}>{p.name}</div>
+                      <div style={{ fontSize: '0.78rem', color: '#78716C' }}>${p.price} • {p.category}</div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -271,47 +314,45 @@ export default function Navbar() {
           <ul className="mobile-nav-list">
             {navLinks.map((link) => (
               <li key={link.name}>
-                {link.path.startsWith('/#') ? (
-                  <a 
-                    href={link.path}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="mobile-nav-link"
-                  >
-                    <span>{link.name}</span>
-                    <ArrowRight size={16} />
-                  </a>
-                ) : (
-                  <Link 
-                    to={link.path}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="mobile-nav-link"
-                  >
-                    <span>{link.name}</span>
-                    <ArrowRight size={16} />
-                  </Link>
-                )}
+                <Link 
+                  to={link.path}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="mobile-nav-link"
+                >
+                  <span>{link.name}</span>
+                  <ArrowRight size={16} />
+                </Link>
               </li>
             ))}
             <li>
-              <Link 
-                to="/login"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mobile-nav-link"
-              >
-                <span>Client Sign In</span>
+              <Link to="/wishlist" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+                <span>Saved Wishlist ({wishlist.length})</span>
                 <ArrowRight size={16} />
               </Link>
             </li>
-            <li>
-              <Link 
-                to="/register"
-                onClick={() => setMobileMenuOpen(false)}
-                className="mobile-nav-link"
-              >
-                <span>Create Account</span>
-                <ArrowRight size={16} />
-              </Link>
-            </li>
+            {currentUser ? (
+              <li>
+                <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+                  <span>My Account ({currentUser.name})</span>
+                  <ArrowRight size={16} />
+                </Link>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+                    <span>Client Sign In</span>
+                    <ArrowRight size={16} />
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+                    <span>Create Account</span>
+                    <ArrowRight size={16} />
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
 
           <div className="mobile-nav-footer">
