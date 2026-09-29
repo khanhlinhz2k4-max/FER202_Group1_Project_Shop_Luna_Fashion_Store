@@ -93,7 +93,13 @@ export function ShopProvider({ children }) {
       const saved = localStorage.getItem('lune_products');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Đồng bộ (merge) các trường mới thêm (như garmentType) từ initialProducts vào localStorage
+          return parsed.map(localProd => {
+            const initialProd = initialProducts.find(p => p.id === localProd.id);
+            return initialProd ? { ...initialProd, ...localProd } : localProd;
+          });
+        }
       }
     } catch (e) {
       console.error("Error reading lune_products:", e);

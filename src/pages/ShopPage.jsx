@@ -2,8 +2,29 @@ import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import ProductCard from '../components/ProductCard';
-import { Filter, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { RotateCcw, Check, ArrowUpDown } from 'lucide-react';
 import './ShopPage.css';
+
+const GARMENT_CATEGORIES = [
+  { id: 'all', label: 'All Garments' },
+  { id: 'Coats & Outerwear', label: 'Coats & Outerwear' },
+  { id: 'Silk Dresses', label: 'Silk Dresses' },
+  { id: 'Blazers & Tailoring', label: 'Blazers & Tailoring' },
+  { id: 'Cashmere Knitwear', label: 'Cashmere Knitwear' },
+  { id: 'Pleated Trousers', label: 'Pleated Trousers' },
+  { id: 'Leather Goods', label: 'Leather Goods' },
+];
+
+const SIZES = ['ALL', 'XS', 'S', 'M', 'L', 'XL'];
+
+const COLOR_PALETTE = [
+  { id: 'ALL', name: 'All Colors' },
+  { id: '#CAA072', name: 'Tan' },
+  { id: '#C8AE84', name: 'Beige' },
+  { id: '#FEE3AF', name: 'Cream' },
+  { id: '#775B3F', name: 'Brown' },
+  { id: '#2C2117', name: 'Black' },
+];
 
 /**
  * ShopPage Component
@@ -13,14 +34,16 @@ export default function ShopPage() {
   const { products } = useShop();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Search keyword from Navbar
+  // Search keyword & category from URL
   const searchKeyword = searchParams.get('search') || '';
-  const initialCategory = searchParams.get('category') || 'all';
+  const urlCategory = searchParams.get('category');
 
-  // Filters state
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [priceRange, setPriceRange] = useState('all'); // all, under100, 100-250, above250
-  const [sortBy, setSortBy] = useState('newest'); // newest, price-asc, price-desc
+  // Filter states matching Stitch design
+  const [selectedGarment, setSelectedGarment] = useState('all');
+  const [selectedSize, setSelectedSize] = useState('ALL');
+  const [selectedColor, setSelectedColor] = useState('ALL');
+  const [maxPrice, setMaxPrice] = useState(400);
+  const [sortBy, setSortBy] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -28,32 +51,46 @@ export default function ShopPage() {
   const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    // 1. Search filter
+    // 1. Search keyword
     if (searchKeyword.trim()) {
       const q = searchKeyword.toLowerCase();
       result = result.filter(p => 
         p.name.toLowerCase().includes(q) || 
-        (p.category && p.category.toLowerCase().includes(q))
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.garmentType && p.garmentType.toLowerCase().includes(q))
       );
     }
 
-    // 2. Category filter
-    if (selectedCategory !== 'all') {
+    // 2. URL Gender Category (e.g. from Navbar: ?category=women or ?category=men)
+    if (urlCategory && urlCategory !== 'all') {
       result = result.filter(p => 
-        p.category && p.category.toLowerCase() === selectedCategory.toLowerCase()
+        p.category && p.category.toLowerCase() === urlCategory.toLowerCase()
       );
     }
 
-    // 3. Price range filter
-    if (priceRange === 'under100') {
-      result = result.filter(p => p.price < 100);
-    } else if (priceRange === '100-250') {
-      result = result.filter(p => p.price >= 100 && p.price <= 250);
-    } else if (priceRange === 'above250') {
-      result = result.filter(p => p.price > 250);
+    // 3. Garment Type
+    if (selectedGarment !== 'all') {
+      result = result.filter(p => p.garmentType === selectedGarment);
     }
 
-    // 4. Sorting
+    // 4. Size
+    if (selectedSize !== 'ALL') {
+      result = result.filter(p => 
+        p.sizes && (p.sizes.includes(selectedSize) || p.sizes.includes('ALL') || p.sizes.includes('One Size'))
+      );
+    }
+
+    // 5. Color
+    if (selectedColor !== 'ALL') {
+      result = result.filter(p => 
+        p.colors && p.colors.includes(selectedColor)
+      );
+    }
+
+    // 6. Max Price
+    result = result.filter(p => p.price <= maxPrice);
+
+    // 7. Sorting
     if (sortBy === 'price-asc') {
       result.sort((a, b) => a.price - b.price);
     } else if (sortBy === 'price-desc') {
@@ -63,7 +100,7 @@ export default function ShopPage() {
     }
 
     return result;
-  }, [products, searchKeyword, selectedCategory, priceRange, sortBy]);
+  }, [products, searchKeyword, urlCategory, selectedGarment, selectedSize, selectedColor, maxPrice, sortBy]);
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
@@ -72,15 +109,14 @@ export default function ShopPage() {
     return filteredProducts.slice(start, start + itemsPerPage);
   }, [filteredProducts, currentPage]);
 
-  const handleCategoryChange = (cat) => {
-    setSelectedCategory(cat);
+  const handleReset = () => {
+    setSelectedGarment('all');
+    setSelectedSize('ALL');
+    setSelectedColor('ALL');
+    setMaxPrice(400);
+    setSortBy('newest');
     setCurrentPage(1);
-    if (cat === 'all') {
-      searchParams.delete('category');
-    } else {
-      searchParams.set('category', cat);
-    }
-    setSearchParams(searchParams);
+    setSearchParams({});
   };
 
   return (
@@ -91,99 +127,135 @@ export default function ShopPage() {
         <p className="shop-subtitle">
           Timeless silhouettes, sustainable textiles, and refined craftsmanship.
           {searchKeyword && <span> (Results for: "<strong>{searchKeyword}</strong>")</span>}
+          {urlCategory && <span> &bull; Gender: <strong style={{ textTransform: 'capitalize' }}>{urlCategory}</strong></span>}
         </p>
       </div>
 
       <div className="shop-layout">
-        {/* Sidebar Filters */}
-        <aside style={{ backgroundColor: '#fff', padding: '24px', border: '1px solid #E7E5E4', borderRadius: '2px', height: 'fit-content' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px', paddingBottom: '12px', borderBottom: '1px solid #E7E5E4' }}>
-            <Filter size={18} color="#775B3F" />
-            <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 600, letterSpacing: '0.05em' }}>FILTERS</h3>
+        {/* Sidebar Filters - High Fashion Stitch Design */}
+        <aside className="filter-sidebar-card">
+          {/* Header & Reset */}
+          <div className="filter-header">
+            <span className="filter-title">FILTER BY</span>
+            <button type="button" className="filter-reset-btn" onClick={handleReset} title="Reset all filters">
+              <RotateCcw size={12} />
+              <span>RESET</span>
+            </button>
           </div>
 
-          {/* Category Filter */}
-          <div style={{ marginBottom: '24px' }}>
-            <h4 style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Categories</h4>
-            {['all', 'women', 'men', 'accessories'].map(cat => (
-              <label key={cat} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontSize: '0.85rem', cursor: 'pointer' }}>
-                <input 
-                  type="radio" 
-                  name="category" 
-                  checked={selectedCategory.toLowerCase() === cat} 
-                  onChange={() => handleCategoryChange(cat)}
-                />
-                <span style={{ textTransform: 'capitalize' }}>{cat === 'all' ? 'All Products' : cat}</span>
-              </label>
-            ))}
+          {/* Categories / Garment Type */}
+          <div className="filter-section">
+            <span className="filter-section-title">CATEGORIES</span>
+            <div className="filter-category-list">
+              {GARMENT_CATEGORIES.map(cat => {
+                const isActive = selectedGarment === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    className={`filter-category-item ${isActive ? 'active' : ''}`}
+                    onClick={() => { setSelectedGarment(cat.id); setCurrentPage(1); }}
+                  >
+                    <span>{cat.label}</span>
+                    {isActive && <Check size={16} className="filter-check-icon" />}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Price Range */}
-          <div style={{ marginBottom: '24px' }}>
-            <h4 style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Price Range</h4>
-            {[
-              { id: 'all', label: 'All Prices' },
-              { id: 'under100', label: 'Under $100' },
-              { id: '100-250', label: '$100 — $250' },
-              { id: 'above250', label: 'Above $250' },
-            ].map(range => (
-              <label key={range.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', fontSize: '0.85rem', cursor: 'pointer' }}>
-                <input 
-                  type="radio" 
-                  name="priceRange" 
-                  checked={priceRange === range.id} 
-                  onChange={() => { setPriceRange(range.id); setCurrentPage(1); }}
-                />
-                <span>{range.label}</span>
-              </label>
-            ))}
+          <div className="filter-divider" />
+
+          {/* Sizes */}
+          <div className="filter-section">
+            <span className="filter-section-title">SIZE</span>
+            <div className="filter-size-grid">
+              {SIZES.map(s => {
+                const isActive = selectedSize === s;
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    className={`filter-size-btn ${isActive ? 'active' : ''}`}
+                    onClick={() => { setSelectedSize(s); setCurrentPage(1); }}
+                  >
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Reset Filters */}
-          <button
-            onClick={() => { setSelectedCategory('all'); setPriceRange('all'); setSearchParams({}); }}
-            style={{
-              width: '100%',
-              padding: '8px',
-              backgroundColor: '#F5EFE6',
-              border: '1px solid #D6D3D1',
-              fontSize: '0.8rem',
-              fontWeight: 600,
-              cursor: 'pointer'
-            }}
-          >
-            RESET ALL FILTERS
-          </button>
+          <div className="filter-divider" />
+
+          {/* Color Palette */}
+          <div className="filter-section">
+            <span className="filter-section-title">COLOR PALETTE</span>
+            <div className="filter-color-palette">
+              <button
+                type="button"
+                className={`filter-color-all ${selectedColor === 'ALL' ? 'active' : ''}`}
+                onClick={() => { setSelectedColor('ALL'); setCurrentPage(1); }}
+                title="All Colors"
+              >
+                <span>ALL</span>
+              </button>
+
+              {COLOR_PALETTE.filter(c => c.id !== 'ALL').map(c => {
+                const isActive = selectedColor === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    className={`filter-color-swatch ${isActive ? 'active' : ''}`}
+                    style={{ backgroundColor: c.id }}
+                    onClick={() => { setSelectedColor(c.id); setCurrentPage(1); }}
+                    title={c.name}
+                    aria-label={c.name}
+                  />
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="filter-divider" />
+
+          {/* Max Price Slider */}
+          <div className="filter-section">
+            <div className="filter-price-header">
+              <span className="filter-section-title" style={{ marginBottom: 0 }}>MAX PRICE</span>
+              <span className="filter-price-value">${maxPrice}</span>
+            </div>
+            <input
+              type="range"
+              min="90"
+              max="400"
+              step="5"
+              value={maxPrice}
+              onChange={(e) => { setMaxPrice(Number(e.target.value)); setCurrentPage(1); }}
+              className="filter-price-slider"
+            />
+            <div className="filter-price-limits">
+              <span>$90</span>
+              <span>$400</span>
+            </div>
+          </div>
         </aside>
 
         {/* Products Main Section */}
         <main>
           {/* Top Sort Bar */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '24px',
-            paddingBottom: '16px',
-            borderBottom: '1px solid #E7E5E4'
-          }}>
-            <span style={{ fontSize: '0.9rem', color: '#78716C' }}>
+          <div className="shop-toolbar">
+            <span className="shop-count">
               Showing <strong>{filteredProducts.length}</strong> styles
             </span>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <ArrowUpDown size={16} color="#78716C" />
+            <div className="shop-sort-wrap">
+              <ArrowUpDown size={15} color="#78716C" />
               <select 
                 value={sortBy} 
                 onChange={e => setSortBy(e.target.value)}
-                style={{
-                  padding: '6px 12px',
-                  border: '1px solid #D6D3D1',
-                  backgroundColor: '#fff',
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                  cursor: 'pointer'
-                }}
+                className="shop-sort-select"
               >
                 <option value="newest">Sort by: Newest Arrival</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -194,21 +266,17 @@ export default function ShopPage() {
 
           {/* Product Grid */}
           {filteredProducts.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '80px 20px', backgroundColor: '#fff', border: '1px solid #E7E5E4' }}>
-              <p style={{ fontSize: '1.1rem', color: '#78716C', marginBottom: '16px' }}>No products match your selected criteria.</p>
+            <div className="shop-empty-state">
+              <p className="shop-empty-text">No products match your selected criteria.</p>
               <button 
-                onClick={() => { setSelectedCategory('all'); setPriceRange('all'); setSearchParams({}); }}
-                style={{ padding: '10px 24px', backgroundColor: '#1C1917', color: '#fff', border: 'none', cursor: 'pointer' }}
+                onClick={handleReset}
+                className="shop-empty-btn"
               >
-                Clear All Filters
+                Reset All Filters
               </button>
             </div>
           ) : (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-              gap: '24px'
-            }}>
+            <div className="shop-product-grid">
               {paginatedProducts.map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -217,23 +285,12 @@ export default function ShopPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '40px' }}>
+            <div className="shop-pagination">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(pageNum => (
                 <button
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
-                  style={{
-                    width: '36px',
-                    height: '36px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    border: currentPage === pageNum ? '2px solid #1C1917' : '1px solid #D6D3D1',
-                    backgroundColor: currentPage === pageNum ? '#1C1917' : '#fff',
-                    color: currentPage === pageNum ? '#fff' : '#1C1917',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
+                  className={`shop-page-btn ${currentPage === pageNum ? 'active' : ''}`}
                 >
                   {pageNum}
                 </button>
