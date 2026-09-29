@@ -13,8 +13,10 @@ import {
   X, 
   Mail
 } from 'lucide-react';
+import { useShop } from '../context/ShopContext';
 
 export default function LoginPage() {
+  const { login: contextLogin } = useShop();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -115,11 +117,14 @@ export default function LoginPage() {
       // Authentication Success
       setIsLoading(false);
       setLoginSuccess(true);
-      setLoggedInName(matchedUser.fullName);
+      setLoggedInName(matchedUser.fullName || matchedUser.name);
+
+      // Context sync
+      contextLogin(matchedUser.email, matchedUser.password);
 
       try {
         localStorage.setItem('lune_user_authenticated', 'true');
-        localStorage.setItem('lune_user_name', matchedUser.fullName);
+        localStorage.setItem('lune_user_name', matchedUser.fullName || matchedUser.name);
         localStorage.setItem('lune_user_email', matchedUser.email);
         
         if (rememberMe) {
@@ -132,8 +137,12 @@ export default function LoginPage() {
       }
 
       setTimeout(() => {
-        navigate('/');
-      }, 1100);
+        if (matchedUser.role === 'admin' || matchedUser.email === 'admin@lune.com') {
+          navigate('/admin');
+        } else {
+          navigate(location.state?.from?.pathname || '/');
+        }
+      }, 1000);
     }, 600);
   };
 
