@@ -115,28 +115,23 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 9px 12px;
+  padding: 8px 2px;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 3px;
-  font-size: 0.88rem;
-  color: #6E6259;
+  border: none;
+  font-size: 0.9rem;
+  color: #78716C;
   text-align: left;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: color 0.2s ease;
 }
 
 .filter-category-item:hover {
   color: #2C2117;
-  background: rgba(119, 91, 63, 0.05);
 }
 
 .filter-category-item.active {
-  background: #FFFFFF;
   color: #2C2117;
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  border-color: #E7E1D8;
 }
 
 .filter-check-icon {
@@ -253,8 +248,7 @@
   width: 100%;
   -webkit-appearance: none;
   appearance: none;
-  height: 7px;
-  background: #775B3F;
+  height: 6px;
   border-radius: 4px;
   outline: none;
   margin: 8px 0;

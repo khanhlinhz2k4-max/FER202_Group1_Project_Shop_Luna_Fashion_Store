@@ -67,7 +67,8 @@ export default function Navbar() {
   ];
 
   return (
-    <header className={`lune-header ${isScrolled ? 'scrolled' : ''}`}>
+    <>
+      <header className={`lune-header ${isScrolled ? 'scrolled' : ''}`}>
       {/* Editorial Announcement Bar */}
       <div className="announcement-bar">
         <p>
@@ -295,72 +296,159 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Mobile Menu Overlay & Drawer */}
-      <div className={`mobile-nav-drawer ${mobileMenuOpen ? 'open' : ''}`}>
-        <div className="mobile-nav-content">
-          <div className="mobile-nav-header">
-            <div className="brand-logo">
-              <span className="brand-name">LUNE</span>
-            </div>
-            <button 
-              onClick={() => setMobileMenuOpen(false)} 
-              className="close-drawer-btn"
-              aria-label="Close menu"
-            >
-              <X size={22} />
-            </button>
-          </div>
+    </header>
 
-          <ul className="mobile-nav-list">
-            {navLinks.map((link) => (
-              <li key={link.name}>
-                <Link 
-                  to={link.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="mobile-nav-link"
-                >
-                  <span>{link.name}</span>
-                  <ArrowRight size={16} />
-                </Link>
-              </li>
-            ))}
+    {/* Mobile Menu Backdrop Overlay (Independent element to prevent backdrop-filter bleeding bug) */}
+    <div 
+      className={`mobile-nav-overlay ${mobileMenuOpen ? 'open' : ''}`}
+      onClick={() => setMobileMenuOpen(false)}
+    />
+
+    {/* Mobile Menu Content Drawer */}
+    <div 
+      className={`mobile-nav-content ${mobileMenuOpen ? 'open' : ''}`}
+      onClick={(e) => e.stopPropagation()}
+    >
+        {/* Drawer Header with Brand Gold Glow */}
+        <div className="mobile-nav-header">
+          <Link to="/" onClick={() => setMobileMenuOpen(false)} className="brand-logo">
+            <span className="brand-name">LUNE</span>
+            <span className="brand-tagline">FASHION STORE</span>
+          </Link>
+          <button 
+            onClick={() => setMobileMenuOpen(false)} 
+            className="close-drawer-btn"
+            aria-label="Close menu"
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        {/* Section 1: Main Navigation & Collections */}
+        <div className="mobile-group-label">EXPLORE COLLECTIONS</div>
+        <ul className="mobile-nav-list">
+          <li>
+            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+              <span>Home</span>
+              <ArrowRight size={16} className="nav-arrow-icon" />
+            </Link>
+          </li>
+          <li>
+            <Link to="/shop" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+              <span>Shop All</span>
+              <ArrowRight size={16} className="nav-arrow-icon" />
+            </Link>
+          </li>
+          <li>
+            <Link to="/shop?category=women" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+              <span>Women's Collection</span>
+              <ArrowRight size={16} className="nav-arrow-icon" />
+            </Link>
+          </li>
+          <li>
+            <Link to="/shop?category=men" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+              <span>Men's Collection</span>
+              <ArrowRight size={16} className="nav-arrow-icon" />
+            </Link>
+          </li>
+          <li>
+            <a href="/#new-arrivals" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+              <span>New Collection</span>
+              <ArrowRight size={16} className="nav-arrow-icon" />
+            </a>
+          </li>
+          <li>
+            <a href="/#about" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+              <span>About LUNE</span>
+              <ArrowRight size={16} className="nav-arrow-icon" />
+            </a>
+          </li>
+        </ul>
+
+        {/* Section 2: Personal Wardrobe & Wishlist */}
+        <div className="mobile-group-label">WARDROBE & ACCOUNT</div>
+        <ul className="mobile-nav-list">
+          <li>
+            <button 
+              onClick={() => { setMobileMenuOpen(false); openCart(); }} 
+              className="mobile-nav-link"
+              style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', fontFamily: 'inherit', padding: '16px 20px', cursor: 'pointer' }}
+            >
+              <span className="link-text-wrap">
+                <ShoppingBag size={16} className="inline-icon-gold" />
+                Shopping Bag
+                {cartCount > 0 && (
+                  <span className="mobile-badge-count">{cartCount}</span>
+                )}
+              </span>
+              <ArrowRight size={16} className="nav-arrow-icon" />
+            </button>
+          </li>
+          <li>
+            <Link to="/wishlist" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+              <span className="link-text-wrap">
+                <Heart size={16} className="inline-icon-gold" />
+                Saved Wishlist
+                {wishlist.length > 0 && (
+                  <span className="mobile-badge-count">{wishlist.length}</span>
+                )}
+              </span>
+              <ArrowRight size={16} className="nav-arrow-icon" />
+            </Link>
+          </li>
+          {currentUser && (
             <li>
-              <Link to="/wishlist" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-                <span>Saved Wishlist ({wishlist.length})</span>
-                <ArrowRight size={16} />
+              <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+                <span className="link-text-wrap">
+                  <User size={16} className="inline-icon-gold" />
+                  My Profile ({currentUser.name.split(' ')[0]})
+                </span>
+                <ArrowRight size={16} className="nav-arrow-icon" />
               </Link>
             </li>
-            {currentUser ? (
-              <li>
-                <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-                  <span>My Account ({currentUser.name})</span>
-                  <ArrowRight size={16} />
-                </Link>
-              </li>
-            ) : (
-              <>
-                <li>
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-                    <span>Client Sign In</span>
-                    <ArrowRight size={16} />
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-                    <span>Create Account</span>
-                    <ArrowRight size={16} />
-                  </Link>
-                </li>
-              </>
-            )}
-          </ul>
+          )}
+        </ul>
 
-          <div className="mobile-nav-footer">
-            <p className="mobile-contact-line">Customer Care: support@lune-fashion.com</p>
-            <p className="mobile-tagline">LUNE Fashion Store — Edition 2026</p>
+        {/* Section 3: Auth CTA Buttons */}
+        <div className="mobile-auth-section">
+          {currentUser ? (
+            <button 
+              type="button" 
+              className="mobile-cta-secondary mobile-cta-logout"
+              onClick={handleLogout}
+            >
+              <LogOut size={16} />
+              <span>SIGN OUT ({currentUser.role.toUpperCase()})</span>
+            </button>
+          ) : (
+            <div className="mobile-cta-group">
+              <Link 
+                to="/login" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="mobile-cta-primary"
+              >
+                <span>Sign In</span>
+                <ArrowRight size={15} />
+              </Link>
+              <Link 
+                to="/register" 
+                onClick={() => setMobileMenuOpen(false)}
+                className="mobile-cta-secondary"
+              >
+                <span>Register</span>
+              </Link>
+            </div>
+          )}
+        </div>
+
+        <div className="mobile-nav-footer">
+          <div className="mobile-footer-info">
+            <span className="mobile-contact-line">Care: support@lune-fashion.com</span>
+            <span className="mobile-footer-divider">·</span>
+            <span className="mobile-tagline">LUNE © 2026</span>
           </div>
         </div>
       </div>
-    </header>
+    </>
   );
 }

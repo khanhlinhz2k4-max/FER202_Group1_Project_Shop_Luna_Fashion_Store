@@ -76,6 +76,11 @@ Tất cả các thành viên khi xây dựng giao diện **bắt buộc dùng ch
   * `New Collection`: Cuộn mượt xuống khối `#new-arrivals` trên Trang chủ.
   * `About`: Cuộn mượt xuống khối `#about` trên Trang chủ.
 * **Cột phải (Cụm tiện ích):** Icon Tìm kiếm (`Search`), Yêu thích (`Wishlist`), Giỏ hàng (`Cart`), Tài khoản (`User / Login`).
+* **Menu trượt di động (Mobile Navigation Drawer):** 
+  * Tối giản 100% phong cách Quiet Luxury, logo đồng bộ màu nâu cacao `#775B3F`.
+  * Phân định rõ ràng 2 danh mục cốt lõi: `Women's Collection` & `Men's Collection`.
+  * Tích hợp trực tiếp nút kích hoạt giỏ hàng `Shopping Bag` kèm số đếm thời gian thực.
+  * Các đường dẫn liên kết phần (`/#new-arrivals`, `/#about`) tự động kích hoạt chế độ cuộn trang mượt mà (smooth scrolling) tới đúng vị trí trên Trang chủ.
 
 ### 2. Chân trang (Footer Layout)
 * Nền màu nâu sẫm thanh lịch, gồm 4 cột: Cột thương hiệu `LUNE`, Cột `Collections` (Women, Men, New Collection), Cột `Customer Care`, Cột `The LUNE Journal` (Newsletter nhận tin) và dòng bản quyền `© 2026 LUNE Fashion Store`.
@@ -135,7 +140,10 @@ Tất cả các thành viên khi xây dựng giao diện **bắt buộc dùng ch
 
 * **Tiêu đề trang:** **SHOP ALL** kèm dòng mô tả ngắn gọn.
 * **Ô tìm kiếm đơn giản:** *"Search products..."* gõ từ khóa là danh sách bên dưới tự động lọc theo tên theo thời gian thực.
-* **Bộ lọc danh mục dạng nút bấm:** `ALL`, `WOMEN`, `MEN`, `NEW COLLECTION`. Nút đang chọn có màu nền nâu hoặc viền nổi bật; khi nhấp nút sản phẩm được lọc chuẩn xác.
+* **Bộ lọc Sidebar tối giản (Stitch / Quiet Luxury Filter Sidebar):**
+  * **Bộ lọc danh mục loại trang phục động (Dynamic Garment Categories):** Danh sách dạng chữ trơn tối giản (Text-based List), tự động phân tích và chỉ hiển thị những loại đồ phù hợp với danh mục giới tính đang xem (ví dụ: tự động ẩn Váy lụa khi chuyển sang xem Đồ Nam).
+  * **Thanh trượt giá (Price Slider):** Sử dụng dải màu gradient động (`linear-gradient`) tô màu nâu nhã nhặn cho vùng giá active, khớp chính xác 100% với vị trí nút kéo thumb và giá trị hiển thị ($90 - $400).
+  * **Bộ chọn kích thước (Size Grid) & Bảng màu (Color Swatches):** Thiết kế dạng ô bấm và các chấm màu thực tế chuẩn xác.
 * **Dữ liệu sản phẩm mẫu (~8 món cân bằng):** Pha trộn hài hòa giữa áo blazer nữ, sơ mi nam, đầm nữ, quần âu nam, áo khoác nam và áo lụa nữ.
 
 ---

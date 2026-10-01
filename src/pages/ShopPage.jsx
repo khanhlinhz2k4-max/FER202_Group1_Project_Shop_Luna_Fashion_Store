@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import ProductCard from '../components/ProductCard';
@@ -46,6 +46,24 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
+  // Reset selected garment when URL gender category changes
+  useEffect(() => {
+    setSelectedGarment('all');
+  }, [urlCategory]);
+
+  // Dynamically filter available garment categories based on the current URL category (e.g. Men vs Women)
+  const availableGarmentCategories = useMemo(() => {
+    let relevantProducts = products;
+    if (urlCategory && urlCategory !== 'all') {
+      relevantProducts = products.filter(
+        p => p.category && p.category.toLowerCase() === urlCategory.toLowerCase()
+      );
+    }
+    const availableTypes = new Set(relevantProducts.map(p => p.garmentType).filter(Boolean));
+
+    return GARMENT_CATEGORIES.filter(cat => cat.id === 'all' || availableTypes.has(cat.id));
+  }, [products, urlCategory]);
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
@@ -147,7 +165,7 @@ export default function ShopPage() {
           <div className="filter-section">
             <span className="filter-section-title">CATEGORIES</span>
             <div className="filter-category-list">
-              {GARMENT_CATEGORIES.map(cat => {
+              {availableGarmentCategories.map(cat => {
                 const isActive = selectedGarment === cat.id;
                 return (
                   <button
@@ -220,26 +238,29 @@ export default function ShopPage() {
 
           <div className="filter-divider" />
 
-          {/* Max Price Slider */}
-          <div className="filter-section">
-            <div className="filter-price-header">
-              <span className="filter-section-title" style={{ marginBottom: 0 }}>MAX PRICE</span>
-              <span className="filter-price-value">${maxPrice}</span>
+            {/* Max Price Slider */}
+            <div className="filter-section">
+              <div className="filter-price-header">
+                <span className="filter-section-title" style={{ marginBottom: 0 }}>MAX PRICE</span>
+                <span className="filter-price-value">${maxPrice}</span>
+              </div>
+              <input
+                type="range"
+                min="90"
+                max="400"
+                step="5"
+                value={maxPrice}
+                onChange={(e) => { setMaxPrice(Number(e.target.value)); setCurrentPage(1); }}
+                className="filter-price-slider"
+                style={{
+                  background: `linear-gradient(to right, #775B3F 0%, #775B3F ${((maxPrice - 90) / (400 - 90)) * 100}%, #E5DFD5 ${((maxPrice - 90) / (400 - 90)) * 100}%, #E5DFD5 100%)`
+                }}
+              />
+              <div className="filter-price-limits">
+                <span>$90</span>
+                <span>$400</span>
+              </div>
             </div>
-            <input
-              type="range"
-              min="90"
-              max="400"
-              step="5"
-              value={maxPrice}
-              onChange={(e) => { setMaxPrice(Number(e.target.value)); setCurrentPage(1); }}
-              className="filter-price-slider"
-            />
-            <div className="filter-price-limits">
-              <span>$90</span>
-              <span>$400</span>
-            </div>
-          </div>
         </aside>
 
         {/* Products Main Section */}
