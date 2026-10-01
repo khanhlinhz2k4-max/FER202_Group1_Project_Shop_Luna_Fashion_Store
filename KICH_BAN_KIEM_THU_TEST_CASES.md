@@ -38,13 +38,15 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 
 | Mã ca kiểm thử | Tên tình huống kiểm thử | Các bước thực hiện (Steps) | Dữ liệu đầu vào (Input) | Kết quả mong đợi (Expected Outcome) | Đánh giá |
 | :---: | :--- | :--- | :--- | :--- | :---: |
-| **TC-SHOP-01** | Hiển thị toàn bộ lưới sản phẩm | 1. Truy cập đường dẫn `/shop`. | Tải trang | Hiển thị danh sách sản phẩm dạng lưới đều đặn, ảnh sắc nét tỷ lệ 3:4, đầy đủ tên, giá và nhãn "NEW" (nếu có). | [ ] PASS<br>[ ] FAIL |
-| **TC-SHOP-02** | Lọc theo Khoảng giá (Price Filter) | 1. Chọn khoảng giá `$100 - $250`.<br>2. Kiểm tra tất cả sản phẩm đang hiển thị. | Mức giá: 100 - 250 | Mọi sản phẩm trên lưới đều có giá nằm trong ngưỡng $\ge \$100$ và $\le \$250$. Không có sản phẩm nào lệch ngưỡng. | [ ] PASS<br>[ ] FAIL |
-| **TC-SHOP-03** | Lọc kết hợp đa tiêu chí (Multi-filter) | 1. Chọn Danh mục: `Women`.<br>2. Chọn Size: `M`.<br>3. Chọn Màu: `Black`. | Women + Size M + Black | Chỉ những sản phẩm thời trang nữ CÓ size M VÀ CÓ màu Black mới được hiển thị. Hiển thị số lượng kết quả khớp chính xác. | [ ] PASS<br>[ ] FAIL |
-| **TC-SHOP-04** | Xử lý khi bộ lọc không có kết quả | 1. Chọn kết hợp các tiêu chí không có hàng (VD: Men + Giá dưới $50). | Bộ lọc không tồn tại hàng | Hiển thị màn hình trạng thái trống lịch sự: *"Không tìm thấy sản phẩm phù hợp"* kèm nút *"Xóa bộ lọc"* để quay lại ban đầu. | [ ] PASS<br>[ ] FAIL |
-| **TC-SHOP-05** | Sắp xếp sản phẩm theo giá tăng dần | 1. Tại dropdown Sắp xếp, chọn *"Giá: Thấp đến Cao"*. | Lựa chọn sắp xếp | Thứ tự hiển thị các sản phẩm được xếp lại ngay: Món rẻ nhất đứng đầu tiên, món đắt nhất đứng cuối cùng. | [ ] PASS<br>[ ] FAIL |
-| **TC-SHOP-06** | Sắp xếp sản phẩm theo giá giảm dần | 1. Tại dropdown Sắp xếp, chọn *"Giá: Cao đến Thấp"*. | Lựa chọn sắp xếp | Sản phẩm đắt nhất đứng đầu tiên, giá giảm dần về sau. | [ ] PASS<br>[ ] FAIL |
-| **TC-SHOP-07** | Phân trang hoặc Tải thêm (Pagination) | 1. Bấm chuyển trang 2 hoặc bấm "Xem thêm". | Click trang 2 | Hiển thị đúng các sản phẩm của trang tiếp theo; màn hình tự động cuộn lên đầu danh sách sản phẩm. | [ ] PASS<br>[ ] FAIL |
+| **TC-SHOP-01** | Hiển thị toàn bộ lưới sản phẩm | 1. Truy cập đường dẫn `/shop`. | Tải trang | Hiển thị danh sách sản phẩm dạng lưới đều đặn, ảnh sắc nét tỷ lệ 3:4, đầy đủ tên, giá và nhãn "NEW" (nếu có). | [x] PASS<br>[ ] FAIL |
+| **TC-SHOP-02** | Lọc theo Khoảng giá & Khớp dải màu (Price Filter) | 1. Chọn khoảng giá `$90 - $400`.<br>2. Kéo thanh trượt giá.<br>3. Quan sát vị trí nút lăn thumb và dải màu. | Mức giá: $90 - $400 | Thanh trượt kéo mượt mà; dải màu nâu active (`linear-gradient`) khớp chính xác 100% với vị trí con lăn thumb và giá tiền hiển thị ở trên. Mọi sản phẩm hiển thị nằm trong khoảng giá. | [x] PASS<br>[ ] FAIL |
+| **TC-SHOP-03** | Lọc kết hợp đa tiêu chí (Multi-filter) | 1. Chọn Danh mục: `Women`.<br>2. Chọn Size: `M`.<br>3. Chọn Màu: `Black`. | Women + Size M + Black | Chỉ những sản phẩm thời trang nữ CÓ size M VÀ CÓ màu Black mới được hiển thị. Hiển thị số lượng kết quả khớp chính xác. | [x] PASS<br>[ ] FAIL |
+| **TC-SHOP-04** | Xử lý khi bộ lọc không có kết quả | 1. Chọn kết hợp các tiêu chí không có hàng (VD: Men + Giá dưới $50). | Bộ lọc không tồn tại hàng | Hiển thị màn hình trạng thái trống lịch sự: *"Không tìm thấy sản phẩm phù hợp"* kèm nút *"Xóa bộ lọc"* để quay lại ban đầu. | [x] PASS<br>[ ] FAIL |
+| **TC-SHOP-05** | Sắp xếp sản phẩm theo giá tăng dần | 1. Tại dropdown Sắp xếp, chọn *"Giá: Thấp đến Cao"*. | Lựa chọn sắp xếp | Thứ tự hiển thị các sản phẩm được xếp lại ngay: Món rẻ nhất đứng đầu tiên, món đắt nhất đứng cuối cùng. | [x] PASS<br>[ ] FAIL |
+| **TC-SHOP-06** | Sắp xếp sản phẩm theo giá giảm dần | 1. Tại dropdown Sắp xếp, chọn *"Giá: Cao đến Thấp"*. | Lựa chọn sắp xếp | Sản phẩm đắt nhất đứng đầu tiên, giá giảm dần về sau. | [x] PASS<br>[ ] FAIL |
+| **TC-SHOP-07** | Phân trang hoặc Tải thêm (Pagination) | 1. Bấm chuyển trang 2 hoặc bấm "Xem thêm". | Click trang 2 | Hiển thị đúng các sản phẩm của trang tiếp theo; màn hình tự động cuộn lên đầu danh sách sản phẩm. | [x] PASS<br>[ ] FAIL |
+| **TC-SHOP-08** | Lọc danh mục loại trang phục động theo Giới tính | 1. Chọn xem `Men's Collection`.<br>2. Quan sát cột bộ lọc CATEGORIES bên trái.<br>3. Chuyển sang `Women's Collection`. | Click chọn Men / Women | Cột CATEGORIES tự động ẩn các loại đồ không liên quan (ví dụ: ẩn Silk Dresses khi chọn đồ Nam); tự động reset chọn về "All Garments" khi đổi danh mục. | [x] PASS<br>[ ] FAIL |
+| **TC-SHOP-09** | Điều hướng & Cuộn mượt trên Menu Mobile | 1. Mở Mobile Menu Drawer.<br>2. Bấm "Women's Collection", "Men's Collection".<br>3. Bấm "New Collection", "About LUNE". | Thao tác click trên Mobile Menu | Chuyển đúng trang danh mục Nam/Nữ; với các link anchor (`/#`) màn hình tự động cuộn mượt xuống đúng vị trí phần tương ứng trên trang Home. | [x] PASS<br>[ ] FAIL |
 
 ---
 
@@ -124,8 +126,8 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 
 ## 🏆 III. BIÊN BẢN NGHIỆM THU CUỐI CÙNG (FINAL SIGN-OFF)
 
-* **Tổng số ca kiểm thử:** 38 Test Cases
-* **Số ca Đạt (PASS):** ........ / 38
-* **Tỷ lệ hoàn thành:** ........ %
+* **Tổng số ca kiểm thử:** 40 Test Cases
+* **Số ca Đạt (PASS):** 40 / 40
+* **Tỷ lệ hoàn thành:** 100%
 * **Xác nhận của Trưởng nhóm (Leader):** ___________________________ (Ký và ghi rõ họ tên)
 * **Kết luận:** *Đủ điều kiện đóng gói sản phẩm và báo cáo bảo vệ đồ án FER202 trước hội đồng chấm thi.*
