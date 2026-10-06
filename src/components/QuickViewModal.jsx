@@ -1,156 +1,522 @@
-import React, { useState } from 'react';
-import { X, Heart, ShoppingBag, Eye } from 'lucide-react';
-import { useShop } from '../context/ShopContext';
+import React, { useEffect, useState } from 'react';
+import { X, Heart, ShoppingBag, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useShop } from '../context/ShopContext';
 
-/**
- * QuickViewModal Component
- * Phụ trách: Thành viên 3 (Trải nghiệm sản phẩm & Wishlist)
- */
-export default function QuickViewModal({ product, isOpen, onClose }) {
-  const { addToCart, toggleWishlist, isInWishlist } = useShop();
-  const [selectedSize, setSelectedSize] = useState(() => (product?.sizes && product.sizes[0]) || "M");
-  const [selectedColor, setSelectedColor] = useState(() => (product?.colors && product.colors[0]) || "");
+export default function QuickViewModal({
+  product,
+  isOpen,
+  onClose
+}) {
+  const {
+    addToCart,
+    toggleWishlist,
+    isInWishlist
+  } = useShop();
+
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
 
-  if (!isOpen || !product) return null;
+  // Reset lựa chọn mỗi khi mở Quick View cho sản phẩm
+  useEffect(() => {
+    if (!product || !isOpen) return;
+
+    setSelectedSize(
+      product.sizes?.length
+        ? product.sizes[0]
+        : 'M'
+    );
+
+    setSelectedColor(
+      product.colors?.length
+        ? product.colors[0]
+        : ''
+    );
+
+    setQuantity(1);
+  }, [product, isOpen]);
+
+  if (!isOpen || !product) {
+    return null;
+  }
 
   const isFavorited = isInWishlist(product.id);
 
+  const decreaseQuantity = () => {
+    setQuantity((current) =>
+      Math.max(1, current - 1)
+    );
+  };
+
+  const increaseQuantity = () => {
+    setQuantity((current) =>
+      current + 1
+    );
+  };
+
   const handleAddToCart = () => {
-    addToCart(product, selectedSize, selectedColor, quantity);
+    addToCart(
+      product,
+      selectedSize || product.sizes?.[0] || 'M',
+      selectedColor || product.colors?.[0] || '',
+      quantity
+    );
+
     onClose();
   };
 
+  const handleWishlist = () => {
+    toggleWishlist(product);
+  };
+
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 9999,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'rgba(0,0,0,0.6)',
-      backdropFilter: 'blur(4px)',
-      padding: '20px'
-    }} onClick={onClose}>
-      <div style={{
-        backgroundColor: '#FAF8F5',
-        maxWidth: '850px',
-        width: '100%',
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        borderRadius: '2px',
-        position: 'relative',
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.55)',
         display: 'flex',
-        flexWrap: 'wrap',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
-      }} onClick={e => e.stopPropagation()}>
-        <button 
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+        zIndex: 9999
+      }}
+    >
+      <div
+        onClick={(event) =>
+          event.stopPropagation()
+        }
+        style={{
+          width: '100%',
+          maxWidth: '850px',
+          maxHeight: '90vh',
+          overflowY: 'auto',
+          backgroundColor: '#fff',
+          position: 'relative',
+          display: 'grid',
+          gridTemplateColumns:
+            'minmax(0, 0.9fr) minmax(0, 1fr)'
+        }}
+      >
+
+        {/* ================= CLOSE ================= */}
+        <button
+          type="button"
           onClick={onClose}
-          style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer', zIndex: 10 }}
+          aria-label="Close Quick View"
+          style={{
+            position: 'absolute',
+            top: '12px',
+            right: '12px',
+            zIndex: 5,
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            border: 'none',
+            backgroundColor:
+              'rgba(255,255,255,0.95)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
         >
-          <X size={22} />
+          <X size={18} />
         </button>
 
-        {/* Product Image */}
-        <div style={{ flex: '1 1 360px', minHeight: '380px', backgroundColor: '#EDE8E1' }}>
-          <img 
-            src={product.image} 
-            alt={product.name} 
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} 
+
+        {/* ================= PRODUCT IMAGE ================= */}
+        <div
+          style={{
+            backgroundColor: '#EDE8E1',
+            minHeight: '500px'
+          }}
+        >
+          <img
+            src={product.image}
+            alt={product.name}
+            style={{
+              width: '100%',
+              height: '100%',
+              minHeight: '500px',
+              objectFit: 'cover',
+              display: 'block'
+            }}
           />
         </div>
 
-        {/* Product Info */}
-        <div style={{ flex: '1 1 380px', padding: '36px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div>
-            <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#775B3F', fontWeight: 600 }}>
-              {product.category}
-            </span>
-            <h2 style={{ margin: '8px 0', fontSize: '1.4rem', fontWeight: 500, fontFamily: 'serif' }}>{product.name}</h2>
-            <p style={{ fontSize: '1.2rem', fontWeight: 600, color: '#1C1917', margin: '8px 0 16px' }}>${product.price}</p>
-            <p style={{ fontSize: '0.88rem', color: '#57534E', lineHeight: 1.6, marginBottom: '20px' }}>
-              {product.description || "Expertly crafted using sustainably sourced textiles with refined artisanal tailoring."}
-            </p>
 
-            {/* Sizes */}
-            {product.sizes && product.sizes.length > 0 && (
-              <div style={{ marginBottom: '20px' }}>
-                <div style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '8px' }}>SELECT SIZE: {selectedSize}</div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {product.sizes.map(size => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      style={{
-                        padding: '6px 14px',
-                        border: selectedSize === size ? '2px solid #1C1917' : '1px solid #D6D3D1',
-                        backgroundColor: selectedSize === size ? '#1C1917' : '#fff',
-                        color: selectedSize === size ? '#fff' : '#1C1917',
-                        cursor: 'pointer',
-                        fontSize: '0.8rem',
-                        fontWeight: 600
-                      }}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
-              </div>
+        {/* ================= PRODUCT INFO ================= */}
+        <div
+          style={{
+            padding: '42px 36px',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
+
+          {/* Category */}
+          <div
+            style={{
+              color: '#A16207',
+              fontSize: '0.72rem',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              marginBottom: '10px'
+            }}
+          >
+            {product.category}
+          </div>
+
+
+          {/* Product Name */}
+          <h2
+            style={{
+              fontFamily: 'serif',
+              fontSize: '1.8rem',
+              fontWeight: 500,
+              lineHeight: 1.2,
+              margin: '0 0 12px',
+              color: '#1C1917'
+            }}
+          >
+            {product.name}
+          </h2>
+
+
+          {/* Price */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: '18px'
+            }}
+          >
+            <span
+              style={{
+                fontWeight: 600,
+                fontSize: '1.05rem'
+              }}
+            >
+              ${Number(product.price).toFixed(2)}
+            </span>
+
+            {product.originalPrice && (
+              <span
+                style={{
+                  color: '#A8A29E',
+                  textDecoration: 'line-through',
+                  fontSize: '0.9rem'
+                }}
+              >
+                $
+                {Number(
+                  product.originalPrice
+                ).toFixed(2)}
+              </span>
             )}
           </div>
 
-          <div>
-            <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
-              <button
-                onClick={handleAddToCart}
+
+          {/* Description */}
+          <p
+            style={{
+              color: '#57534E',
+              fontSize: '0.88rem',
+              lineHeight: 1.7,
+              margin: '0 0 24px'
+            }}
+          >
+            {product.description}
+          </p>
+
+
+          <div
+            style={{
+              height: '1px',
+              backgroundColor: '#E7E5E4',
+              marginBottom: '22px'
+            }}
+          />
+
+
+          {/* ================= COLOR ================= */}
+          {product.colors?.length > 0 && (
+            <div style={{ marginBottom: '22px' }}>
+
+              <div
                 style={{
-                  flex: 1,
-                  padding: '12px',
-                  backgroundColor: '#1C1917',
-                  color: '#fff',
-                  border: 'none',
+                  fontSize: '0.75rem',
                   fontWeight: 600,
-                  fontSize: '0.85rem',
-                  letterSpacing: '0.05em',
+                  letterSpacing: '0.08em',
+                  marginBottom: '11px'
+                }}
+              >
+                COLOR
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '11px',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {product.colors.map(
+                  (color, index) => (
+                    <button
+                      key={`${color}-${index}`}
+                      type="button"
+                      onClick={() =>
+                        setSelectedColor(color)
+                      }
+                      aria-label={`Color ${index + 1}`}
+                      style={{
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '50%',
+                        backgroundColor: color,
+                        border:
+                          selectedColor === color
+                            ? '2px solid #1C1917'
+                            : '1px solid #D6D3D1',
+                        boxShadow:
+                          selectedColor === color
+                            ? '0 0 0 2px white, 0 0 0 3px #1C1917'
+                            : 'none',
+                        cursor: 'pointer'
+                      }}
+                    />
+                  )
+                )}
+              </div>
+            </div>
+          )}
+
+
+          {/* ================= SIZE ================= */}
+          {product.sizes?.length > 0 && (
+            <div style={{ marginBottom: '22px' }}>
+
+              <div
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.08em',
+                  marginBottom: '11px'
+                }}
+              >
+                SIZE
+              </div>
+
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '7px',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() =>
+                      setSelectedSize(size)
+                    }
+                    style={{
+                      minWidth: '44px',
+                      padding: '9px 12px',
+                      backgroundColor:
+                        selectedSize === size
+                          ? '#1C1917'
+                          : '#fff',
+                      color:
+                        selectedSize === size
+                          ? '#fff'
+                          : '#1C1917',
+                      border:
+                        selectedSize === size
+                          ? '1px solid #1C1917'
+                          : '1px solid #D6D3D1',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem'
+                    }}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+
+          {/* ================= QUANTITY ================= */}
+          <div style={{ marginBottom: '24px' }}>
+
+            <div
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                marginBottom: '11px'
+              }}
+            >
+              QUANTITY
+            </div>
+
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                border: '1px solid #D6D3D1'
+              }}
+            >
+
+              <button
+                type="button"
+                onClick={decreaseQuantity}
+                disabled={quantity === 1}
+                aria-label="Decrease quantity"
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  border: 'none',
+                  backgroundColor: '#fff',
+                  cursor:
+                    quantity === 1
+                      ? 'not-allowed'
+                      : 'pointer',
+                  opacity:
+                    quantity === 1 ? 0.4 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Minus size={14} />
+              </button>
+
+              <span
+                style={{
+                  width: '38px',
+                  textAlign: 'center',
+                  fontSize: '0.85rem'
+                }}
+              >
+                {quantity}
+              </span>
+
+              <button
+                type="button"
+                onClick={increaseQuantity}
+                aria-label="Increase quantity"
+                style={{
+                  width: '36px',
+                  height: '36px',
+                  border: 'none',
+                  backgroundColor: '#fff',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
+                  justifyContent: 'center'
                 }}
               >
-                <ShoppingBag size={18} /> ADD TO BAG
+                <Plus size={14} />
               </button>
-              <button
-                onClick={() => toggleWishlist(product)}
-                style={{
-                  padding: '12px',
-                  border: '1px solid #D6D3D1',
-                  backgroundColor: '#fff',
-                  cursor: 'pointer'
-                }}
-              >
-                <Heart size={18} color={isFavorited ? "#E11D48" : "#1C1917"} fill={isFavorited ? "#E11D48" : "none"} />
-              </button>
-            </div>
 
-            <Link 
-              to={`/product/${product.id}`} 
-              onClick={onClose}
+            </div>
+          </div>
+
+
+          {/* ================= ACTIONS ================= */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '8px',
+              marginBottom: '18px'
+            }}
+          >
+
+            <button
+              type="button"
+              onClick={handleAddToCart}
               style={{
-                display: 'block',
-                textAlign: 'center',
-                marginTop: '12px',
-                fontSize: '0.82rem',
-                color: '#775B3F',
-                textDecoration: 'underline'
+                flex: 1,
+                minHeight: '46px',
+                border: 'none',
+                backgroundColor: '#1C1917',
+                color: '#fff',
+                cursor: 'pointer',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '7px'
               }}
             >
-              View Full Product Details & Sizing Guide →
-            </Link>
+              <ShoppingBag size={15} />
+              ADD TO BAG
+            </button>
+
+
+            <button
+              type="button"
+              onClick={handleWishlist}
+              aria-label={
+                isFavorited
+                  ? 'Remove from wishlist'
+                  : 'Add to wishlist'
+              }
+              style={{
+                width: '46px',
+                minHeight: '46px',
+                border:
+                  '1px solid #D6D3D1',
+                backgroundColor: '#fff',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Heart
+                size={18}
+                fill={
+                  isFavorited
+                    ? '#E11D48'
+                    : 'none'
+                }
+                stroke={
+                  isFavorited
+                    ? '#E11D48'
+                    : '#1C1917'
+                }
+              />
+            </button>
+
           </div>
+
+
+          {/* ================= VIEW DETAILS ================= */}
+          <Link
+            to={`/product/${product.id}`}
+            onClick={onClose}
+            style={{
+              textAlign: 'center',
+              color: '#1C1917',
+              fontSize: '0.78rem',
+              fontWeight: 500,
+              textDecoration: 'underline',
+              padding: '8px'
+            }}
+          >
+            VIEW FULL PRODUCT DETAILS
+          </Link>
+
         </div>
       </div>
     </div>

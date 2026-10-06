@@ -1,185 +1,1007 @@
-import React, { useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import {
+  Heart,
+  ShoppingBag,
+  ShieldCheck,
+  RefreshCw,
+  Truck,
+  ChevronRight,
+  Minus,
+  Plus
+} from 'lucide-react';
+
 import { useShop } from '../context/ShopContext';
-import { Heart, ShoppingBag, ShieldCheck, RefreshCw, Truck, ChevronRight } from 'lucide-react';
 import SizeGuideModal from '../components/SizeGuideModal';
 
-/**
- * ProductDetailPage Component
- * Phụ trách: Thành viên 3 (Trải nghiệm sản phẩm & Danh sách yêu thích)
- */
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const { products, addToCart, toggleWishlist, isInWishlist } = useShop();
+
+  const {
+    products,
+    addToCart,
+    toggleWishlist,
+    isInWishlist
+  } = useShop();
 
   const product = useMemo(() => {
-    return products.find(p => String(p.id) === String(id));
+    return products.find(
+      (item) => String(item.id) === String(id)
+    );
   }, [products, id]);
 
-  const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activeTab, setActiveTab] = useState('description');
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
+  // Set default values whenever product changes
+  useEffect(() => {
+    if (!product) return;
+
+    setSelectedSize(
+      product.sizes?.length
+        ? product.sizes[0]
+        : 'M'
+    );
+
+    setSelectedColor(
+      product.colors?.length
+        ? product.colors[0]
+        : ''
+    );
+
+    setQuantity(1);
+    setActiveImageIndex(0);
+    setActiveTab('description');
+  }, [product]);
+
+  // Product not found
   if (!product) {
     return (
-      <div style={{ padding: '80px 20px', textAlign: 'center' }}>
-        <h2>Product not found</h2>
-        <Link to="/shop" style={{ color: '#775B3F', textDecoration: 'underline' }}>Back to Collection</Link>
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '100px 24px',
+          textAlign: 'center'
+        }}
+      >
+        <h1
+          style={{
+            fontFamily: 'serif',
+            fontSize: '2rem',
+            fontWeight: 500
+          }}
+        >
+          PRODUCT NOT FOUND
+        </h1>
+
+        <p
+          style={{
+            color: '#78716C',
+            marginBottom: '24px'
+          }}
+        >
+          The product you are looking for does not exist.
+        </p>
+
+        <Link
+          to="/shop"
+          style={{
+            display: 'inline-block',
+            padding: '12px 24px',
+            backgroundColor: '#1C1917',
+            color: '#fff',
+            textDecoration: 'none',
+            fontSize: '0.85rem',
+            fontWeight: 600
+          }}
+        >
+          BACK TO SHOP
+        </Link>
       </div>
     );
   }
 
-  const allImages = [product.image, product.secondaryImage, ...(product.images || [])].filter(Boolean);
+  const allImages = [
+    product.image,
+    product.secondaryImage,
+    ...(product.images || [])
+  ].filter(Boolean);
+
   const isFavorited = isInWishlist(product.id);
 
+  const decreaseQuantity = () => {
+    setQuantity((current) => Math.max(1, current - 1));
+  };
+
+  const increaseQuantity = () => {
+    setQuantity((current) => current + 1);
+  };
+
   const handleAddToCart = () => {
-    addToCart(product, selectedSize, selectedColor || (product.colors && product.colors[0]), quantity);
+    addToCart(
+      product,
+      selectedSize || product.sizes?.[0] || 'M',
+      selectedColor || product.colors?.[0] || '',
+      quantity
+    );
+  };
+
+  const handleWishlist = () => {
+    toggleWishlist(product);
   };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px' }}>
-      {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', color: '#78716C', marginBottom: '32px' }}>
-        <Link to="/" style={{ color: '#78716C' }}>Home</Link>
-        <ChevronRight size={14} />
-        <Link to="/shop" style={{ color: '#78716C' }}>Collection</Link>
-        <ChevronRight size={14} />
-        <span style={{ color: '#1C1917', fontWeight: 500 }}>{product.name}</span>
-      </div>
+    <>
+      <div
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '24px'
+        }}
+      >
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '48px' }}>
-        {/* Left: Gallery */}
-        <div>
-          <div style={{ backgroundColor: '#EDE8E1', minHeight: '480px', marginBottom: '16px', overflow: 'hidden' }}>
-            <img 
-              src={allImages[activeImageIndex] || product.image} 
-              alt={product.name} 
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-            />
-          </div>
-          {allImages.length > 1 && (
-            <div style={{ display: 'flex', gap: '12px' }}>
-              {allImages.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveImageIndex(idx)}
-                  style={{
-                    width: '80px',
-                    height: '100px',
-                    border: activeImageIndex === idx ? '2px solid #1C1917' : '1px solid #D6D3D1',
-                    padding: 0,
-                    cursor: 'pointer',
-                    overflow: 'hidden'
-                  }}
-                >
-                  <img src={img} alt="thumb" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                </button>
-              ))}
-            </div>
-          )}
+        {/* ================= BREADCRUMB ================= */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            fontSize: '0.78rem',
+            color: '#78716C',
+            marginBottom: '32px'
+          }}
+        >
+          <Link
+            to="/"
+            style={{
+              color: '#78716C',
+              textDecoration: 'none'
+            }}
+          >
+            Home
+          </Link>
+
+          <ChevronRight size={14} />
+
+          <Link
+            to="/shop"
+            style={{
+              color: '#78716C',
+              textDecoration: 'none'
+            }}
+          >
+            Shop
+          </Link>
+
+          <ChevronRight size={14} />
+
+          <span style={{ color: '#1C1917' }}>
+            {product.name}
+          </span>
         </div>
 
-        {/* Right: Info */}
-        <div>
-          <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.15em', color: '#775B3F', fontWeight: 600 }}>
-            {product.category}
-          </span>
-          <h1 style={{ fontSize: '2rem', fontWeight: 500, fontFamily: 'serif', margin: '8px 0 16px' }}>{product.name}</h1>
-          <p style={{ fontSize: '1.4rem', fontWeight: 600, color: '#1C1917', marginBottom: '24px' }}>${product.price}</p>
-          <p style={{ color: '#57534E', lineHeight: 1.7, marginBottom: '32px' }}>
-            {product.description || "Cut from natural fibers with meticulous attention to tailoring. Designed for timeless elegance and lasting quality."}
-          </p>
 
-          {/* Size Selection */}
-          <div style={{ marginBottom: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem' }}>
-              <span style={{ fontWeight: 600 }}>SIZE: {selectedSize}</span>
-              <button 
-                onClick={() => setIsSizeGuideOpen(true)}
-                style={{ background: 'none', border: 'none', color: '#775B3F', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.82rem' }}
+        {/* ================= PRODUCT AREA ================= */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns:
+              'minmax(0, 1.05fr) minmax(0, 0.95fr)',
+            gap: '50px',
+            alignItems: 'start'
+          }}
+        >
+
+          {/* ================= IMAGE GALLERY ================= */}
+          <div>
+            <div
+              style={{
+                width: '100%',
+                aspectRatio: '4 / 5',
+                backgroundColor: '#EDE8E1',
+                overflow: 'hidden',
+                marginBottom: '12px'
+              }}
+            >
+              <img
+                src={allImages[activeImageIndex]}
+                alt={product.name}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block'
+                }}
+              />
+            </div>
+
+            {allImages.length > 1 && (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns:
+                    'repeat(4, 1fr)',
+                  gap: '10px'
+                }}
               >
-                Size Guide
+                {allImages.map((image, index) => (
+                  <button
+                    key={`${image}-${index}`}
+                    type="button"
+                    onClick={() =>
+                      setActiveImageIndex(index)
+                    }
+                    style={{
+                      padding: 0,
+                      border:
+                        activeImageIndex === index
+                          ? '2px solid #1C1917'
+                          : '1px solid #E7E5E4',
+                      backgroundColor: '#EDE8E1',
+                      cursor: 'pointer',
+                      aspectRatio: '1 / 1',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <img
+                      src={image}
+                      alt={`${product.name} ${index + 1}`}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+
+          {/* ================= PRODUCT INFORMATION ================= */}
+          <div>
+
+            <div
+              style={{
+                color: '#A16207',
+                fontSize: '0.75rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                marginBottom: '10px'
+              }}
+            >
+              {product.category}
+            </div>
+
+            <h1
+              style={{
+                fontFamily: 'serif',
+                fontSize: '2.2rem',
+                fontWeight: 500,
+                lineHeight: 1.15,
+                margin: '0 0 14px'
+              }}
+            >
+              {product.name}
+            </h1>
+
+            <div
+              style={{
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'center',
+                marginBottom: '20px'
+              }}
+            >
+              <span
+                style={{
+                  fontSize: '1.15rem',
+                  fontWeight: 600
+                }}
+              >
+                ${Number(product.price).toFixed(2)}
+              </span>
+
+              {product.originalPrice && (
+                <span
+                  style={{
+                    color: '#A8A29E',
+                    textDecoration: 'line-through'
+                  }}
+                >
+                  ${Number(product.originalPrice).toFixed(2)}
+                </span>
+              )}
+            </div>
+
+            <p
+              style={{
+                color: '#57534E',
+                lineHeight: 1.7,
+                fontSize: '0.92rem',
+                marginBottom: '28px'
+              }}
+            >
+              {product.description}
+            </p>
+
+            <div
+              style={{
+                height: '1px',
+                backgroundColor: '#E7E5E4',
+                marginBottom: '24px'
+              }}
+            />
+
+
+            {/* ================= COLOR ================= */}
+            {product.colors?.length > 0 && (
+              <div style={{ marginBottom: '24px' }}>
+                <div
+                  style={{
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    marginBottom: '12px'
+                  }}
+                >
+                  COLOR
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '12px'
+                  }}
+                >
+                  {product.colors.map((color, index) => (
+                    <button
+                      key={`${color}-${index}`}
+                      type="button"
+                      onClick={() =>
+                        setSelectedColor(color)
+                      }
+                      aria-label={`Color ${index + 1}`}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        backgroundColor: color,
+                        border:
+                          selectedColor === color
+                            ? '2px solid #1C1917'
+                            : '1px solid #D6D3D1',
+                        boxShadow:
+                          selectedColor === color
+                            ? '0 0 0 2px white, 0 0 0 3px #1C1917'
+                            : 'none',
+                        cursor: 'pointer'
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+
+            {/* ================= SIZE ================= */}
+            {product.sizes?.length > 0 && (
+              <div style={{ marginBottom: '24px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '12px'
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.08em'
+                    }}
+                  >
+                    SIZE
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setIsSizeGuideOpen(true)
+                    }
+                    style={{
+                      border: 'none',
+                      background: 'none',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      color: '#78716C',
+                      fontSize: '0.75rem'
+                    }}
+                  >
+                    Size Guide
+                  </button>
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    flexWrap: 'wrap'
+                  }}
+                >
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() =>
+                        setSelectedSize(size)
+                      }
+                      style={{
+                        minWidth: '48px',
+                        padding: '11px 14px',
+                        backgroundColor:
+                          selectedSize === size
+                            ? '#1C1917'
+                            : '#fff',
+                        color:
+                          selectedSize === size
+                            ? '#fff'
+                            : '#1C1917',
+                        border:
+                          selectedSize === size
+                            ? '1px solid #1C1917'
+                            : '1px solid #D6D3D1',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+
+            {/* ================= QUANTITY ================= */}
+            <div style={{ marginBottom: '24px' }}>
+              <div
+                style={{
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.08em',
+                  marginBottom: '12px'
+                }}
+              >
+                QUANTITY
+              </div>
+
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  border: '1px solid #D6D3D1'
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={decreaseQuantity}
+                  disabled={quantity === 1}
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    border: 'none',
+                    background: '#fff',
+                    cursor:
+                      quantity === 1
+                        ? 'not-allowed'
+                        : 'pointer',
+                    opacity:
+                      quantity === 1 ? 0.4 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <Minus size={15} />
+                </button>
+
+                <span
+                  style={{
+                    width: '42px',
+                    textAlign: 'center'
+                  }}
+                >
+                  {quantity}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={increaseQuantity}
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    border: 'none',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <Plus size={15} />
+                </button>
+              </div>
+            </div>
+
+
+            {/* ================= BUTTONS ================= */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '10px',
+                marginBottom: '28px'
+              }}
+            >
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                style={{
+                  flex: 1,
+                  minHeight: '50px',
+                  border: 'none',
+                  backgroundColor: '#1C1917',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  fontSize: '0.82rem',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
+                }}
+              >
+                <ShoppingBag size={17} />
+                ADD TO BAG
+              </button>
+
+              <button
+                type="button"
+                onClick={handleWishlist}
+                style={{
+                  width: '50px',
+                  minHeight: '50px',
+                  border: '1px solid #D6D3D1',
+                  backgroundColor: '#fff',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Heart
+                  size={19}
+                  fill={
+                    isFavorited
+                      ? '#E11D48'
+                      : 'none'
+                  }
+                  stroke={
+                    isFavorited
+                      ? '#E11D48'
+                      : '#1C1917'
+                  }
+                />
               </button>
             </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              {(product.sizes || ["XS", "S", "M", "L"]).map(size => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
+
+
+            {/* ================= TRUST BADGES ================= */}
+            <div
+              style={{
+                borderTop: '1px solid #E7E5E4',
+                borderBottom: '1px solid #E7E5E4',
+                padding: '20px 0',
+                display: 'grid',
+                gridTemplateColumns:
+                  'repeat(3, 1fr)',
+                gap: '12px'
+              }}
+            >
+              <div
+                style={{
+                  textAlign: 'center'
+                }}
+              >
+                <ShieldCheck
+                  size={19}
+                  strokeWidth={1.5}
+                />
+                <div
                   style={{
-                    padding: '10px 18px',
-                    border: selectedSize === size ? '2px solid #1C1917' : '1px solid #D6D3D1',
-                    backgroundColor: selectedSize === size ? '#1C1917' : '#fff',
-                    color: selectedSize === size ? '#fff' : '#1C1917',
-                    fontWeight: 600,
-                    cursor: 'pointer'
+                    fontSize: '0.68rem',
+                    color: '#57534E',
+                    marginTop: '7px'
                   }}
                 >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
+                  SECURE PAYMENT
+                </div>
+              </div>
 
-          {/* Quantity & CTA */}
-          <div style={{ display: 'flex', gap: '16px', marginBottom: '32px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #D6D3D1', padding: '0 12px' }}>
-              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}>-</button>
-              <span style={{ padding: '0 12px', fontWeight: 600 }}>{quantity}</span>
-              <button onClick={() => setQuantity(quantity + 1)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px' }}>+</button>
+              <div
+                style={{
+                  textAlign: 'center'
+                }}
+              >
+                <RefreshCw
+                  size={19}
+                  strokeWidth={1.5}
+                />
+                <div
+                  style={{
+                    fontSize: '0.68rem',
+                    color: '#57534E',
+                    marginTop: '7px'
+                  }}
+                >
+                  EASY RETURNS
+                </div>
+              </div>
+
+              <div
+                style={{
+                  textAlign: 'center'
+                }}
+              >
+                <Truck
+                  size={19}
+                  strokeWidth={1.5}
+                />
+                <div
+                  style={{
+                    fontSize: '0.68rem',
+                    color: '#57534E',
+                    marginTop: '7px'
+                  }}
+                >
+                  FAST DELIVERY
+                </div>
+              </div>
             </div>
 
-            <button
-              onClick={handleAddToCart}
-              style={{
-                flex: 1,
-                padding: '14px',
-                backgroundColor: '#1C1917',
-                color: '#fff',
-                border: 'none',
-                fontWeight: 600,
-                letterSpacing: '0.05em',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <ShoppingBag size={18} /> ADD TO BAG
-            </button>
-
-            <button
-              onClick={() => toggleWishlist(product)}
-              style={{
-                padding: '14px',
-                border: '1px solid #D6D3D1',
-                backgroundColor: '#fff',
-                cursor: 'pointer'
-              }}
-            >
-              <Heart size={20} color={isFavorited ? "#E11D48" : "#1C1917"} fill={isFavorited ? "#E11D48" : "none"} />
-            </button>
-          </div>
-
-          {/* Trust badges */}
-          <div style={{ borderTop: '1px solid #E7E5E4', paddingTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.85rem', color: '#57534E' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Truck size={18} color="#775B3F" /> Free express delivery on orders over $250
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <RefreshCw size={18} color="#775B3F" /> 30-day effortless returns & exchanges
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <ShieldCheck size={18} color="#775B3F" /> 100% Authentic artisanal craftsmanship
-            </div>
           </div>
         </div>
+
+
+        {/* ================================================== */}
+        {/* ================= PRODUCT TABS =================== */}
+        {/* ================================================== */}
+
+        <div
+          style={{
+            marginTop: '70px',
+            borderTop: '1px solid #E7E5E4'
+          }}
+        >
+
+          {/* TAB BUTTONS */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              borderBottom: '1px solid #E7E5E4',
+              overflowX: 'auto'
+            }}
+          >
+
+            <button
+              type="button"
+              onClick={() =>
+                setActiveTab('description')
+              }
+              style={{
+                padding: '18px 24px',
+                border: 'none',
+                borderBottom:
+                  activeTab === 'description'
+                    ? '2px solid #1C1917'
+                    : '2px solid transparent',
+                backgroundColor: '#fff',
+                color:
+                  activeTab === 'description'
+                    ? '#1C1917'
+                    : '#78716C',
+                cursor: 'pointer',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              DESCRIPTION & MATERIAL
+            </button>
+
+
+            <button
+              type="button"
+              onClick={() =>
+                setActiveTab('care')
+              }
+              style={{
+                padding: '18px 24px',
+                border: 'none',
+                borderBottom:
+                  activeTab === 'care'
+                    ? '2px solid #1C1917'
+                    : '2px solid transparent',
+                backgroundColor: '#fff',
+                color:
+                  activeTab === 'care'
+                    ? '#1C1917'
+                    : '#78716C',
+                cursor: 'pointer',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              CARE INSTRUCTIONS
+            </button>
+
+
+            <button
+              type="button"
+              onClick={() =>
+                setActiveTab('shipping')
+              }
+              style={{
+                padding: '18px 24px',
+                border: 'none',
+                borderBottom:
+                  activeTab === 'shipping'
+                    ? '2px solid #1C1917'
+                    : '2px solid transparent',
+                backgroundColor: '#fff',
+                color:
+                  activeTab === 'shipping'
+                    ? '#1C1917'
+                    : '#78716C',
+                cursor: 'pointer',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                whiteSpace: 'nowrap'
+              }}
+            >
+              SHIPPING & DELIVERY
+            </button>
+
+          </div>
+
+
+          {/* TAB CONTENT */}
+          <div
+            style={{
+              maxWidth: '800px',
+              margin: '0 auto',
+              padding: '35px 20px 50px'
+            }}
+          >
+
+            {activeTab === 'description' && (
+              <div>
+                <h2
+                  style={{
+                    fontFamily: 'serif',
+                    fontSize: '1.35rem',
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    marginBottom: '15px'
+                  }}
+                >
+                  DESCRIPTION & MATERIAL
+                </h2>
+
+                <p
+                  style={{
+                    color: '#57534E',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.8,
+                    textAlign: 'center',
+                    margin: 0
+                  }}
+                >
+                  {product.description}
+                </p>
+
+                <div
+                  style={{
+                    marginTop: '25px',
+                    padding: '18px',
+                    backgroundColor: '#F7F5F2',
+                    textAlign: 'center'
+                  }}
+                >
+                  <strong
+                    style={{
+                      display: 'block',
+                      marginBottom: '6px'
+                    }}
+                  >
+                    MATERIAL
+                  </strong>
+
+                  <span
+                    style={{
+                      color: '#57534E',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    Premium materials selected for
+                    comfort, quality and everyday wear.
+                  </span>
+                </div>
+              </div>
+            )}
+
+
+            {activeTab === 'care' && (
+              <div>
+                <h2
+                  style={{
+                    fontFamily: 'serif',
+                    fontSize: '1.35rem',
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    marginBottom: '15px'
+                  }}
+                >
+                  CARE INSTRUCTIONS
+                </h2>
+
+                <p
+                  style={{
+                    color: '#57534E',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.8,
+                    textAlign: 'center',
+                    margin: 0
+                  }}
+                >
+                  To preserve the quality and appearance
+                  of this piece, follow the recommended
+                  care instructions for its fabric.
+                </p>
+
+                <div
+                  style={{
+                    marginTop: '25px',
+                    padding: '20px',
+                    backgroundColor: '#F7F5F2'
+                  }}
+                >
+                  <p
+                    style={{
+                      margin: '0 0 10px',
+                      color: '#57534E',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    • Avoid excessive heat.
+                  </p>
+
+                  <p
+                    style={{
+                      margin: '0 0 10px',
+                      color: '#57534E',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    • Follow the garment's recommended
+                    washing instructions.
+                  </p>
+
+                  <p
+                    style={{
+                      margin: 0,
+                      color: '#57534E',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    • Store in a dry and clean place.
+                  </p>
+                </div>
+              </div>
+            )}
+
+
+            {activeTab === 'shipping' && (
+              <div>
+                <h2
+                  style={{
+                    fontFamily: 'serif',
+                    fontSize: '1.35rem',
+                    fontWeight: 500,
+                    textAlign: 'center',
+                    marginBottom: '15px'
+                  }}
+                >
+                  SHIPPING & DELIVERY
+                </h2>
+
+                <p
+                  style={{
+                    color: '#57534E',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.8,
+                    textAlign: 'center',
+                    margin: 0
+                  }}
+                >
+                  Your order will be carefully packed
+                  and prepared for delivery after checkout.
+                </p>
+
+                <div
+                  style={{
+                    marginTop: '25px',
+                    padding: '20px',
+                    backgroundColor: '#F7F5F2'
+                  }}
+                >
+                  <p
+                    style={{
+                      margin: '0 0 10px',
+                      color: '#57534E',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    • Orders are carefully packed before
+                    shipment.
+                  </p>
+
+                  <p
+                    style={{
+                      margin: '0 0 10px',
+                      color: '#57534E',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    • Delivery time depends on your
+                    location.
+                  </p>
+
+                  <p
+                    style={{
+                      margin: 0,
+                      color: '#57534E',
+                      fontSize: '0.85rem'
+                    }}
+                  >
+                    • Delivery information is provided
+                    after your order is processed.
+                  </p>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+
       </div>
 
-      <SizeGuideModal isOpen={isSizeGuideOpen} onClose={() => setIsSizeGuideOpen(false)} />
-    </div>
+
+      {/* ================= SIZE GUIDE ================= */}
+      <SizeGuideModal
+        isOpen={isSizeGuideOpen}
+        onClose={() =>
+          setIsSizeGuideOpen(false)
+        }
+      />
+    </>
   );
 }
