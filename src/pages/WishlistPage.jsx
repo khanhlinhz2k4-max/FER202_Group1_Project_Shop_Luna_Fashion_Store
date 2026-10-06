@@ -23,8 +23,8 @@ export default function WishlistPage() {
         <div style={{ textAlign: 'center', padding: '80px 20px', backgroundColor: '#fff', border: '1px solid #E7E5E4' }}>
           <Heart size={48} strokeWidth={1} style={{ margin: '0 auto 16px', color: '#D6D3D1' }} />
           <p style={{ color: '#78716C', marginBottom: '20px' }}>You haven't saved any items to your wishlist yet.</p>
-          <Link 
-            to="/shop" 
+          <Link
+            to="/shop"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -47,7 +47,7 @@ export default function WishlistPage() {
           gap: '24px'
         }}>
           {wishlist.map(product => (
-            <div 
+            <div
               key={product.id}
               style={{
                 backgroundColor: '#fff',
@@ -58,10 +58,10 @@ export default function WishlistPage() {
               }}
             >
               <div style={{ position: 'relative', height: '320px', backgroundColor: '#EDE8E1' }}>
-                <img 
-                  src={product.image} 
-                  alt={product.name} 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 <button
                   onClick={() => removeFromWishlist(product.id)}
@@ -94,7 +94,12 @@ export default function WishlistPage() {
                 <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
                   <button
                     onClick={() => {
-                      addToCart(product, (product.sizes && product.sizes[0]) || "M");
+                      addToCart(
+                        product,
+                        product.sizes?.[0] || "M",
+                        product.colors?.[0] || "",
+                        1
+                      );
                       removeFromWishlist(product.id);
                     }}
                     style={{
