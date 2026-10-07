@@ -10,8 +10,13 @@ import { Link } from 'react-router-dom';
 export default function AdminDashboard() {
   const { products, orders, users } = useShop();
 
-  const totalRevenue = orders.reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
-  const recentOrders = orders.slice(0, 5);
+ const totalRevenue = orders
+  .filter((o) => o.status !== 'Cancelled')
+  .reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0);
+
+const recentOrders = [...orders]
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  .slice(0, 5);
 
   const kpis = [
     { title: "Total Revenue", value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign, color: "#10B981", bg: "#ECFDF5" },
@@ -80,14 +85,7 @@ export default function AdminDashboard() {
                   <td>{order.items?.length || 0} items</td>
                   <td style={{ fontWeight: 600 }}>${order.totalAmount}</td>
                   <td>
-                    <span style={{
-                      padding: '4px 8px',
-                      borderRadius: '4px',
-                      fontSize: '0.75rem',
-                      fontWeight: 600,
-                      backgroundColor: order.status === 'Delivered' ? '#DCFCE7' : order.status === 'Shipping' ? '#FEF9C3' : '#F1F5F9',
-                      color: order.status === 'Delivered' ? '#166534' : order.status === 'Shipping' ? '#854D0E' : '#334155'
-                    }}>
+                    <span className={`admin-status admin-status-${String(order.status).toLowerCase()}`}>
                       {order.status}
                     </span>
                   </td>
