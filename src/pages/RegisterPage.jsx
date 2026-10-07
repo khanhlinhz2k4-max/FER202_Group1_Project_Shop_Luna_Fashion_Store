@@ -12,12 +12,13 @@ import {
   ShieldCheck, 
   AlertCircle, 
   Check, 
-  X,
-  FileText
+  X
 } from 'lucide-react';
+import { useShop } from '../context/ShopContext';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { register: contextRegister, users: contextUsers } = useShop();
 
   // Form states
   const [fullName, setFullName] = useState('');
@@ -42,7 +43,7 @@ export default function RegisterPage() {
     length: password.length >= 8,
     case: /[A-Z]/.test(password) && /[a-z]/.test(password),
     number: /[0-9]/.test(password),
-    special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password),
+    special: /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password),
   };
 
   const passedCriteriaCount = Object.values(passwordCriteria).filter(Boolean).length;
@@ -127,17 +128,27 @@ export default function RegisterPage() {
       return;
     }
 
-    // Check existing accounts in localStorage
-    let registeredUsers = [];
+    // Check existing accounts in lune_users & contextUsers
+    let currentUsers = [];
     try {
-      const stored = localStorage.getItem('lune_registered_users');
-      registeredUsers = stored ? JSON.parse(stored) : [];
-    } catch (err) {
-      registeredUsers = [];
+      const stored = localStorage.getItem('lune_users');
+      currentUsers = stored ? JSON.parse(stored) : [];
+      if (!Array.isArray(currentUsers)) currentUsers = [];
+    } catch {
+      currentUsers = [];
     }
 
-    const emailExisted = registeredUsers.some(
-      u => u.email?.toLowerCase() === email.trim().toLowerCase()
+    // Merge context users if any
+    if (Array.isArray(contextUsers)) {
+      contextUsers.forEach(cu => {
+        if (!currentUsers.some(u => u.email?.toLowerCase() === cu.email?.toLowerCase())) {
+          currentUsers.push(cu);
+        }
+      });
+    }
+
+    const emailExisted = currentUsers.some(
+      u => (u.email || '').toLowerCase() === email.trim().toLowerCase()
     );
     if (emailExisted) {
       setFieldErrors(prev => ({ ...prev, email: 'This email is already associated with an atelier account.' }));
@@ -145,8 +156,8 @@ export default function RegisterPage() {
       return;
     }
 
-    const userExisted = registeredUsers.some(
-      u => u.username?.toLowerCase() === username.trim().toLowerCase()
+    const userExisted = currentUsers.some(
+      u => (u.username || '').toLowerCase() === username.trim().toLowerCase()
     );
     if (userExisted) {
       setFieldErrors(prev => ({ ...prev, username: 'This username is already taken. Please choose another.' }));
@@ -156,22 +167,31 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
-    // Save new account into localStorage
+    // Save new account with role: 'user'
     const newUser = {
-      id: Date.now(),
+      id: `user-${Date.now()}`,
+      name: fullName.trim(),
       fullName: fullName.trim(),
       email: email.trim(),
       username: username.trim(),
       password: password,
+      role: 'user', // Assigned customer role
       createdAt: new Date().toISOString()
     };
 
     setTimeout(() => {
       try {
-        registeredUsers.push(newUser);
-        localStorage.setItem('lune_registered_users', JSON.stringify(registeredUsers));
+        currentUsers.push(newUser);
+        localStorage.setItem('lune_users', JSON.stringify(currentUsers));
+        // Keep lune_registered_users in sync for backward compatibility
+        localStorage.setItem('lune_registered_users', JSON.stringify(currentUsers));
       } catch (err) {
         console.error('Storage error:', err);
+      }
+
+      // Sync with context
+      if (contextRegister) {
+        contextRegister(newUser);
       }
 
       setIsLoading(false);

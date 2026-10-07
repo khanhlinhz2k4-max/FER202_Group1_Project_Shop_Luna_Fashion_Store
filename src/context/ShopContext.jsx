@@ -276,13 +276,13 @@ export function ShopProvider({ children }) {
     setWishlist(prev => prev.filter(item => item.id !== productId));
   };
 
-  // ================= ORDER ACTIONS =================
+  // ================= ORDER ACTIONS (CRUD) =================
   const addOrder = (orderData) => {
-    const newOrderId = `LUNE-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newOrderId = orderData.id || `LUNE-${Math.floor(1000 + Math.random() * 9000)}`;
     const newOrder = {
       id: newOrderId,
-      createdAt: new Date().toISOString(),
-      status: "Pending",
+      createdAt: orderData.createdAt || new Date().toISOString(),
+      status: orderData.status || "Pending",
       paymentMethod: orderData.paymentMethod || "Cash on Delivery",
       ...orderData
     };
@@ -327,6 +327,16 @@ export function ShopProvider({ children }) {
     ));
   };
 
+  const updateOrder = (orderId, updatedFields) => {
+    setOrders(prev => prev.map(order => 
+      order.id === orderId ? { ...order, ...updatedFields } : order
+    ));
+  };
+
+  const deleteOrder = (orderId) => {
+    setOrders(prev => prev.filter(order => order.id !== orderId));
+  };
+
   // ================= PRODUCT CRUD ACTIONS (ADMIN) =================
   const addProduct = (newProduct) => {
     const created = {
@@ -360,27 +370,31 @@ export function ShopProvider({ children }) {
     setProducts(prev => prev.filter(prod => prod.id !== id));
   };
 
-  // ================= AUTH / USER ACTIONS =================
-  const login = (email, password) => {
-    const emailNorm = (email || '').toLowerCase().trim();
+  // ================= AUTH / USER ACTIONS (CRUD) =================
+  const login = (identifier, password) => {
+    const identNorm = (identifier || '').toLowerCase().trim();
     const user = users.find(u => {
-      if ((u.email || '').toLowerCase() !== emailNorm) return false;
+      const emailMatch = (u.email || '').toLowerCase() === identNorm;
+      const usernameMatch = (u.username || '').toLowerCase() === identNorm;
+      if (!emailMatch && !usernameMatch) return false;
+
       if (u.password === password) return true;
-      // Admin demo allows both Admin@123 and admin123
-      if (emailNorm === 'admin@lune.com' && (password === 'admin123' || password === 'Admin@123')) {
+      // Admin demo fallback
+      if ((identNorm === 'admin@lune.com' || identNorm === 'admin') && (password === 'admin123' || password === 'Admin@123')) {
         return true;
       }
-      // Customer demo allows both Password@123 and user123
-      if (emailNorm === 'customer@lune.com' && (password === 'user123' || password === 'Password@123')) {
+      // Customer demo fallback
+      if ((identNorm === 'customer@lune.com' || identNorm === 'user') && (password === 'user123' || password === 'Password@123')) {
         return true;
       }
       return false;
     });
+
     if (user) {
       setCurrentUser(user);
       return { success: true, user };
     }
-    return { success: false, message: "Invalid email or password" };
+    return { success: false, message: "Invalid email/username or password" };
   };
 
   const logout = () => {
@@ -388,22 +402,62 @@ export function ShopProvider({ children }) {
   };
 
   const register = (userData) => {
-    const exists = users.some(u => u.email.toLowerCase() === userData.email.toLowerCase());
-    if (exists) {
+    const emailNorm = (userData.email || '').toLowerCase().trim();
+    const usernameNorm = (userData.username || '').toLowerCase().trim();
+
+    const emailExists = users.some(u => (u.email || '').toLowerCase() === emailNorm);
+    if (emailExists) {
       return { success: false, message: "Email is already registered" };
     }
+
+    if (usernameNorm) {
+      const usernameExists = users.some(u => (u.username || '').toLowerCase() === usernameNorm);
+      if (usernameExists) {
+        return { success: false, message: "Username is already taken" };
+      }
+    }
+
     const newUser = {
-      id: `user-${Date.now()}`,
-      name: userData.name,
+      id: userData.id || `user-${Date.now()}`,
+      name: userData.name || userData.fullName || "Valued Client",
       email: userData.email,
+      username: userData.username || emailNorm.split('@')[0],
       password: userData.password,
       role: userData.role || "user",
       phone: userData.phone || "",
-      address: userData.address || ""
+      address: userData.address || "",
+      createdAt: userData.createdAt || new Date().toISOString()
     };
+
     setUsers(prev => [...prev, newUser]);
-    setCurrentUser(newUser);
     return { success: true, user: newUser };
+  };
+
+  const addUser = (userData) => {
+    return register(userData);
+  };
+
+  const updateUser = (userId, updatedFields) => {
+    setUsers(prev => prev.map(u => {
+      if (u.id === userId) {
+        const updated = { ...u, ...updatedFields };
+        // If current user is being updated, sync currentUser state
+        if (currentUser && currentUser.id === userId) {
+          setCurrentUser(updated);
+        }
+        return updated;
+      }
+      return u;
+    }));
+    return { success: true };
+  };
+
+  const deleteUser = (userId) => {
+    if (currentUser && currentUser.id === userId) {
+      return { success: false, message: "Cannot delete the currently logged in account." };
+    }
+    setUsers(prev => prev.filter(u => u.id !== userId));
+    return { success: true };
   };
 
   const updateProfile = (updatedFields) => {
@@ -411,6 +465,30 @@ export function ShopProvider({ children }) {
     const updated = { ...currentUser, ...updatedFields };
     setCurrentUser(updated);
     setUsers(prev => prev.map(u => u.id === updated.id ? updated : u));
+    return { success: true };
+  };
+
+  const changePassword = (userId, oldPassword, newPassword) => {
+    const targetUser = users.find(u => u.id === userId);
+    if (!targetUser) {
+      return { success: false, message: "User not found." };
+    }
+
+    // Verify old password
+    const isOldCorrect = targetUser.password === oldPassword ||
+      (targetUser.role === 'admin' && (oldPassword === 'admin123' || oldPassword === 'Admin@123')) ||
+      (targetUser.role === 'user' && (oldPassword === 'user123' || oldPassword === 'Password@123'));
+
+    if (!isOldCorrect) {
+      return { success: false, message: "Current password does not match." };
+    }
+
+    const updatedUser = { ...targetUser, password: newPassword };
+    setUsers(prev => prev.map(u => u.id === userId ? updatedUser : u));
+    if (currentUser && currentUser.id === userId) {
+      setCurrentUser(updatedUser);
+    }
+    return { success: true, message: "Password updated successfully!" };
   };
 
   return (
@@ -445,17 +523,23 @@ export function ShopProvider({ children }) {
       // Order actions
       addOrder,
       updateOrderStatus,
+      updateOrder,
+      deleteOrder,
 
       // Product CRUD
       addProduct,
       updateProduct,
       deleteProduct,
 
-      // Auth actions
+      // Auth & User CRUD actions
       login,
       logout,
       register,
-      updateProfile
+      addUser,
+      updateUser,
+      deleteUser,
+      updateProfile,
+      changePassword
     }}>
       {children}
     </ShopContext.Provider>
