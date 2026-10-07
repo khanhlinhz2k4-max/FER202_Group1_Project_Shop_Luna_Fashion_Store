@@ -39,12 +39,12 @@ export default function AdminLayout() {
       <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Shield size={22} color="#D4AF37" />
-            <span style={{ fontSize: '1.1rem', fontWeight: 700, letterSpacing: '0.08em', color: '#FFF' }}>
+            <Shield size={22} color="#CAA072" />
+            <span style={{ fontFamily: 'Playfair Display, Cormorant Garamond, serif', fontSize: '1.25rem', fontWeight: 600, letterSpacing: '0.08em', color: '#FAF7F2' }}>
               LUNE ADMIN
             </span>
           </div>
-          <span style={{ fontSize: '0.75rem', color: '#64748B', display: 'block', marginTop: '4px' }}>
+          <span style={{ fontSize: '0.75rem', color: '#C8AE84', display: 'block', marginTop: '4px' }}>
             Store Management v1.0
           </span>
         </div>
@@ -67,10 +67,10 @@ export default function AdminLayout() {
           })}
         </nav>
 
-        <div style={{ padding: '16px', borderTop: '1px solid #1E293B' }}>
+        <div style={{ padding: '16px', borderTop: '1px solid #483526' }}>
           <Link
             to="/"
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94A3B8', textDecoration: 'none', fontSize: '0.85rem', marginBottom: '12px' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#C8AE84', textDecoration: 'none', fontSize: '0.85rem', marginBottom: '12px' }}
           >
             <ExternalLink size={16} /> View Storefront
           </Link>
@@ -83,10 +83,10 @@ export default function AdminLayout() {
               gap: '8px',
               width: '100%',
               padding: '10px',
-              backgroundColor: '#1E293B',
-              color: '#F87171',
-              border: 'none',
-              borderRadius: '6px',
+              backgroundColor: '#483526',
+              color: '#FAF7F2',
+              border: '1px solid #5A4331',
+              borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '0.85rem',
               fontWeight: 500,
@@ -108,14 +108,14 @@ export default function AdminLayout() {
             >
               <Menu size={20} />
             </button>
-            <div style={{ fontSize: '0.9rem', color: '#64748B' }}>
+            <div style={{ fontSize: '0.9rem', color: '#5C4A3A' }}>
               Admin Portal / <strong>FER202 Final Project</strong>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div className="admin-avatar">{initials}</div>
-            <span style={{ fontSize: '0.88rem', fontWeight: 600 }}>{displayName}</span>
-            <span style={{ padding: '3px 8px', backgroundColor: '#FEF3C7', color: '#92400E', fontSize: '0.75rem', borderRadius: '4px', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#2C2117' }}>{displayName}</span>
+            <span style={{ padding: '3px 8px', backgroundColor: '#F9F2E7', color: '#775B3F', border: '1px solid #C8AE84', fontSize: '0.75rem', borderRadius: '4px', fontWeight: 600 }}>
               ADMIN
             </span>
           </div>

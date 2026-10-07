@@ -6,6 +6,7 @@ import { ShieldCheck, ArrowLeft, CheckCircle2 } from 'lucide-react';
 /**
  * CheckoutPage Component
  * Phụ trách: Thành viên 4 (Giỏ hàng & Quy trình thanh toán)
+ * Harmonized with LUNE Warm Luxury Brand Guidelines
  */
 export default function CheckoutPage() {
   const { cart, cartTotal, addOrder, currentUser } = useShop();
@@ -28,9 +29,9 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div style={{ padding: '80px 20px', textAlign: 'center' }}>
-        <h2>Your shopping bag is empty</h2>
-        <p style={{ color: '#78716C', marginBottom: '20px' }}>Add items to your bag before proceeding to checkout.</p>
-        <Link to="/shop" style={{ color: '#775B3F', textDecoration: 'underline' }}>Return to Shop</Link>
+        <h2 style={{ fontFamily: 'Playfair Display, serif', color: '#2C2117' }}>Your shopping bag is empty</h2>
+        <p style={{ color: '#5C4A3A', marginBottom: '24px' }}>Add items to your bag before proceeding to checkout.</p>
+        <Link to="/shop" style={{ color: '#775B3F', fontWeight: 600, textDecoration: 'underline' }}>Return to Shop</Link>
       </div>
     );
   }
@@ -71,84 +72,83 @@ export default function CheckoutPage() {
         address: `${formData.address}, ${formData.city}`
       },
       items: cart,
-      subtotal: cartTotal,
+      totalAmount: finalTotal,
       discount: appliedDiscount,
       shippingFee: shippingFee,
-      totalAmount: finalTotal,
-      paymentMethod: formData.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Credit / Debit Card'
+      paymentMethod: formData.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Credit Card (Simulated)'
     });
 
     navigate('/order-success', { state: { order: newOrder } });
   };
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '40px 24px' }}>
+    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px' }}>
       <div style={{ marginBottom: '32px' }}>
-        <Link to="/shop" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#78716C', textDecoration: 'none', fontSize: '0.85rem' }}>
+        <Link to="/shop" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#5C4A3A', textDecoration: 'none', fontSize: '0.85rem' }}>
           <ArrowLeft size={16} /> Continue Shopping
         </Link>
-        <h1 style={{ fontFamily: 'serif', fontSize: '2rem', fontWeight: 500, margin: '12px 0 4px' }}>CHECKOUT</h1>
-        <p style={{ color: '#78716C', fontSize: '0.9rem' }}>Please enter your delivery details and choose your payment method.</p>
+        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '2.2rem', fontWeight: 500, margin: '12px 0 4px', color: '#2C2117' }}>CHECKOUT</h1>
+        <p style={{ color: '#5C4A3A', fontSize: '0.92rem' }}>Please enter your delivery details and choose your payment method.</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '48px' }}>
         {/* Left: Form */}
-        <form onSubmit={handleSubmit} style={{ backgroundColor: '#fff', padding: '32px', border: '1px solid #E7E5E4' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.05em', marginBottom: '20px' }}>1. SHIPPING ADDRESS</h2>
+        <form onSubmit={handleSubmit} style={{ backgroundColor: '#FFFFFF', padding: '36px', border: '1px solid #E7DDCE', borderRadius: '4px', boxShadow: '0 2px 8px rgba(44, 33, 23, 0.03)' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>1. SHIPPING ADDRESS</h2>
 
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px' }}>Full Name *</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Full Name *</label>
             <input 
               type="text" 
               value={formData.name} 
               onChange={e => setFormData({ ...formData, name: e.target.value })}
-              style={{ width: '100%', padding: '10px', border: '1px solid #D6D3D1', outline: 'none' }}
+              style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }}
               placeholder="e.g. Nguyen Van A"
             />
-            {errors.name && <span style={{ color: '#E11D48', fontSize: '0.78rem' }}>{errors.name}</span>}
+            {errors.name && <span style={{ color: '#B91C1C', fontSize: '0.78rem' }}>{errors.name}</span>}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px' }}>Phone Number *</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Phone Number *</label>
               <input 
                 type="text" 
                 value={formData.phone} 
                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                style={{ width: '100%', padding: '10px', border: '1px solid #D6D3D1', outline: 'none' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }}
                 placeholder="0912 345 678"
               />
-              {errors.phone && <span style={{ color: '#E11D48', fontSize: '0.78rem' }}>{errors.phone}</span>}
+              {errors.phone && <span style={{ color: '#B91C1C', fontSize: '0.78rem' }}>{errors.phone}</span>}
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px' }}>Email</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Email</label>
               <input 
                 type="email" 
                 value={formData.email} 
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
-                style={{ width: '100%', padding: '10px', border: '1px solid #D6D3D1', outline: 'none' }}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }}
                 placeholder="your.email@example.com"
               />
             </div>
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px' }}>Street Address *</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Street Address *</label>
             <input 
               type="text" 
               value={formData.address} 
               onChange={e => setFormData({ ...formData, address: e.target.value })}
-              style={{ width: '100%', padding: '10px', border: '1px solid #D6D3D1', outline: 'none' }}
+              style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }}
               placeholder="House number, Street, Ward, District"
             />
-            {errors.address && <span style={{ color: '#E11D48', fontSize: '0.78rem' }}>{errors.address}</span>}
+            {errors.address && <span style={{ color: '#B91C1C', fontSize: '0.78rem' }}>{errors.address}</span>}
           </div>
 
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.05em', margin: '32px 0 20px' }}>2. PAYMENT METHOD</h2>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', margin: '32px 0 20px', color: '#2C2117' }}>2. PAYMENT METHOD</h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', border: '1px solid #D6D3D1', cursor: 'pointer' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', border: '1px solid #C8AE84', borderRadius: '3px', cursor: 'pointer', backgroundColor: formData.paymentMethod === 'COD' ? '#FAF7F2' : '#FFFFFF' }}>
               <input 
                 type="radio" 
                 name="payment" 
@@ -156,12 +156,12 @@ export default function CheckoutPage() {
                 onChange={() => setFormData({ ...formData, paymentMethod: 'COD' })} 
               />
               <div>
-                <strong>Cash On Delivery (COD)</strong>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: '#78716C' }}>Pay cash when your order is delivered</p>
+                <strong style={{ color: '#2C2117' }}>Cash On Delivery (COD)</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#5C4A3A' }}>Pay cash when your order is delivered</p>
               </div>
             </label>
 
-            <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', border: '1px solid #D6D3D1', cursor: 'pointer' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', border: '1px solid #C8AE84', borderRadius: '3px', cursor: 'pointer', backgroundColor: formData.paymentMethod === 'CARD' ? '#FAF7F2' : '#FFFFFF' }}>
               <input 
                 type="radio" 
                 name="payment" 
@@ -169,8 +169,8 @@ export default function CheckoutPage() {
                 onChange={() => setFormData({ ...formData, paymentMethod: 'CARD' })} 
               />
               <div>
-                <strong>Credit / Debit Card (Simulated)</strong>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: '#78716C' }}>Visa, MasterCard, JCB instant confirmation</p>
+                <strong style={{ color: '#2C2117' }}>Credit / Debit Card (Simulated)</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#5C4A3A' }}>Visa, MasterCard, JCB instant confirmation</p>
               </div>
             </label>
           </div>
@@ -180,12 +180,14 @@ export default function CheckoutPage() {
             style={{
               width: '100%',
               padding: '16px',
-              backgroundColor: '#1C1917',
-              color: '#fff',
+              backgroundColor: '#775B3F',
+              color: '#FFFFFF',
               border: 'none',
+              borderRadius: '2px',
               fontWeight: 600,
-              letterSpacing: '0.05em',
-              cursor: 'pointer'
+              letterSpacing: '0.06em',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s ease'
             }}
           >
             CONFIRM & PLACE ORDER (${finalTotal})
@@ -193,17 +195,17 @@ export default function CheckoutPage() {
         </form>
 
         {/* Right: Order Summary */}
-        <aside style={{ backgroundColor: '#FAF8F5', padding: '32px', border: '1px solid #E7E5E4', height: 'fit-content' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.05em', marginBottom: '20px' }}>ORDER SUMMARY ({cart.length})</h2>
+        <aside style={{ backgroundColor: '#FAF7F2', padding: '36px', border: '1px solid #E7DDCE', borderRadius: '4px', height: 'fit-content' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>ORDER SUMMARY ({cart.length})</h2>
 
           <div style={{ maxHeight: '280px', overflowY: 'auto', marginBottom: '24px' }}>
             {cart.map(item => (
-              <div key={item.cartItemId || item.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid #E7E5E4' }}>
-                <img src={item.image} alt={item.name} style={{ width: '50px', height: '65px', objectFit: 'cover' }} />
+              <div key={item.cartItemId || item.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid #E7DDCE' }}>
+                <img src={item.image} alt={item.name} style={{ width: '50px', height: '65px', objectFit: 'cover', borderRadius: '2px' }} />
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ margin: '0 0 2px', fontSize: '0.85rem' }}>{item.name}</h4>
-                  <p style={{ margin: 0, fontSize: '0.78rem', color: '#78716C' }}>Qty: {item.quantity} | Size: {item.selectedSize}</p>
-                  <p style={{ margin: '2px 0 0', fontWeight: 600, fontSize: '0.85rem' }}>${item.price * item.quantity}</p>
+                  <h4 style={{ margin: '0 0 2px', fontSize: '0.85rem', color: '#2C2117' }}>{item.name}</h4>
+                  <p style={{ margin: 0, fontSize: '0.78rem', color: '#5C4A3A' }}>Qty: {item.quantity} | Size: {item.selectedSize}</p>
+                  <p style={{ margin: '2px 0 0', fontWeight: 600, fontSize: '0.85rem', color: '#775B3F' }}>${item.price * item.quantity}</p>
                 </div>
               </div>
             ))}
@@ -217,26 +219,26 @@ export default function CheckoutPage() {
                 placeholder="Promo Code (e.g. LUNE10)" 
                 value={formData.promoCode}
                 onChange={e => setFormData({ ...formData, promoCode: e.target.value })}
-                style={{ flex: 1, padding: '8px 12px', border: '1px solid #D6D3D1', fontSize: '0.85rem', outline: 'none' }}
+                style={{ flex: 1, padding: '8px 12px', border: '1px solid #C8AE84', borderRadius: '2px', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFFFFF', color: '#2C2117' }}
               />
               <button 
                 type="button" 
                 onClick={handleApplyPromo}
-                style={{ padding: '8px 16px', backgroundColor: '#775B3F', color: '#fff', border: 'none', fontSize: '0.85rem', cursor: 'pointer' }}
+                style={{ padding: '8px 18px', backgroundColor: '#775B3F', color: '#FFFFFF', border: 'none', borderRadius: '2px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
               >
                 Apply
               </button>
             </div>
             {promoMessage && (
-              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: appliedDiscount > 0 ? '#16A34A' : '#E11D48' }}>
+              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: appliedDiscount > 0 ? '#16A34A' : '#B91C1C' }}>
                 {promoMessage}
               </p>
             )}
           </div>
 
           {/* Calculations */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.9rem', borderTop: '1px solid #E7E5E4', paddingTop: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#57534E' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.9rem', borderTop: '1px solid #E7DDCE', paddingTop: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5C4A3A' }}>
               <span>Subtotal</span>
               <span>${cartTotal}</span>
             </div>
@@ -246,13 +248,13 @@ export default function CheckoutPage() {
                 <span>-${appliedDiscount}</span>
               </div>
             )}
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#57534E' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5C4A3A' }}>
               <span>Shipping</span>
               <span>{shippingFee === 0 ? 'FREE' : `$${shippingFee}`}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.15rem', fontWeight: 700, borderTop: '1px solid #E7E5E4', paddingTop: '12px', marginTop: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.15rem', fontWeight: 700, borderTop: '1px solid #E7DDCE', paddingTop: '12px', marginTop: '4px', color: '#2C2117' }}>
               <span>Total</span>
-              <span>${finalTotal}</span>
+              <span style={{ color: '#775B3F' }}>${finalTotal}</span>
             </div>
           </div>
         </aside>

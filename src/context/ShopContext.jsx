@@ -70,7 +70,7 @@ const sampleUsers = [
     id: "user-admin",
     name: "Lune Administrator",
     email: "admin@lune.com",
-    password: "admin123",
+    password: "Admin@123",
     role: "admin",
     phone: "+84 900 000 001",
     address: "Lune Fashion HQ, 01 Le Duan, District 1, HCMC"
@@ -79,7 +79,7 @@ const sampleUsers = [
     id: "user-demo",
     name: "Linh Nguyen",
     email: "customer@lune.com",
-    password: "user123",
+    password: "Password@123",
     role: "user",
     phone: "+84 987 654 321",
     address: "789 Nguyen Hue, District 1, HCMC"
@@ -94,10 +94,12 @@ export function ShopProvider({ children }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Đồng bộ (merge) các trường mới thêm (như garmentType) từ initialProducts vào localStorage
+          // Đồng bộ (merge) các trường mới thêm (như garmentType, stock) từ initialProducts vào localStorage
           return parsed.map(localProd => {
             const initialProd = initialProducts.find(p => p.id === localProd.id);
-            return initialProd ? { ...initialProd, ...localProd } : localProd;
+            return initialProd 
+              ? { ...initialProd, ...localProd, stock: localProd.stock !== undefined ? Number(localProd.stock) : (initialProd.stock ?? 20) } 
+              : { stock: 20, ...localProd };
           });
         }
       }
@@ -284,12 +286,42 @@ export function ShopProvider({ children }) {
       paymentMethod: orderData.paymentMethod || "Cash on Delivery",
       ...orderData
     };
+
+    // Tự động trừ tồn kho (Auto-deduct stock) theo số lượng đã mua
+    if (Array.isArray(orderData.items) && orderData.items.length > 0) {
+      setProducts(prevProds => prevProds.map(prod => {
+        const boughtItem = orderData.items.find(item => item.id === prod.id);
+        if (boughtItem) {
+          const currentStock = prod.stock !== undefined ? Number(prod.stock) : 20;
+          const newStock = Math.max(0, currentStock - (boughtItem.quantity || 1));
+          return { ...prod, stock: newStock };
+        }
+        return prod;
+      }));
+    }
+
     setOrders(prev => [newOrder, ...prev]);
     clearCart();
     return newOrder;
   };
 
   const updateOrderStatus = (orderId, newStatus) => {
+    const targetOrder = orders.find(o => o.id === orderId);
+
+    // Nếu chuyển sang trạng thái Cancelled và đơn chưa từng bị Cancelled: tự động hoàn trả số lượng vào kho
+    if (newStatus === 'Cancelled' && targetOrder && targetOrder.status !== 'Cancelled') {
+      if (Array.isArray(targetOrder.items) && targetOrder.items.length > 0) {
+        setProducts(prevProds => prevProds.map(prod => {
+          const cancelledItem = targetOrder.items.find(item => item.id === prod.id);
+          if (cancelledItem) {
+            const currentStock = prod.stock !== undefined ? Number(prod.stock) : 0;
+            return { ...prod, stock: currentStock + (cancelledItem.quantity || 1) };
+          }
+          return prod;
+        }));
+      }
+    }
+
     setOrders(prev => prev.map(order => 
       order.id === orderId ? { ...order, status: newStatus } : order
     ));
@@ -301,6 +333,7 @@ export function ShopProvider({ children }) {
       ...newProduct,
       id: Date.now(),
       price: Number(newProduct.price) || 0,
+      stock: Number(newProduct.stock) >= 0 ? Number(newProduct.stock) : 20,
       isNew: newProduct.isNew !== undefined ? newProduct.isNew : true,
       colors: Array.isArray(newProduct.colors) ? newProduct.colors : ["#000000"],
       sizes: Array.isArray(newProduct.sizes) ? newProduct.sizes : ["S", "M", "L"]
@@ -315,7 +348,8 @@ export function ShopProvider({ children }) {
         return {
           ...prod,
           ...updatedFields,
-          price: updatedFields.price !== undefined ? Number(updatedFields.price) : prod.price
+          price: updatedFields.price !== undefined ? Number(updatedFields.price) : prod.price,
+          stock: updatedFields.stock !== undefined ? Number(updatedFields.stock) : (prod.stock ?? 20)
         };
       }
       return prod;
@@ -328,7 +362,20 @@ export function ShopProvider({ children }) {
 
   // ================= AUTH / USER ACTIONS =================
   const login = (email, password) => {
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+    const emailNorm = (email || '').toLowerCase().trim();
+    const user = users.find(u => {
+      if ((u.email || '').toLowerCase() !== emailNorm) return false;
+      if (u.password === password) return true;
+      // Admin demo allows both Admin@123 and admin123
+      if (emailNorm === 'admin@lune.com' && (password === 'admin123' || password === 'Admin@123')) {
+        return true;
+      }
+      // Customer demo allows both Password@123 and user123
+      if (emailNorm === 'customer@lune.com' && (password === 'user123' || password === 'Password@123')) {
+        return true;
+      }
+      return false;
+    });
     if (user) {
       setCurrentUser(user);
       return { success: true, user };

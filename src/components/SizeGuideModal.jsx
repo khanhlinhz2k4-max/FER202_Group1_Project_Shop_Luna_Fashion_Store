@@ -39,7 +39,7 @@ export default function SizeGuideModal({ isOpen, onClose }) {
         </p>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
           <thead>
-            <tr style={{ borderBottom: '2px solid #1C1917', backgroundColor: '#F5EFE6' }}>
+            <tr style={{ borderBottom: '2px solid #775B3F', backgroundColor: '#F5EFE6' }}>
               <th style={{ padding: '8px' }}>Size</th>
               <th style={{ padding: '8px' }}>Bust</th>
               <th style={{ padding: '8px' }}>Waist</th>

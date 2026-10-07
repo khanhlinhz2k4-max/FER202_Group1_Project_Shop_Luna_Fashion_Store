@@ -86,13 +86,17 @@ export default function CartDrawer() {
                 onClick={() => { closeCart(); navigate('/shop'); }}
                 style={{
                   marginTop: '12px',
-                  padding: '8px 20px',
-                  backgroundColor: '#1C1917',
+                  padding: '10px 22px',
+                  backgroundColor: '#775B3F',
                   color: '#fff',
                   border: 'none',
                   fontSize: '0.85rem',
-                  cursor: 'pointer'
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'background-color 0.2s ease'
                 }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5C4A3A'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#775B3F'}
               >
                 DISCOVER COLLECTION
               </button>
@@ -165,7 +169,7 @@ export default function CartDrawer() {
               style={{
                 width: '100%',
                 padding: '14px',
-                backgroundColor: '#1C1917',
+                backgroundColor: '#775B3F',
                 color: '#fff',
                 border: 'none',
                 fontWeight: 600,
@@ -174,8 +178,11 @@ export default function CartDrawer() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px'
+                gap: '8px',
+                transition: 'background-color 0.2s ease'
               }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#5C4A3A'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#775B3F'}
             >
               PROCEED TO CHECKOUT <ArrowRight size={18} />
             </button>

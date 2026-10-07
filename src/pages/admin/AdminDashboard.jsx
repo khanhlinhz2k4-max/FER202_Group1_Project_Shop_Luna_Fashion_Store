@@ -19,17 +19,19 @@ const recentOrders = [...orders]
   .slice(0, 5);
 
   const kpis = [
-    { title: "Total Revenue", value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign, color: "#10B981", bg: "#ECFDF5" },
-    { title: "Total Orders", value: orders.length, icon: ClipboardList, color: "#3B82F6", bg: "#EFF6FF" },
-    { title: "Live Products", value: products.length, icon: ShoppingBag, color: "#F59E0B", bg: "#FFFBEB" },
-    { title: "Registered Users", value: users.length, icon: Users, color: "#8B5CF6", bg: "#F5F3FF" }
+    { title: "Total Revenue", value: `$${totalRevenue.toLocaleString()}`, icon: DollarSign, color: "#775B3F", bg: "#F9F2E7" },
+    { title: "Total Orders", value: orders.length, icon: ClipboardList, color: "#CAA072", bg: "#FAF7F2" },
+    { title: "Live Products", value: products.length, icon: ShoppingBag, color: "#775B3F", bg: "#F5EFEB" },
+    { title: "Registered Users", value: users.length, icon: Users, color: "#C8AE84", bg: "#FAF8F5" }
   ];
 
   return (
     <div>
-      <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '1.7rem', fontWeight: 700, margin: '0 0 6px', color: '#0F172A' }}>STORE DASHBOARD</h1>
-        <p style={{ color: '#64748B', margin: 0, fontSize: '0.9rem' }}>Real-time overview of metrics and incoming customer orders.</p>
+      <div className="admin-page-header" style={{ marginBottom: '28px' }}>
+        <div>
+          <h1 className="admin-title">STORE DASHBOARD</h1>
+          <p className="admin-subtitle">Real-time overview of metrics and incoming customer orders.</p>
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -38,12 +40,22 @@ const recentOrders = [...orders]
           const Icon = kpi.icon;
           return (
             <div key={idx} className="admin-card" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ width: '48px', height: '48px', borderRadius: '8px', backgroundColor: kpi.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '50px', height: '50px', borderRadius: '6px', backgroundColor: kpi.bg, border: '1px solid #E7DDCE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Icon size={24} color={kpi.color} />
               </div>
               <div>
-                <span style={{ fontSize: '0.8rem', color: '#64748B', fontWeight: 500, textTransform: 'uppercase' }}>{kpi.title}</span>
-                <h3 style={{ margin: '4px 0 0', fontSize: '1.4rem', fontWeight: 700, color: '#0F172A' }}>{kpi.value}</h3>
+                <span style={{ fontSize: '0.78rem', color: '#5C4A3A', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{kpi.title}</span>
+                <h3 style={{ 
+                  margin: '3px 0 0', 
+                  fontFamily: 'Montserrat, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', 
+                  fontSize: '1.65rem', 
+                  fontWeight: 700, 
+                  color: '#2C2117',
+                  fontVariantNumeric: 'lining-nums tabular-nums',
+                  letterSpacing: '-0.02em'
+                }}>
+                  {kpi.value}
+                </h3>
               </div>
             </div>
           );
@@ -54,10 +66,10 @@ const recentOrders = [...orders]
       <div className="admin-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div>
-            <h2 style={{ fontSize: '1.1rem', fontWeight: 700, margin: '0 0 4px', color: '#0F172A' }}>RECENT ORDERS</h2>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748B' }}>Latest orders needing fulfillment review</p>
+            <h2 className="admin-section-title">RECENT ORDERS</h2>
+            <p className="admin-subtitle">Latest orders needing fulfillment review</p>
           </div>
-          <Link to="/admin/orders" style={{ fontSize: '0.85rem', color: '#3B82F6', textDecoration: 'none', fontWeight: 600 }}>
+          <Link to="/admin/orders" style={{ fontSize: '0.85rem', color: '#775B3F', textDecoration: 'none', fontWeight: 600 }}>
             View All Orders →
           </Link>
         </div>

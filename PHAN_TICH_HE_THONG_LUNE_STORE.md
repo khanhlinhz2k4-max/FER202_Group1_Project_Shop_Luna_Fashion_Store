@@ -370,6 +370,7 @@ Ký hiệu:
 * **Bộ sưu tập ảnh chi tiết (Images):** Danh sách mảng các đường dẫn ảnh góc phụ để người mua khảo sát chi tiết đường may và phối đồ.
 * **Dải kích cỡ (Sizes):** Mảng các kích cỡ khả dụng (Ví dụ: `XS`, `S`, `M`, `L`, `XL`).
 * **Bảng màu sắc (Colors):** Mảng các phiên bản màu sắc có sẵn (Ví dụ: `Black`, `Beige`, `Ivory`, `Navy`).
+* **Số lượng tồn kho (Stock):** Số nguyên không âm ($\ge 0$) biểu diễn số lượng sản phẩm thực tế còn sẵn sàng trong kho *(Do Thành viên 1 thiết kế và quản trị)*.
 * **Mô tả sản phẩm (Description):** Nội dung phân tích chất liệu vải, phom dáng và hướng dẫn sử dụng.
 * **Thuộc tính nổi bật (isNew):** Cờ trạng thái xác định sản phẩm thuộc bộ sưu tập mới xuất xưởng.
 
@@ -420,6 +421,24 @@ Ký hiệu:
 4. **Quy tắc Bảo mật Điều hướng (Route Protection Rule):**
    * Khu vực `/profile` yêu cầu người dùng phải có phiên đăng nhập hợp lệ. Nếu chưa đăng nhập $\rightarrow$ Điều hướng tức thì về `/login`.
    * Toàn bộ cụm đường dẫn `/admin/*` yêu cầu người dùng vừa phải đăng nhập, vừa phải sở hữu vai trò `role: admin`. Mọi đối tượng khác (Khách vãng lai, Người dùng thường) đều bị ngăn chặn tuyệt đối.
+5. **Quy tắc Quản trị Vòng đời Tồn kho Sản phẩm (Inventory & Stock Flow Rule - Do Thành viên 1 phụ trách):**
+   * **Khấu trừ tồn kho tự động khi tạo đơn:** Khi khách hàng đặt đơn thành công thông qua `addOrder()`, hệ thống tự động khấu trừ số lượng sản phẩm tương ứng trong kho hàng (`stock = Math.max(0, currentStock - boughtQuantity)`).
+   * **Hoàn kho tự động khi hủy đơn:** Khi đơn hàng chuyển trạng thái sang `Cancelled` (do khách hủy hoặc Admin hủy), hệ thống tự động hoàn lại đúng số lượng của từng mặt hàng về kho `products` trong `localStorage`.
+   * **Kiểm soát khả dụng trên giao diện Storefront:**
+     - Bộ chọn số lượng `quantity` bị giới hạn trên bởi `stock` (không thể vượt quá tồn kho khả dụng).
+     - Sản phẩm có `stock === 0`: Hiển thị nhãn `SOLD OUT` trên thẻ sản phẩm, nhãn `HẾT HÀNG (OUT OF STOCK)` tại trang chi tiết/xem nhanh, đồng thời vô hiệu hóa nút `ADD TO BAG`.
+     - Sản phẩm có `1 <= stock <= 5`: Hiển thị cảnh báo màu vàng cam `CHỈ CÒN X SẢN PHẨM (LOW STOCK)` kích thích quyết định mua hàng.
+   * **Quản trị Tồn kho Phía Admin (`/admin/products`):**
+     - Bảng sản phẩm hiển thị trực quan cột số lượng tồn kho kèm badge màu theo 3 cấp độ: Còn hàng (>10 sản phẩm - Xanh lục), Cảnh báo sắp hết (1-10 sản phẩm - Vàng cam), Hết hàng (0 sản phẩm - Đỏ).
+     - Hỗ trợ thêm mới hoặc chỉnh sửa trường số lượng tồn kho với kiểm tra ràng buộc số nguyên $\ge 0$.
+5. **Quy tắc Quốc tế hóa & Đa ngôn ngữ (Bilingual Internationalization Rule - Do Thành viên 1 phụ trách):**
+   * **Chuyển đổi tức thời (Zero-reload Switcher):** Hệ thống tích hợp LanguageContext và từ điển dịch thuật tập trung 	ranslations.js, cho phép người dùng chuyển đổi qua lại giữa tiếng Anh (EN) và tiếng Việt (VI) mà không cần tải lại trang.
+   * **Lưu trữ tùy chọn hiển thị (Persistence):** Tùy chọn ngôn ngữ được đồng bộ tự động vào localStorage với khóa 'lune_language' ('en' | 'vi'), bảo toàn ngôn ngữ ưa thích của người dùng qua các phiên truy cập tiếp theo.
+   * **Điểm truy cập điều khiển linh hoạt (Multi-access Language Switcher):**
+     - **Thanh thông báo đầu trang (Top Announcement Bar):** Nút toggle EN | VI tối giản, thanh lịch chuẩn phong cách Warm Luxury với gạch chân chỉ báo ngôn ngữ hiện thời.
+     - **Menu điều hướng di động (Mobile Drawer):** Mục chọn ngôn ngữ nổi bật ở chân menu di động giúp người dùng smartphone thao tác bằng một tay dễ dàng.
+     - **Cổng quản trị (Admin Portal Topbar):** Nút chuyển đổi nhanh 🌐 EN / VI giúp quản trị viên theo dõi và đối soát dữ liệu trên cả 2 ngôn ngữ.
+   * **Phạm vi bản địa hóa toàn diện:** Toàn bộ thanh điều hướng, ô tìm kiếm thời gian thực, bảng kích cỡ, nhãn tồn kho, giỏ hàng, trang thanh toán, chân trang và thanh công cụ quản trị đều được bản địa hóa chuẩn ngữ cảnh thời trang cao cấp.
 
 ---
 

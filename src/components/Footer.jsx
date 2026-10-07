@@ -109,9 +109,9 @@ export default function Footer() {
             <div className="footer-col">
               <h4 className="footer-heading">Collections</h4>
               <ul className="footer-links">
-                <li><a href="/#new-arrivals">Women's Wardrobe</a></li>
-                <li><a href="/#new-arrivals">Men's Collection</a></li>
-                <li><a href="/#new-arrivals">New Arrivals</a></li>
+                <li><Link to="/shop">Women's Wardrobe</Link></li>
+                <li><Link to="/shop">Men's Collection</Link></li>
+                <li><Link to="/shop">All Collections</Link></li>
                 <li><a href="/#categories">Product Categories</a></li>
                 <li><a href="/#about">About LUNE</a></li>
               </ul>

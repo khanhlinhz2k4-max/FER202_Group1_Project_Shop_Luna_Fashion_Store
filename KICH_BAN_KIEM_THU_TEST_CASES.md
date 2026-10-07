@@ -47,7 +47,16 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 | **TC-SHOP-07** | Phân trang hoặc Tải thêm (Pagination) | 1. Bấm chuyển trang 2 hoặc bấm "Xem thêm". | Click trang 2 | Hiển thị đúng các sản phẩm của trang tiếp theo; màn hình tự động cuộn lên đầu danh sách sản phẩm. | [x] PASS<br>[ ] FAIL |
 | **TC-SHOP-08** | Lọc danh mục loại trang phục động theo Giới tính | 1. Chọn xem `Men's Collection`.<br>2. Quan sát cột bộ lọc CATEGORIES bên trái.<br>3. Chuyển sang `Women's Collection`. | Click chọn Men / Women | Cột CATEGORIES tự động ẩn các loại đồ không liên quan (ví dụ: ẩn Silk Dresses khi chọn đồ Nam); tự động reset chọn về "All Garments" khi đổi danh mục. | [x] PASS<br>[ ] FAIL |
 | **TC-SHOP-09** | Điều hướng & Cuộn mượt trên Menu Mobile | 1. Mở Mobile Menu Drawer.<br>2. Bấm "Women's Collection", "Men's Collection".<br>3. Bấm "New Collection", "About LUNE". | Thao tác click trên Mobile Menu | Chuyển đúng trang danh mục Nam/Nữ; với các link anchor (`/#`) màn hình tự động cuộn mượt xuống đúng vị trí phần tương ứng trên trang Home. | [x] PASS<br>[ ] FAIL |
+| **TC-STOCK-01** | Tự động trừ tồn kho khi tạo đơn đặt hàng | 1. Kiểm tra tồn kho SP A (Ví dụ: 18 cái).<br>2. Khách thêm 3 cái vào giỏ và đặt hàng thành công tại `/checkout`.<br>3. Kiểm tra lại thông số tồn kho của SP A. | Đặt mua 3 sản phẩm A | Đơn hàng tạo thành công; tồn kho SP A tự động giảm từ 18 xuống đúng 15 cái trên toàn hệ thống (cả Client lẫn Admin). | [x] PASS<br>[ ] FAIL |
+| **TC-STOCK-02** | Tự động hoàn lại tồn kho khi đơn bị hủy (Cancelled) | 1. Đơn hàng vừa tạo ở TC-STOCK-01 có 3 SP A.<br>2. Tại `/admin/orders`, chuyển trạng thái đơn hàng sang `Cancelled`.<br>3. Kiểm tra lại tồn kho SP A. | Chuyển trạng thái: `Cancelled` | Hệ thống tự động kích hoạt hoàn kho: Tồn kho SP A được cộng bù lại +3 cái, phục hồi chính xác về 18 cái ban đầu. | [x] PASS<br>[ ] FAIL |
+| **TC-STOCK-03** | Khống chế số lượng mua tối đa bằng tồn kho khả dụng | 1. Mở trang chi tiết SP có tồn kho = 4 cái.<br>2. Bấm nút `[+]` liên tục để tăng số lượng. | Click nút `+` nhiều lần | Khi số lượng đạt 4, nút `[+]` tự động bị vô hiệu hóa (disabled), ngăn chặn khách đặt vượt quá 4 sản phẩm còn lại trong kho. | [x] PASS<br>[ ] FAIL |
+| **TC-STOCK-04** | Nhận diện & Khóa đặt hàng khi sản phẩm hết hàng (Out of Stock) | 1. Chọn sản phẩm có tồn kho = 0.<br>2. Quan sát thẻ sản phẩm trên Shop và trang chi tiết `/product/:id`.<br>3. Thử thao tác đặt hàng. | Sản phẩm có `stock: 0` | Thẻ sản phẩm hiển thị nhãn đỏ `SOLD OUT`; nút Quick Add bị vô hiệu hóa; Trang chi tiết hiển thị `HẾT HÀNG (OUT OF STOCK)`, nút `ADD TO BAG` đổi thành `OUT OF STOCK` và không thể click. | [x] PASS<br>[ ] FAIL |
+| **TC-STOCK-05** | Quản trị và giám sát tồn kho tại Admin Products | 1. Truy cập `/admin/products`.<br>2. Quan sát cột "Tồn Kho" và mở modal Sửa sản phẩm.<br>3. Chỉnh sửa số lượng tồn kho và bấm Lưu. | Nhập số lượng mới $\ge 0$ | Cột tồn kho hiển thị badge trạng thái màu chuẩn (>10 xanh lá, 1-10 vàng cam, 0 đỏ); sau khi sửa giá trị tồn kho mới được lưu bền vững vào `localStorage`. | [x] PASS<br>[ ] FAIL |
 
+| **TC-LANG-01** | Chuyển đổi song ngữ Anh - Việt tức thời (Zero-reload Switcher) | 1. Tại Announcement Bar trên cùng hoặc Mobile Menu, bấm chọn nút `VI` hoặc `EN`.
+2. Quan sát thanh Navbar, giỏ hàng, trang Shop, trang Chi tiết và Footer. | Thao tác toggle `EN | VI` | Toàn bộ nhãn danh mục, giỏ hàng, thanh toán, nút bấm và badge tồn kho lập tức chuyển sang ngôn ngữ đã chọn mượt mà không tải lại trang. | [x] PASS<br>[ ] FAIL |
+| **TC-LANG-02** | Lưu trữ tùy chọn ngôn ngữ bền vững (`localStorage`) | 1. Chuyển ngôn ngữ sang `VI`.
+2. Nhấn `F5` tải lại trang web hoặc mở tab mới. | Tải lại trang (F5) | Hệ thống đọc khóa `lune_language` và tiếp tục duy trì trạng thái Tiếng Việt, không bị reset về ngôn ngữ mặc định. | [x] PASS<br>[ ] FAIL |
 ---
 
 ### 👤 TEST SUITE 3: CHI TIẾT SẢN PHẨM, BIẾN THỂ & YÊU THÍCH (PHỤ TRÁCH: TV3)
@@ -90,7 +99,7 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 | **TC-AUTH-03** | Báo lỗi đăng ký email đã tồn tại | 1. Đăng ký với một email đã có sẵn trong danh sách người dùng. | Email trùng lặp | Báo lỗi: *"Email này đã được sử dụng bởi một tài khoản khác"*. | [ ] PASS<br>[ ] FAIL |
 | **TC-AUTH-04** | Đăng nhập tài khoản thất bại | 1. Nhập sai email hoặc sai mật khẩu.<br>2. Bấm "Đăng nhập". | Mật khẩu sai | Báo lỗi màu đỏ: *"Email hoặc mật khẩu không chính xác"*; không tạo phiên đăng nhập. | [ ] PASS<br>[ ] FAIL |
 | **TC-AUTH-05** | Đăng nhập thành công tài khoản thường | 1. Nhập đúng tài khoản khách hàng.<br>2. Bấm "Đăng nhập". | Tài khoản `role: user` | Đăng nhập thành công; Navbar đổi icon tài khoản thành Tên người dùng; chuyển hướng về Trang chủ. | [ ] PASS<br>[ ] FAIL |
-| **TC-AUTH-06** | Đăng nhập tài khoản Quản trị viên | 1. Nhập tài khoản admin.<br>2. Bấm "Đăng nhập". | Tài khoản `role: admin` | Đăng nhập thành công; hệ thống tự động chuyển thẳng vào trang Quản trị `/admin`. | [ ] PASS<br>[ ] FAIL |
+| **TC-AUTH-06** | Đăng nhập tài khoản Quản trị viên | 1. Nhập tài khoản admin (`admin@lune.com`).<br>2. Nhập mật khẩu: `"Admin@123"` (hoặc `"admin123"`).<br>3. Bấm "Đăng nhập". | Mật khẩu chuẩn `Admin@123` hoặc `admin123` | Đăng nhập thành công; hệ thống tự động chuyển thẳng vào trang Quản trị `/admin`. | [x] PASS<br>[ ] FAIL |
 | **TC-AUTH-07** | Đăng xuất an toàn | 1. Bấm vào menu tài khoản trên Navbar.<br>2. Bấm nút "Đăng xuất". | Click Đăng xuất | Xóa phiên đăng nhập hiện tại; Navbar trở về trạng thái Khách vãng lai; điều hướng an toàn về `/`. | [ ] PASS<br>[ ] FAIL |
 | **TC-GUARD-01**| Bảo vệ đường dẫn Hồ sơ (`/profile`) | 1. Khi CHƯA đăng nhập, gõ trực tiếp URL `/profile` trên trình duyệt. | Khách chưa đăng nhập | Bộ bảo vệ (ProtectedRoute) phát hiện chưa đăng nhập, tự động chặn lại và đá văng về trang `/login`. | [ ] PASS<br>[ ] FAIL |
 | **TC-PROF-01** | Xem danh sách đơn hàng đã mua (My Orders)| 1. Đăng nhập tài khoản đã từng mua hàng.<br>2. Vào `/profile` -> Tab "Đơn hàng của tôi". | Tài khoản có lịch sử mua | Hiển thị chính xác các đơn hàng của tài khoản này, gồm mã `LUNE-XXXX`, ngày mua, tổng tiền và nhãn trạng thái có màu sắc chuẩn. | [ ] PASS<br>[ ] FAIL |
@@ -126,8 +135,8 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 
 ## 🏆 III. BIÊN BẢN NGHIỆM THU CUỐI CÙNG (FINAL SIGN-OFF)
 
-* **Tổng số ca kiểm thử:** 40 Test Cases
-* **Số ca Đạt (PASS):** 40 / 40
+* **Tổng số ca kiểm thử:** 45 Test Cases
+* **Số ca Đạt (PASS):** 45 / 45
 * **Tỷ lệ hoàn thành:** 100%
 * **Xác nhận của Trưởng nhóm (Leader):** ___________________________ (Ký và ghi rõ họ tên)
 * **Kết luận:** *Đủ điều kiện đóng gói sản phẩm và báo cáo bảo vệ đồ án FER202 trước hội đồng chấm thi.*

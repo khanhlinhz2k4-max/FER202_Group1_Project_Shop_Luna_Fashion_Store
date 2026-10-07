@@ -133,26 +133,56 @@ export default function Navbar() {
             <Search size={19} strokeWidth={1.75} />
           </button>
 
-          {/* Wishlist Link */}
-          <Link 
-            to="/wishlist" 
-            className="action-btn" 
-            aria-label="Wishlist"
-            title={`Wishlist: ${wishlist.length} saved items`}
-          >
-            <Heart size={19} strokeWidth={1.75} />
-            {wishlist.length > 0 && <span className="action-badge">{wishlist.length}</span>}
-          </Link>
+          {/* Wishlist Link (Customers & Guests only) */}
+          {currentUser?.role !== 'admin' && (
+            <Link 
+              to="/wishlist" 
+              className="action-btn" 
+              aria-label="Wishlist"
+              title={`Wishlist: ${wishlist.length} saved items`}
+            >
+              <Heart size={19} strokeWidth={1.75} />
+              {wishlist.length > 0 && <span className="action-badge">{wishlist.length}</span>}
+            </Link>
+          )}
 
-          {/* Shopping Bag / Cart Trigger */}
-          <button 
-            className="action-btn bag-btn" 
-            aria-label="Shopping Bag"
-            onClick={openCart}
-          >
-            <ShoppingBag size={19} strokeWidth={1.75} />
-            {cartCount > 0 && <span className="action-badge">{cartCount}</span>}
-          </button>
+          {/* Shopping Bag / Cart Trigger (Customers & Guests only) */}
+          {currentUser?.role !== 'admin' && (
+            <button 
+              className="action-btn bag-btn" 
+              aria-label="Shopping Bag"
+              onClick={openCart}
+            >
+              <ShoppingBag size={19} strokeWidth={1.75} />
+              {cartCount > 0 && <span className="action-badge">{cartCount}</span>}
+            </button>
+          )}
+
+          {/* Quick Admin Portal Button on Topbar (Admin only) */}
+          {currentUser?.role === 'admin' && (
+            <Link
+              to="/admin"
+              className="action-btn"
+              title="Go to Admin Portal"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '6px 12px',
+                backgroundColor: '#F9F2E7',
+                border: '1px solid #C8AE84',
+                borderRadius: '4px',
+                color: '#775B3F',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                textDecoration: 'none',
+                letterSpacing: '0.04em'
+              }}
+            >
+              <Shield size={14} color="#775B3F" />
+              <span>DASHBOARD</span>
+            </Link>
+          )}
 
           {/* User Account / Login or Profile */}
           {currentUser ? (
@@ -186,8 +216,8 @@ export default function Navbar() {
 
                     <div className="dropdown-divider"></div>
 
-                    {/* Admin Portal Link */}
-                    {currentUser.role === 'admin' && (
+                    {/* Role-based Navigation: Admin vs Customer */}
+                    {currentUser.role === 'admin' ? (
                       <Link 
                         to="/admin" 
                         className="dropdown-link"
@@ -196,16 +226,16 @@ export default function Navbar() {
                       >
                         <Shield size={16} /> Admin Portal
                       </Link>
+                    ) : (
+                      <Link 
+                        to="/profile" 
+                        className="dropdown-link"
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#1C1917', textDecoration: 'none', fontSize: '0.85rem' }}
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <Package size={16} /> My Account & Orders
+                      </Link>
                     )}
-
-                    <Link 
-                      to="/profile" 
-                      className="dropdown-link"
-                      style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#1C1917', textDecoration: 'none', fontSize: '0.85rem' }}
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      <Package size={16} /> My Account & Orders
-                    </Link>
 
                     <div className="dropdown-divider"></div>
 
@@ -365,49 +395,68 @@ export default function Navbar() {
           </li>
         </ul>
 
-        {/* Section 2: Personal Wardrobe & Wishlist */}
-        <div className="mobile-group-label">WARDROBE & ACCOUNT</div>
-        <ul className="mobile-nav-list">
-          <li>
-            <button 
-              onClick={() => { setMobileMenuOpen(false); openCart(); }} 
-              className="mobile-nav-link"
-              style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', fontFamily: 'inherit', padding: '16px 20px', cursor: 'pointer' }}
-            >
-              <span className="link-text-wrap">
-                <ShoppingBag size={16} className="inline-icon-gold" />
-                Shopping Bag
-                {cartCount > 0 && (
-                  <span className="mobile-badge-count">{cartCount}</span>
-                )}
-              </span>
-              <ArrowRight size={16} className="nav-arrow-icon" />
-            </button>
-          </li>
-          <li>
-            <Link to="/wishlist" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-              <span className="link-text-wrap">
-                <Heart size={16} className="inline-icon-gold" />
-                Saved Wishlist
-                {wishlist.length > 0 && (
-                  <span className="mobile-badge-count">{wishlist.length}</span>
-                )}
-              </span>
-              <ArrowRight size={16} className="nav-arrow-icon" />
-            </Link>
-          </li>
-          {currentUser && (
-            <li>
-              <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-                <span className="link-text-wrap">
-                  <User size={16} className="inline-icon-gold" />
-                  My Profile ({currentUser.name.split(' ')[0]})
-                </span>
-                <ArrowRight size={16} className="nav-arrow-icon" />
-              </Link>
-            </li>
-          )}
-        </ul>
+        {/* Section 2: Personal Wardrobe (Customer) vs Administration (Admin) */}
+        {currentUser?.role === 'admin' ? (
+          <>
+            <div className="mobile-group-label">STORE ADMINISTRATION</div>
+            <ul className="mobile-nav-list">
+              <li>
+                <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+                  <span className="link-text-wrap">
+                    <Shield size={16} className="inline-icon-gold" />
+                    Admin Management Portal
+                  </span>
+                  <ArrowRight size={16} className="nav-arrow-icon" />
+                </Link>
+              </li>
+            </ul>
+          </>
+        ) : (
+          <>
+            <div className="mobile-group-label">WARDROBE & ACCOUNT</div>
+            <ul className="mobile-nav-list">
+              <li>
+                <button 
+                  onClick={() => { setMobileMenuOpen(false); openCart(); }} 
+                  className="mobile-nav-link"
+                  style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', fontFamily: 'inherit', padding: '16px 20px', cursor: 'pointer' }}
+                >
+                  <span className="link-text-wrap">
+                    <ShoppingBag size={16} className="inline-icon-gold" />
+                    Shopping Bag
+                    {cartCount > 0 && (
+                      <span className="mobile-badge-count">{cartCount}</span>
+                    )}
+                  </span>
+                  <ArrowRight size={16} className="nav-arrow-icon" />
+                </button>
+              </li>
+              <li>
+                <Link to="/wishlist" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+                  <span className="link-text-wrap">
+                    <Heart size={16} className="inline-icon-gold" />
+                    Saved Wishlist
+                    {wishlist.length > 0 && (
+                      <span className="mobile-badge-count">{wishlist.length}</span>
+                    )}
+                  </span>
+                  <ArrowRight size={16} className="nav-arrow-icon" />
+                </Link>
+              </li>
+              {currentUser && (
+                <li>
+                  <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
+                    <span className="link-text-wrap">
+                      <User size={16} className="inline-icon-gold" />
+                      My Account & Orders ({currentUser.name.split(' ')[0]})
+                    </span>
+                    <ArrowRight size={16} className="nav-arrow-icon" />
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </>
+        )}
 
         {/* Section 3: Auth CTA Buttons */}
         <div className="mobile-auth-section">

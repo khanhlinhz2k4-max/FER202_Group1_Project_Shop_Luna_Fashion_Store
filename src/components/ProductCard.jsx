@@ -11,6 +11,8 @@ export default function ProductCard({ product }) {
   const navigate = useNavigate();
 
   const isFavorited = isInWishlist(product.id);
+  const stock = product.stock !== undefined ? product.stock : 20;
+  const isOutOfStock = stock === 0;
 
   const handleWishlistClick = (e) => {
     e.preventDefault();
@@ -21,6 +23,7 @@ export default function ProductCard({ product }) {
   const handleQuickAdd = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (isOutOfStock) return;
     addToCart(product, (product.sizes && product.sizes[0]) || "M", (product.colors && product.colors[0]) || "");
   };
 
@@ -55,10 +58,29 @@ export default function ProductCard({ product }) {
             loading="lazy"
           />
 
-          {/* Product Tag */}
-          {product.tag && (
+          {/* Product Tag or Sold Out Badge */}
+          {isOutOfStock ? (
+            <span
+              style={{
+                position: 'absolute',
+                top: '12px',
+                left: '12px',
+                backgroundColor: '#DC2626',
+                color: '#fff',
+                fontSize: '0.65rem',
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                padding: '4px 8px',
+                textTransform: 'uppercase',
+                zIndex: 2,
+                borderRadius: '2px'
+              }}
+            >
+              SOLD OUT
+            </span>
+          ) : product.tag ? (
             <span className="product-tag">{product.tag}</span>
-          )}
+          ) : null}
 
           {/* Wishlist Button */}
           <button 
@@ -81,7 +103,7 @@ export default function ProductCard({ product }) {
               bottom: isHovered ? 0 : '-50px',
               left: 0,
               right: 0,
-              backgroundColor: 'rgba(28, 25, 23, 0.9)',
+              backgroundColor: 'rgba(119, 91, 63, 0.95)',
               display: 'flex',
               transition: 'bottom 0.25s ease',
               zIndex: 3
@@ -113,23 +135,24 @@ export default function ProductCard({ product }) {
             <button
               type="button"
               onClick={handleQuickAdd}
+              disabled={isOutOfStock}
               style={{
                 flex: 1,
                 padding: '10px',
                 border: 'none',
-                background: 'none',
-                color: '#fff',
+                background: isOutOfStock ? 'rgba(0,0,0,0.2)' : 'none',
+                color: isOutOfStock ? 'rgba(255,255,255,0.6)' : '#fff',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 letterSpacing: '0.05em',
-                cursor: 'pointer',
+                cursor: isOutOfStock ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '6px'
               }}
             >
-              <ShoppingBag size={14} /> ADD TO BAG
+              <ShoppingBag size={14} /> {isOutOfStock ? 'SOLD OUT' : 'ADD TO BAG'}
             </button>
           </div>
         </div>
