@@ -16,7 +16,7 @@ import {
 import { useShop } from '../context/ShopContext';
 
 export default function LoginPage() {
-  const { login: contextLogin, register: contextRegister, users: contextUsers } = useShop();
+  const { login: contextLogin, users: contextUsers } = useShop();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -31,12 +31,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [loggedInName, setLoggedInName] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState(location.state?.error || '');
   const [fieldErrors, setFieldErrors] = useState({});
 
-  // Registration notice if user was redirected from RegisterPage
+  // Registration notice if user was redirected from RegisterPage or ProtectedRoute
   const [registeredNotice, setRegisteredNotice] = useState(
-    location.state?.justRegistered ? `Account registered! Sign in to access your LUNE account.` : ''
+    location.state?.justRegistered ? `Account registered! Sign in to access your LUNE account.` : (location.state?.notice || '')
   );
 
   // Forgot password modal
@@ -44,49 +44,55 @@ export default function LoginPage() {
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSent, setForgotSent] = useState(false);
 
-  // Seed default demo accounts (Customer & Admin) if missing
+  // Seed default demo accounts (Customer & Admin) in 'lune_users' if missing
   useEffect(() => {
     try {
-      const existing = localStorage.getItem('lune_registered_users');
-      let registered = existing ? JSON.parse(existing) : [];
-      if (!Array.isArray(registered)) registered = [];
+      const existing = localStorage.getItem('lune_users');
+      let usersList = existing ? JSON.parse(existing) : [];
+      if (!Array.isArray(usersList)) usersList = [];
 
       let modified = false;
 
       // 1. Demo Customer
-      if (!registered.some(u => u.email?.toLowerCase() === 'demo@lune-atelier.com' || u.username === 'linhnguyen')) {
-        registered.push({
-          id: 'demo-1',
+      if (!usersList.some(u => u.email?.toLowerCase() === 'customer@lune.com' || u.username === 'linhnguyen')) {
+        usersList.push({
+          id: 'user-demo',
+          name: 'Linh Nguyen',
           fullName: 'Linh Nguyen',
-          email: 'demo@lune-atelier.com',
+          email: 'customer@lune.com',
           username: 'linhnguyen',
           password: 'Password@123',
           role: 'user',
+          phone: '+84 987 654 321',
+          address: '789 Nguyen Hue, District 1, HCMC',
           createdAt: new Date().toISOString()
         });
         modified = true;
       }
 
       // 2. Demo Admin
-      if (!registered.some(u => u.email?.toLowerCase() === 'admin@lune.com' || u.username === 'admin')) {
-        registered.push({
+      if (!usersList.some(u => u.email?.toLowerCase() === 'admin@lune.com' || u.username === 'admin')) {
+        usersList.push({
           id: 'user-admin',
-          fullName: 'Lune Administrator',
           name: 'Lune Administrator',
+          fullName: 'Lune Administrator',
           email: 'admin@lune.com',
           username: 'admin',
           password: 'Admin@123',
           role: 'admin',
+          phone: '+84 900 000 001',
+          address: 'Lune Fashion HQ, 01 Le Duan, District 1, HCMC',
           createdAt: new Date().toISOString()
         });
         modified = true;
       }
 
       if (modified || !existing) {
-        localStorage.setItem('lune_registered_users', JSON.stringify(registered));
+        localStorage.setItem('lune_users', JSON.stringify(usersList));
+        localStorage.setItem('lune_registered_users', JSON.stringify(usersList));
       }
     } catch (e) {
-      console.error(e);
+      console.error('Error seeding users:', e);
     }
   }, []);
 
@@ -113,27 +119,30 @@ export default function LoginPage() {
     setIsLoading(true);
 
     setTimeout(() => {
-      // Fetch registered users from localStorage
+      // Fetch users from 'lune_users' and contextUsers
       let users = [];
       try {
-        const stored = localStorage.getItem('lune_registered_users');
+        const stored = localStorage.getItem('lune_users');
         users = stored ? JSON.parse(stored) : [];
-      } catch (err) {
+        if (!Array.isArray(users)) users = [];
+      } catch {
         users = [];
       }
 
       // Merge with context users if any are missing
       if (Array.isArray(contextUsers)) {
         contextUsers.forEach(cu => {
-          if (!users.some(u => u.email?.toLowerCase() === cu.email?.toLowerCase())) {
+          if (!users.some(u => (u.email || '').toLowerCase() === (cu.email || '').toLowerCase())) {
             users.push({
               id: cu.id,
               fullName: cu.name,
               name: cu.name,
               email: cu.email,
-              username: cu.email ? cu.email.split('@')[0] : 'user',
+              username: cu.username || (cu.email ? cu.email.split('@')[0] : 'user'),
               password: cu.password,
-              role: cu.role
+              role: cu.role || 'user',
+              phone: cu.phone || '',
+              address: cu.address || ''
             });
           }
         });
@@ -142,7 +151,7 @@ export default function LoginPage() {
       // Check matching user by email OR username (case-insensitive)
       const inputTrimmed = identifier.trim().toLowerCase();
       let matchedUser = users.find(
-        u => (u.email?.toLowerCase() === inputTrimmed || u.username?.toLowerCase() === inputTrimmed)
+        u => ((u.email || '').toLowerCase() === inputTrimmed || (u.username || '').toLowerCase() === inputTrimmed)
       );
 
       // Direct fallback for hardcoded default admin
@@ -158,12 +167,29 @@ export default function LoginPage() {
         };
       }
 
+      // Direct fallback for hardcoded default demo customer
+      if (!matchedUser && (inputTrimmed === 'customer@lune.com' || inputTrimmed === 'linhnguyen') && (password === 'user123' || password === 'Password@123')) {
+        matchedUser = {
+          id: 'user-demo',
+          fullName: 'Linh Nguyen',
+          name: 'Linh Nguyen',
+          email: 'customer@lune.com',
+          username: 'linhnguyen',
+          password: 'Password@123',
+          role: 'user',
+          phone: '+84 987 654 321',
+          address: '789 Nguyen Hue, District 1, HCMC'
+        };
+      }
+
       const isPasswordMatched = Boolean(
         matchedUser && (
           matchedUser.password === password ||
           // Admin accepts both Admin@123 and admin123
           (matchedUser.role === 'admin' && (password === 'admin123' || password === 'Admin@123')) ||
-          (inputTrimmed === 'admin@lune.com' && (password === 'admin123' || password === 'Admin@123'))
+          (inputTrimmed === 'admin@lune.com' && (password === 'admin123' || password === 'Admin@123')) ||
+          // Customer demo accepts both Password@123 and user123
+          (matchedUser.role === 'user' && (password === 'user123' || password === 'Password@123'))
         )
       );
 
@@ -180,37 +206,35 @@ export default function LoginPage() {
       // Authentication Success
       setIsLoading(false);
       setLoginSuccess(true);
-      setLoggedInName(matchedUser.fullName || matchedUser.name);
+      const displayName = matchedUser.fullName || matchedUser.name || 'Valued Member';
+      setLoggedInName(displayName);
 
       // Context sync
-      const syncResult = contextLogin(matchedUser.email, matchedUser.password);
-      if (!syncResult?.success && contextRegister) {
-        contextRegister({
-          name: matchedUser.fullName || matchedUser.name,
-          email: matchedUser.email,
-          password: matchedUser.password,
-          role: matchedUser.role || (matchedUser.email === 'admin@lune.com' ? 'admin' : 'user')
-        });
-      }
+      contextLogin(matchedUser.email, matchedUser.password);
 
       try {
-        localStorage.setItem('lune_user_authenticated', 'true');
-        localStorage.setItem('lune_user_name', matchedUser.fullName || matchedUser.name);
-        localStorage.setItem('lune_user_email', matchedUser.email);
-        localStorage.setItem('lune_current_user', JSON.stringify({
-          id: matchedUser.id || 'user-admin',
-          name: matchedUser.fullName || matchedUser.name,
+        const sessionUser = {
+          id: matchedUser.id || `user-${Date.now()}`,
+          name: displayName,
           email: matchedUser.email,
-          role: matchedUser.role || (matchedUser.email === 'admin@lune.com' ? 'admin' : 'user')
-        }));
+          username: matchedUser.username || matchedUser.email?.split('@')[0],
+          role: matchedUser.role || 'user',
+          phone: matchedUser.phone || '',
+          address: matchedUser.address || ''
+        };
+
+        localStorage.setItem('lune_user_authenticated', 'true');
+        localStorage.setItem('lune_user_name', displayName);
+        localStorage.setItem('lune_user_email', matchedUser.email);
+        localStorage.setItem('lune_current_user', JSON.stringify(sessionUser));
         
         if (rememberMe) {
           localStorage.setItem('lune_remembered_identifier', identifier.trim());
         } else {
           localStorage.removeItem('lune_remembered_identifier');
         }
-      } catch (err) {
-        console.error(err);
+      } catch (e) {
+        console.error('Error saving session:', e);
       }
 
       setTimeout(() => {
@@ -414,7 +438,13 @@ export default function LoginPage() {
                       try {
                         localStorage.setItem('lune_user_authenticated', 'true');
                         localStorage.setItem('lune_user_name', 'Atelier Member');
-                      } catch (err) {}
+                        localStorage.setItem('lune_current_user', JSON.stringify({
+                          id: 'user-demo',
+                          name: 'Atelier Member',
+                          email: 'customer@lune.com',
+                          role: 'user'
+                        }));
+                      } catch {}
                       setTimeout(() => navigate('/'), 1000);
                     }, 600);
                   }}
@@ -442,7 +472,13 @@ export default function LoginPage() {
                       try {
                         localStorage.setItem('lune_user_authenticated', 'true');
                         localStorage.setItem('lune_user_name', 'Atelier Member');
-                      } catch (err) {}
+                        localStorage.setItem('lune_current_user', JSON.stringify({
+                          id: 'user-demo',
+                          name: 'Atelier Member',
+                          email: 'customer@lune.com',
+                          role: 'user'
+                        }));
+                      } catch {}
                       setTimeout(() => navigate('/'), 1000);
                     }, 600);
                   }}

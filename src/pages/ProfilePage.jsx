@@ -1,44 +1,145 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
-import { User, Package, LogOut, Settings, Clock, CheckCircle } from 'lucide-react';
+import { 
+  User, 
+  Package, 
+  LogOut, 
+  KeyRound, 
+  CheckCircle, 
+  AlertCircle, 
+  Clock, 
+  Truck, 
+  XCircle,
+  Eye,
+  EyeOff,
+  ShoppingBag
+} from 'lucide-react';
+import './ProfilePage.css';
 
 /**
  * ProfilePage Component
- * Phụ trách: Thành viên 5 (Xác thực, phân quyền & Hồ sơ khách hàng)
- * Harmonized with LUNE Warm Luxury Brand Guidelines
+ * Phụ trách: Thành viên 5 (Xác thực, phân quyền & Quản lý hồ sơ khách hàng)
+ * Chức năng:
+ *  - Tab Thông tin cá nhân: Xem/sửa họ tên, số điện thoại, địa chỉ mặc định, ĐỔI MẬT KHẨU.
+ *  - Tab Đơn hàng của tôi (My Orders): Danh sách đơn hàng đã mua, xem trạng thái (Pending, Shipping, Delivered), Hủy đơn (Pending).
  */
 export default function ProfilePage() {
-  const { currentUser, logout, updateProfile, orders } = useShop();
+  const { 
+    currentUser, 
+    logout, 
+    updateProfile, 
+    changePassword, 
+    orders, 
+    updateOrderStatus 
+  } = useShop();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' or 'info'
+
+  // Personal Info Form State
   const [name, setName] = useState(currentUser?.name || '');
   const [phone, setPhone] = useState(currentUser?.phone || '');
   const [address, setAddress] = useState(currentUser?.address || '');
-  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [infoSuccess, setInfoSuccess] = useState('');
+  const [infoError, setInfoError] = useState('');
 
-  // If not logged in, redirect to login
+  // Change Password Form State
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showOldPass, setShowOldPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [passSuccess, setPassSuccess] = useState('');
+  const [passError, setPassError] = useState('');
+  const [isChangingPass, setIsChangingPass] = useState(false);
+
+  // Orders Filter
+  const [orderFilter, setOrderFilter] = useState('all');
+
+  // If unauthenticated, redirect to login
   if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
 
-  // Admin is an administrator, not a shopping client - redirect to Admin Portal
-  if (currentUser.role === 'admin') {
-    return <Navigate to="/admin" replace />;
-  }
+  // Filter orders associated with this user
+  const userOrders = orders.filter(o => {
+    const emailMatch = o.customer?.email && o.customer.email.toLowerCase() === currentUser.email.toLowerCase();
+    const phoneMatch = o.customer?.phone && currentUser.phone && o.customer.phone === currentUser.phone;
+    return emailMatch || phoneMatch;
+  });
 
-  // Filter orders made by this user or general orders
-  const myOrders = orders.filter(o => 
-    (o.customer?.email && o.customer.email.toLowerCase() === currentUser.email.toLowerCase()) ||
-    (o.customer?.phone && o.customer.phone === currentUser.phone)
-  );
+  const displayedOrders = userOrders.filter(o => {
+    if (orderFilter === 'all') return true;
+    return (o.status || '').toLowerCase() === orderFilter.toLowerCase();
+  });
 
-  const handleUpdate = (e) => {
+  // Handle Profile Details Update
+  const handleUpdateProfile = (e) => {
     e.preventDefault();
-    updateProfile({ name, phone, address });
-    setSavedSuccess(true);
-    setTimeout(() => setSavedSuccess(false), 3000);
+    setInfoSuccess('');
+    setInfoError('');
+
+    if (!name.trim()) {
+      setInfoError('Full name cannot be empty.');
+      return;
+    }
+
+    const res = updateProfile({ 
+      name: name.trim(), 
+      phone: phone.trim(), 
+      address: address.trim() 
+    });
+
+    if (res?.success) {
+      setInfoSuccess('Your personal profile has been updated successfully.');
+      setTimeout(() => setInfoSuccess(''), 4000);
+    }
+  };
+
+  // Handle Change Password
+  const handleChangePassword = (e) => {
+    e.preventDefault();
+    setPassSuccess('');
+    setPassError('');
+
+    if (!oldPassword) {
+      setPassError('Please enter your current password.');
+      return;
+    }
+    if (!newPassword || newPassword.length < 6) {
+      setPassError('New password must be at least 6 characters long.');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPassError('New password and confirmation password do not match.');
+      return;
+    }
+
+    setIsChangingPass(true);
+    setTimeout(() => {
+      const res = changePassword(currentUser.id, oldPassword, newPassword);
+      setIsChangingPass(false);
+      if (res.success) {
+        setPassSuccess('Password changed successfully! Keep it confidential.');
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        setTimeout(() => setPassSuccess(''), 4000);
+      } else {
+        setPassError(res.message || 'Failed to update password.');
+      }
+    }, 400);
+  };
+
+  // Handle Order Cancellation by Customer
+  const handleCancelOrder = (orderId) => {
+    const confirmCancel = window.confirm(
+      `Are you sure you want to cancel Order ${orderId}? The reserved items will be restored to store inventory.`
+    );
+    if (confirmCancel) {
+      updateOrderStatus(orderId, 'Cancelled');
+    }
   };
 
   const handleLogout = () => {
@@ -46,160 +147,345 @@ export default function ProfilePage() {
     navigate('/');
   };
 
+  const initials = (currentUser.name || 'Client')
+    .split(' ')
+    .filter(Boolean)
+    .map(w => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', borderBottom: '1px solid #E7DDCE', paddingBottom: '20px' }}>
+    <div className="profile-page-container">
+      {/* Page Header */}
+      <div className="profile-header">
         <div>
-          <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '2.2rem', fontWeight: 500, margin: '0 0 6px', color: '#2C2117', letterSpacing: '0.04em' }}>
-            CLIENT ACCOUNT
-          </h1>
-          <p style={{ color: '#5C4A3A', margin: 0, fontSize: '0.92rem' }}>
-            Welcome back, <strong style={{ color: '#2C2117' }}>{currentUser.name}</strong> ({currentUser.email})
+          <h1 className="profile-title">CLIENT ACCOUNT</h1>
+          <p className="profile-subtitle">
+            Welcome back, <strong>{currentUser.name}</strong> • Member Portal
           </p>
         </div>
-        <button 
-          onClick={handleLogout}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '9px 20px',
-            border: '1px solid #C8AE84',
-            backgroundColor: '#FAF7F2',
-            color: '#2C2117',
-            borderRadius: '2px',
-            cursor: 'pointer',
-            fontSize: '0.85rem',
-            fontWeight: 500,
-            transition: 'all 0.2s ease'
-          }}
-        >
-          <LogOut size={16} color="#775B3F" /> Sign Out
+        <button type="button" onClick={handleLogout} className="profile-logout-btn">
+          <LogOut size={16} /> Sign Out
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '36px' }}>
+      <div className="profile-grid">
         {/* Navigation Sidebar */}
-        <aside style={{ backgroundColor: '#FFFFFF', border: '1px solid #E7DDCE', borderRadius: '4px', height: 'fit-content', overflow: 'hidden' }}>
+        <aside className="profile-sidebar">
+          <div className="profile-user-card">
+            <div className="profile-avatar-circle">{initials}</div>
+            <h3 className="profile-user-name">{currentUser.name}</h3>
+            <p className="profile-user-email">{currentUser.email}</p>
+          </div>
+
           <button
+            type="button"
+            className={`profile-nav-btn ${activeTab === 'orders' ? 'active' : ''}`}
             onClick={() => setActiveTab('orders')}
-            style={{
-              width: '100%',
-              padding: '16px 20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              border: 'none',
-              borderLeft: activeTab === 'orders' ? '3px solid #775B3F' : '3px solid transparent',
-              backgroundColor: activeTab === 'orders' ? '#F9F2E7' : '#FFFFFF',
-              color: activeTab === 'orders' ? '#775B3F' : '#2C2117',
-              fontWeight: activeTab === 'orders' ? 600 : 400,
-              textAlign: 'left',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              transition: 'all 0.2s ease'
-            }}
           >
-            <Package size={18} color={activeTab === 'orders' ? '#775B3F' : '#5C4A3A'} /> My Orders ({myOrders.length})
+            <Package size={18} />
+            <span>My Orders</span>
+            <span className="profile-nav-badge">{userOrders.length}</span>
           </button>
 
           <button
+            type="button"
+            className={`profile-nav-btn ${activeTab === 'info' ? 'active' : ''}`}
             onClick={() => setActiveTab('info')}
-            style={{
-              width: '100%',
-              padding: '16px 20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              border: 'none',
-              borderLeft: activeTab === 'info' ? '3px solid #775B3F' : '3px solid transparent',
-              backgroundColor: activeTab === 'info' ? '#F9F2E7' : '#FFFFFF',
-              color: activeTab === 'info' ? '#775B3F' : '#2C2117',
-              fontWeight: activeTab === 'info' ? 600 : 400,
-              textAlign: 'left',
-              cursor: 'pointer',
-              fontSize: '0.9rem',
-              transition: 'all 0.2s ease'
-            }}
           >
-            <User size={18} color={activeTab === 'info' ? '#775B3F' : '#5C4A3A'} /> Personal Details
+            <User size={18} />
+            <span>Personal Details</span>
           </button>
         </aside>
 
         {/* Content Area */}
-        <main style={{ backgroundColor: '#FFFFFF', padding: '36px', border: '1px solid #E7DDCE', borderRadius: '4px', boxShadow: '0 2px 8px rgba(44, 33, 23, 0.03)' }}>
-          {activeTab === 'orders' ? (
+        <main className="profile-main-card">
+          {/* TAB 1: MY ORDERS */}
+          {activeTab === 'orders' && (
             <div>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>ORDER HISTORY</h2>
-              {myOrders.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '60px 0', color: '#5C4A3A' }}>
-                  <Package size={40} style={{ opacity: 0.35, margin: '0 auto 12px', color: '#775B3F' }} />
-                  <p>You haven't placed any orders with Lune yet.</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '12px' }}>
+                <h2 className="profile-section-heading">ORDER HISTORY</h2>
+                <span style={{ fontSize: '0.85rem', color: '#6B5645' }}>
+                  Total Orders: <strong>{userOrders.length}</strong>
+                </span>
+              </div>
+              <p className="profile-section-desc">
+                Review past purchases, current shipping progress, and order receipts.
+              </p>
+
+              {/* Status Filter Bar */}
+              <div className="orders-filter-bar">
+                {['all', 'pending', 'shipping', 'delivered', 'cancelled'].map(st => (
+                  <button
+                    key={st}
+                    type="button"
+                    className={`orders-filter-btn ${orderFilter === st ? 'active' : ''}`}
+                    onClick={() => setOrderFilter(st)}
+                  >
+                    {st.charAt(0).toUpperCase() + st.slice(1)}
+                  </button>
+                ))}
+              </div>
+
+              {displayedOrders.length === 0 ? (
+                <div className="empty-orders-view">
+                  <Package size={48} style={{ opacity: 0.35, margin: '0 auto 12px', color: '#775B3F' }} />
+                  <p>No orders found matching the selected filter.</p>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/shop')}
+                    className="profile-submit-btn"
+                  >
+                    <ShoppingBag size={16} /> Explore Collection
+                  </button>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {myOrders.map(order => (
-                    <div key={order.id} style={{ border: '1px solid #E7DDCE', padding: '20px', borderRadius: '4px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', borderBottom: '1px solid #F5EFEB', paddingBottom: '10px' }}>
+                displayedOrders.map(order => {
+                  const statusKey = (order.status || 'pending').toLowerCase();
+                  return (
+                    <div key={order.id} className="order-card">
+                      <div className="order-card-header">
                         <div>
-                          <strong style={{ fontSize: '1rem', color: '#2C2117' }}>Order {order.id}</strong>
-                          <p style={{ margin: '2px 0 0', fontSize: '0.8rem', color: '#5C4A3A' }}>
-                            Placed on {new Date(order.createdAt).toLocaleDateString()}
-                          </p>
+                          <div className="order-card-id">{order.id}</div>
+                          <div className="order-card-date">
+                            Ordered on {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </div>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                          <span style={{
-                            padding: '4px 10px',
-                            borderRadius: '12px',
-                            fontSize: '0.75rem',
-                            fontWeight: 600,
-                            backgroundColor: order.status === 'Delivered' ? '#DCFCE7' : order.status === 'Shipping' ? '#FEF3C7' : '#F5EFEB',
-                            color: order.status === 'Delivered' ? '#166534' : order.status === 'Shipping' ? '#92400E' : '#775B3F'
-                          }}>
+
+                        <div>
+                          <span className={`order-badge order-badge-${statusKey}`}>
+                            {statusKey === 'pending' && <Clock size={12} />}
+                            {statusKey === 'shipping' && <Truck size={12} />}
+                            {statusKey === 'delivered' && <CheckCircle size={12} />}
+                            {statusKey === 'cancelled' && <XCircle size={12} />}
                             {order.status}
                           </span>
-                          <p style={{ margin: '4px 0 0', fontWeight: 700, color: '#775B3F' }}>${order.totalAmount}</p>
                         </div>
                       </div>
 
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {(order.items || []).map((it, idx) => (
-                          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#5C4A3A' }}>
-                            <span>{it.quantity}x {it.name} (Size: {it.selectedSize})</span>
-                            <span style={{ fontWeight: 600, color: '#2C2117' }}>${it.price * it.quantity}</span>
+                      <div className="order-card-body">
+                        {(order.items || []).map((item, idx) => (
+                          <div key={idx} className="order-item-row">
+                            <img
+                              src={item.image || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=300'}
+                              alt={item.name}
+                              className="order-item-img"
+                            />
+                            <div className="order-item-details">
+                              <h4 className="order-item-name">{item.name}</h4>
+                              <div className="order-item-meta">
+                                Size: <strong>{item.selectedSize || 'Standard'}</strong> • Quantity: <strong>{item.quantity}</strong>
+                              </div>
+                            </div>
+                            <div className="order-item-price">
+                              ${(item.price * item.quantity).toLocaleString()}
+                            </div>
                           </div>
                         ))}
+
+                        <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px dashed #E7DDCE', fontSize: '0.82rem', color: '#6B5645' }}>
+                          <div><strong>Delivery Address:</strong> {order.customer?.address || 'Standard Address'}</div>
+                          <div><strong>Payment Method:</strong> {order.paymentMethod || 'Cash on Delivery'}</div>
+                        </div>
+                      </div>
+
+                      <div className="order-card-footer">
+                        <div>
+                          <span style={{ fontSize: '0.82rem', color: '#6B5645' }}>Total Amount: </span>
+                          <span className="order-total-amount">${order.totalAmount}</span>
+                        </div>
+
+                        {/* Customer can cancel if order is still Pending */}
+                        {order.status === 'Pending' && (
+                          <button
+                            type="button"
+                            className="order-cancel-btn"
+                            onClick={() => handleCancelOrder(order.id)}
+                          >
+                            Cancel Order
+                          </button>
+                        )}
                       </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })
               )}
             </div>
-          ) : (
+          )}
+
+          {/* TAB 2: PERSONAL DETAILS & CHANGE PASSWORD */}
+          {activeTab === 'info' && (
             <div>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>EDIT DETAILS</h2>
-              {savedSuccess && (
-                <div style={{ padding: '12px 16px', backgroundColor: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', borderRadius: '4px', marginBottom: '20px', fontSize: '0.85rem', fontWeight: 500 }}>
-                  ✓ Profile updated successfully!
+              <h2 className="profile-section-heading">PERSONAL INFORMATION</h2>
+              <p className="profile-section-desc">
+                Update your contact details and default delivery destination for future orders.
+              </p>
+
+              {infoSuccess && (
+                <div className="profile-alert-success">
+                  <CheckCircle size={18} />
+                  <span>{infoSuccess}</span>
                 </div>
               )}
-              <form onSubmit={handleUpdate} style={{ maxWidth: '480px' }}>
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Full Name</label>
-                  <input type="text" value={name} onChange={e => setName(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }} />
+              {infoError && (
+                <div className="profile-alert-error">
+                  <AlertCircle size={18} />
+                  <span>{infoError}</span>
                 </div>
-                <div style={{ marginBottom: '16px' }}>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Phone Number</label>
-                  <input type="text" value={phone} onChange={e => setPhone(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }} />
+              )}
+
+              <form onSubmit={handleUpdateProfile}>
+                <div className="profile-form-grid">
+                  <div className="profile-form-group">
+                    <label className="profile-label">Full Name *</label>
+                    <input
+                      type="text"
+                      className="profile-input"
+                      value={name}
+                      onChange={e => setName(e.target.value)}
+                      placeholder="e.g. Linh Nguyen"
+                      required
+                    />
+                  </div>
+
+                  <div className="profile-form-group">
+                    <label className="profile-label">Email Address (Read-only)</label>
+                    <input
+                      type="email"
+                      className="profile-input"
+                      value={currentUser.email}
+                      disabled
+                    />
+                  </div>
+
+                  <div className="profile-form-group">
+                    <label className="profile-label">Phone Number</label>
+                    <input
+                      type="tel"
+                      className="profile-input"
+                      value={phone}
+                      onChange={e => setPhone(e.target.value)}
+                      placeholder="e.g. +84 987 654 321"
+                    />
+                  </div>
+
+                  <div className="profile-form-group">
+                    <label className="profile-label">System Role</label>
+                    <input
+                      type="text"
+                      className="profile-input"
+                      value={currentUser.role === 'admin' ? 'Administrator' : 'Lune Client Member'}
+                      disabled
+                    />
+                  </div>
+
+                  <div className="profile-form-group profile-form-full">
+                    <label className="profile-label">Default Delivery Address</label>
+                    <input
+                      type="text"
+                      className="profile-input"
+                      value={address}
+                      onChange={e => setAddress(e.target.value)}
+                      placeholder="Street, Ward, District, City"
+                    />
+                  </div>
                 </div>
-                <div style={{ marginBottom: '24px' }}>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Default Delivery Address</label>
-                  <input type="text" value={address} onChange={e => setAddress(e.target.value)} style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }} />
-                </div>
-                <button type="submit" style={{ padding: '12px 32px', backgroundColor: '#775B3F', color: '#FFFFFF', border: 'none', borderRadius: '2px', fontWeight: 600, letterSpacing: '0.04em', cursor: 'pointer', transition: 'background-color 0.2s ease' }}>
-                  SAVE CHANGES
+
+                <button type="submit" className="profile-submit-btn">
+                  Save Changes
                 </button>
               </form>
+
+              {/* CHANGE PASSWORD SUB-SECTION */}
+              <div className="profile-password-section">
+                <h3 className="profile-section-heading" style={{ fontSize: '1.1rem' }}>
+                  CHANGE PASSWORD
+                </h3>
+                <p className="profile-section-desc">
+                  Ensure your account is protected with a secure and unique password.
+                </p>
+
+                {passSuccess && (
+                  <div className="profile-alert-success">
+                    <CheckCircle size={18} />
+                    <span>{passSuccess}</span>
+                  </div>
+                )}
+                {passError && (
+                  <div className="profile-alert-error">
+                    <AlertCircle size={18} />
+                    <span>{passError}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleChangePassword}>
+                  <div className="profile-form-grid">
+                    <div className="profile-form-group profile-form-full">
+                      <label className="profile-label">Current Password *</label>
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          type={showOldPass ? 'text' : 'password'}
+                          className="profile-input"
+                          value={oldPassword}
+                          onChange={e => setOldPassword(e.target.value)}
+                          placeholder="Enter your current password"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowOldPass(!showOldPass)}
+                          style={{ position: 'absolute', right: 12, top: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#7D6B5A' }}
+                        >
+                          {showOldPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="profile-form-group">
+                      <label className="profile-label">New Password *</label>
+                      <div style={{ position: 'relative' }}>
+                        <input
+                          type={showNewPass ? 'text' : 'password'}
+                          className="profile-input"
+                          value={newPassword}
+                          onChange={e => setNewPassword(e.target.value)}
+                          placeholder="At least 6 characters"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPass(!showNewPass)}
+                          style={{ position: 'absolute', right: 12, top: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#7D6B5A' }}
+                        >
+                          {showNewPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="profile-form-group">
+                      <label className="profile-label">Confirm New Password *</label>
+                      <input
+                        type="password"
+                        className="profile-input"
+                        value={confirmPassword}
+                        onChange={e => setConfirmPassword(e.target.value)}
+                        placeholder="Re-enter new password"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="profile-submit-btn"
+                    disabled={isChangingPass}
+                  >
+                    <KeyRound size={16} />
+                    {isChangingPass ? 'Updating...' : 'Update Password'}
+                  </button>
+                </form>
+              </div>
             </div>
           )}
         </main>
