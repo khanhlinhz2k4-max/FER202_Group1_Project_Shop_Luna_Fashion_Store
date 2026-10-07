@@ -93,7 +93,7 @@ export default function ProductDetailPage() {
           style={{
             display: 'inline-block',
             padding: '12px 24px',
-            backgroundColor: '#1C1917',
+            backgroundColor: '#775B3F',
             color: '#fff',
             textDecoration: 'none',
             fontSize: '0.85rem',
@@ -113,16 +113,20 @@ export default function ProductDetailPage() {
   ].filter(Boolean);
 
   const isFavorited = isInWishlist(product.id);
+  const stock = product.stock !== undefined ? product.stock : 20;
 
   const decreaseQuantity = () => {
     setQuantity((current) => Math.max(1, current - 1));
   };
 
   const increaseQuantity = () => {
-    setQuantity((current) => current + 1);
+    if (stock > 0) {
+      setQuantity((current) => Math.min(stock, current + 1));
+    }
   };
 
   const handleAddToCart = () => {
+    if (stock <= 0) return;
     addToCart(
       product,
       selectedSize || product.sizes?.[0] || 'M',
@@ -240,7 +244,7 @@ export default function ProductDetailPage() {
                       padding: 0,
                       border:
                         activeImageIndex === index
-                          ? '2px solid #1C1917'
+                          ? '2px solid #775B3F'
                           : '1px solid #E7E5E4',
                       backgroundColor: '#EDE8E1',
                       cursor: 'pointer',
@@ -375,11 +379,11 @@ export default function ProductDetailPage() {
                         backgroundColor: color,
                         border:
                           selectedColor === color
-                            ? '2px solid #1C1917'
+                            ? '2px solid #775B3F'
                             : '1px solid #D6D3D1',
                         boxShadow:
                           selectedColor === color
-                            ? '0 0 0 2px white, 0 0 0 3px #1C1917'
+                            ? '0 0 0 2px white, 0 0 0 3px #775B3F'
                             : 'none',
                         cursor: 'pointer'
                       }}
@@ -448,17 +452,18 @@ export default function ProductDetailPage() {
                         padding: '11px 14px',
                         backgroundColor:
                           selectedSize === size
-                            ? '#1C1917'
+                            ? '#775B3F'
                             : '#fff',
                         color:
                           selectedSize === size
                             ? '#fff'
-                            : '#1C1917',
+                            : '#2C2117',
                         border:
                           selectedSize === size
-                            ? '1px solid #1C1917'
+                            ? '1px solid #775B3F'
                             : '1px solid #D6D3D1',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
                       }}
                     >
                       {size}
@@ -468,6 +473,65 @@ export default function ProductDetailPage() {
               </div>
             )}
 
+
+            {/* ================= STOCK STATUS ================= */}
+            <div style={{ marginBottom: '20px' }}>
+              {stock === 0 ? (
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    backgroundColor: '#FEE2E2',
+                    color: '#991B1B',
+                    borderRadius: '4px',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.02em'
+                  }}
+                >
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#DC2626' }} />
+                  OUT OF STOCK
+                </div>
+              ) : stock <= 5 ? (
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    backgroundColor: '#FEF3C7',
+                    color: '#92400E',
+                    borderRadius: '4px',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.02em'
+                  }}
+                >
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#D97706' }} />
+                  LOW STOCK: ONLY {stock} LEFT
+                </div>
+              ) : (
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '6px 12px',
+                    backgroundColor: '#ECFDF5',
+                    color: '#065F46',
+                    borderRadius: '4px',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.02em'
+                  }}
+                >
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+                  IN STOCK ({stock} units available)
+                </div>
+              )}
+            </div>
 
             {/* ================= QUANTITY ================= */}
             <div style={{ marginBottom: '24px' }}>
@@ -486,24 +550,25 @@ export default function ProductDetailPage() {
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
-                  border: '1px solid #D6D3D1'
+                  border: '1px solid #D6D3D1',
+                  opacity: stock === 0 ? 0.5 : 1
                 }}
               >
                 <button
                   type="button"
                   onClick={decreaseQuantity}
-                  disabled={quantity === 1}
+                  disabled={quantity <= 1 || stock === 0}
                   style={{
                     width: '40px',
                     height: '40px',
                     border: 'none',
                     background: '#fff',
                     cursor:
-                      quantity === 1
+                      quantity <= 1 || stock === 0
                         ? 'not-allowed'
                         : 'pointer',
                     opacity:
-                      quantity === 1 ? 0.4 : 1,
+                      quantity <= 1 || stock === 0 ? 0.4 : 1,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -518,18 +583,24 @@ export default function ProductDetailPage() {
                     textAlign: 'center'
                   }}
                 >
-                  {quantity}
+                  {stock === 0 ? 0 : quantity}
                 </span>
 
                 <button
                   type="button"
                   onClick={increaseQuantity}
+                  disabled={quantity >= stock || stock === 0}
                   style={{
                     width: '40px',
                     height: '40px',
                     border: 'none',
                     background: '#fff',
-                    cursor: 'pointer',
+                    cursor:
+                      quantity >= stock || stock === 0
+                        ? 'not-allowed'
+                        : 'pointer',
+                    opacity:
+                      quantity >= stock || stock === 0 ? 0.4 : 1,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -552,23 +623,32 @@ export default function ProductDetailPage() {
               <button
                 type="button"
                 onClick={handleAddToCart}
+                disabled={stock === 0}
                 style={{
                   flex: 1,
                   minHeight: '50px',
                   border: 'none',
-                  backgroundColor: '#1C1917',
+                  backgroundColor: stock === 0 ? '#A8A29E' : '#775B3F',
                   color: '#fff',
-                  cursor: 'pointer',
+                  cursor: stock === 0 ? 'not-allowed' : 'pointer',
                   fontSize: '0.82rem',
                   fontWeight: 600,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '8px'
+                  gap: '8px',
+                  transition: 'background-color 0.2s ease',
+                  opacity: stock === 0 ? 0.7 : 1
+                }}
+                onMouseEnter={(e) => {
+                  if (stock > 0) e.currentTarget.style.backgroundColor = '#5C4A3A';
+                }}
+                onMouseLeave={(e) => {
+                  if (stock > 0) e.currentTarget.style.backgroundColor = '#775B3F';
                 }}
               >
                 <ShoppingBag size={17} />
-                ADD TO BAG
+                {stock === 0 ? 'OUT OF STOCK' : 'ADD TO BAG'}
               </button>
 
               <button
@@ -710,12 +790,12 @@ export default function ProductDetailPage() {
                 border: 'none',
                 borderBottom:
                   activeTab === 'description'
-                    ? '2px solid #1C1917'
+                    ? '2px solid #775B3F'
                     : '2px solid transparent',
                 backgroundColor: '#fff',
                 color:
                   activeTab === 'description'
-                    ? '#1C1917'
+                    ? '#775B3F'
                     : '#78716C',
                 cursor: 'pointer',
                 fontSize: '0.75rem',
@@ -737,12 +817,12 @@ export default function ProductDetailPage() {
                 border: 'none',
                 borderBottom:
                   activeTab === 'care'
-                    ? '2px solid #1C1917'
+                    ? '2px solid #775B3F'
                     : '2px solid transparent',
                 backgroundColor: '#fff',
                 color:
                   activeTab === 'care'
-                    ? '#1C1917'
+                    ? '#775B3F'
                     : '#78716C',
                 cursor: 'pointer',
                 fontSize: '0.75rem',
@@ -764,12 +844,12 @@ export default function ProductDetailPage() {
                 border: 'none',
                 borderBottom:
                   activeTab === 'shipping'
-                    ? '2px solid #1C1917'
+                    ? '2px solid #775B3F'
                     : '2px solid transparent',
                 backgroundColor: '#fff',
                 color:
                   activeTab === 'shipping'
-                    ? '#1C1917'
+                    ? '#775B3F'
                     : '#78716C',
                 cursor: 'pointer',
                 fontSize: '0.75rem',

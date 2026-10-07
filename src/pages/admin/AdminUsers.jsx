@@ -11,11 +11,13 @@ export default function AdminUsers() {
 
   return (
     <div>
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '1.7rem', fontWeight: 700, margin: '0 0 6px', color: '#0F172A' }}>REGISTERED CLIENTS</h1>
-        <p style={{ color: '#64748B', margin: 0, fontSize: '0.9rem' }}>
-          Accounts registered on the Lune Storefront and their assigned roles.
-        </p>
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-title">REGISTERED CLIENTS</h1>
+          <p className="admin-subtitle">
+            Accounts registered on the Lune Storefront and their assigned roles.
+          </p>
+        </div>
       </div>
 
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -34,11 +36,11 @@ export default function AdminUsers() {
               {users.map(u => (
                 <tr key={u.id}>
                   <td>
-                    <strong style={{ color: '#0F172A' }}>{u.name}</strong>
+                    <strong style={{ color: '#2C2117' }}>{u.name}</strong>
                   </td>
-                  <td>{u.email}</td>
-                  <td>{u.phone || '—'}</td>
-                  <td style={{ maxWidth: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <td style={{ color: '#5C4A3A' }}>{u.email}</td>
+                  <td style={{ color: '#5C4A3A' }}>{u.phone || '—'}</td>
+                  <td style={{ maxWidth: '250px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#5C4A3A' }}>
                     {u.address || '—'}
                   </td>
                   <td>
@@ -47,8 +49,9 @@ export default function AdminUsers() {
                       borderRadius: '12px',
                       fontSize: '0.75rem',
                       fontWeight: 600,
-                      backgroundColor: u.role === 'admin' ? '#FEF3C7' : '#EFF6FF',
-                      color: u.role === 'admin' ? '#92400E' : '#1E40AF'
+                      backgroundColor: u.role === 'admin' ? '#F9F2E7' : '#F5EFEB',
+                      color: u.role === 'admin' ? '#775B3F' : '#5C4A3A',
+                      border: u.role === 'admin' ? '1px solid #C8AE84' : 'none'
                     }}>
                       {u.role === 'admin' ? '🛡️ Admin' : '👤 Customer'}
                     </span>

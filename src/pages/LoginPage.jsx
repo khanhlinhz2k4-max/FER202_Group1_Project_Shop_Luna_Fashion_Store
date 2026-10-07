@@ -16,7 +16,7 @@ import {
 import { useShop } from '../context/ShopContext';
 
 export default function LoginPage() {
-  const { login: contextLogin } = useShop();
+  const { login: contextLogin, register: contextRegister, users: contextUsers } = useShop();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,22 +44,46 @@ export default function LoginPage() {
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSent, setForgotSent] = useState(false);
 
-  // Seed default demo account if no accounts exist yet
+  // Seed default demo accounts (Customer & Admin) if missing
   useEffect(() => {
     try {
       const existing = localStorage.getItem('lune_registered_users');
-      if (!existing) {
-        const demoAccounts = [
-          {
-            id: 'demo-1',
-            fullName: 'Linh Nguyen',
-            email: 'demo@lune-atelier.com',
-            username: 'linhnguyen',
-            password: 'Password@123',
-            createdAt: new Date().toISOString()
-          }
-        ];
-        localStorage.setItem('lune_registered_users', JSON.stringify(demoAccounts));
+      let registered = existing ? JSON.parse(existing) : [];
+      if (!Array.isArray(registered)) registered = [];
+
+      let modified = false;
+
+      // 1. Demo Customer
+      if (!registered.some(u => u.email?.toLowerCase() === 'demo@lune-atelier.com' || u.username === 'linhnguyen')) {
+        registered.push({
+          id: 'demo-1',
+          fullName: 'Linh Nguyen',
+          email: 'demo@lune-atelier.com',
+          username: 'linhnguyen',
+          password: 'Password@123',
+          role: 'user',
+          createdAt: new Date().toISOString()
+        });
+        modified = true;
+      }
+
+      // 2. Demo Admin
+      if (!registered.some(u => u.email?.toLowerCase() === 'admin@lune.com' || u.username === 'admin')) {
+        registered.push({
+          id: 'user-admin',
+          fullName: 'Lune Administrator',
+          name: 'Lune Administrator',
+          email: 'admin@lune.com',
+          username: 'admin',
+          password: 'Admin@123',
+          role: 'admin',
+          createdAt: new Date().toISOString()
+        });
+        modified = true;
+      }
+
+      if (modified || !existing) {
+        localStorage.setItem('lune_registered_users', JSON.stringify(registered));
       }
     } catch (e) {
       console.error(e);
@@ -98,13 +122,52 @@ export default function LoginPage() {
         users = [];
       }
 
+      // Merge with context users if any are missing
+      if (Array.isArray(contextUsers)) {
+        contextUsers.forEach(cu => {
+          if (!users.some(u => u.email?.toLowerCase() === cu.email?.toLowerCase())) {
+            users.push({
+              id: cu.id,
+              fullName: cu.name,
+              name: cu.name,
+              email: cu.email,
+              username: cu.email ? cu.email.split('@')[0] : 'user',
+              password: cu.password,
+              role: cu.role
+            });
+          }
+        });
+      }
+
       // Check matching user by email OR username (case-insensitive)
       const inputTrimmed = identifier.trim().toLowerCase();
-      const matchedUser = users.find(
+      let matchedUser = users.find(
         u => (u.email?.toLowerCase() === inputTrimmed || u.username?.toLowerCase() === inputTrimmed)
       );
 
-      if (!matchedUser || matchedUser.password !== password) {
+      // Direct fallback for hardcoded default admin
+      if (!matchedUser && (inputTrimmed === 'admin@lune.com' || inputTrimmed === 'admin') && (password === 'admin123' || password === 'Admin@123')) {
+        matchedUser = {
+          id: 'user-admin',
+          fullName: 'Lune Administrator',
+          name: 'Lune Administrator',
+          email: 'admin@lune.com',
+          username: 'admin',
+          password: 'Admin@123',
+          role: 'admin'
+        };
+      }
+
+      const isPasswordMatched = Boolean(
+        matchedUser && (
+          matchedUser.password === password ||
+          // Admin accepts both Admin@123 and admin123
+          (matchedUser.role === 'admin' && (password === 'admin123' || password === 'Admin@123')) ||
+          (inputTrimmed === 'admin@lune.com' && (password === 'admin123' || password === 'Admin@123'))
+        )
+      );
+
+      if (!matchedUser || !isPasswordMatched) {
         setIsLoading(false);
         setErrorMsg('Invalid email/username or password. Please verify your credentials.');
         setFieldErrors({
@@ -120,12 +183,26 @@ export default function LoginPage() {
       setLoggedInName(matchedUser.fullName || matchedUser.name);
 
       // Context sync
-      contextLogin(matchedUser.email, matchedUser.password);
+      const syncResult = contextLogin(matchedUser.email, matchedUser.password);
+      if (!syncResult?.success && contextRegister) {
+        contextRegister({
+          name: matchedUser.fullName || matchedUser.name,
+          email: matchedUser.email,
+          password: matchedUser.password,
+          role: matchedUser.role || (matchedUser.email === 'admin@lune.com' ? 'admin' : 'user')
+        });
+      }
 
       try {
         localStorage.setItem('lune_user_authenticated', 'true');
         localStorage.setItem('lune_user_name', matchedUser.fullName || matchedUser.name);
         localStorage.setItem('lune_user_email', matchedUser.email);
+        localStorage.setItem('lune_current_user', JSON.stringify({
+          id: matchedUser.id || 'user-admin',
+          name: matchedUser.fullName || matchedUser.name,
+          email: matchedUser.email,
+          role: matchedUser.role || (matchedUser.email === 'admin@lune.com' ? 'admin' : 'user')
+        }));
         
         if (rememberMe) {
           localStorage.setItem('lune_remembered_identifier', identifier.trim());

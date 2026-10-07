@@ -21,7 +21,7 @@ export default function ProtectedRoute({ children, requireAdmin = false }) {
 
   if (requireAdmin && currentUser.role !== 'admin') {
     // If not admin, redirect to home
-    alert("Quyền truy cập bị từ chối: Trang này chỉ dành cho Quản trị viên (Admin).");
+    alert("Access denied: This section is restricted to Administrators.");
     return <Navigate to="/" replace />;
   }
 

@@ -16,6 +16,7 @@
   name: "Lune Silk Minimal Shirt", // Chuỗi tên sản phẩm
   price: 145,                     // Số nguyên (KHÔNG kèm ký tự '$' để tiện tính toán)
   category: "women",              // "women" | "men" | "accessories"
+  stock: 18,                      // Số lượng tồn kho khả dụng (Mới bổ sung bởi TV1)
   image: "https://...",           // Link ảnh chính
   images: ["url1", "url2"],       // Mảng các link ảnh phụ (thumbnail)
   sizes: ["XS", "S", "M", "L"],   // Mảng kích cỡ
@@ -68,21 +69,30 @@
 ## 👥 II. BẢNG PHÂN CÔNG CHI TIẾT 6 THÀNH VIÊN
 
 ### 👤 THÀNH VIÊN 1: TRƯỞNG NHÓM (TEAM LEADER)
-* **Vai trò:** Quản trị Kiến trúc Hệ thống, Điều phối Git & Trang Cửa Hàng Tổng Hợp.
+* **Vai trò:** Quản trị Kiến trúc Hệ thống, Điều phối Git, Trang Cửa Hàng Tổng Hợp & **Luồng Số Lượng Tồn Kho Sản Phẩm (Inventory & Stock Flow)**.
 * **Nhiệm vụ cụ thể:**
   1. **Khởi tạo Lõi State toàn cục (`src/context/ShopContext.jsx`):**
      * Quản lý State: `products`, `cart`, `wishlist`, `orders`, `currentUser`.
-     * Cung cấp các hàm dùng chung: `addToCart()`, `removeFromCart()`, `updateQuantity()`, `toggleWishlist()`, `addProduct()`, `updateProduct()`, `deleteProduct()`, `addOrder()`.
+     * Cung cấp các hàm dùng chung: `addToCart()`, `removeFromCart()`, `updateQuantity()`, `toggleWishlist()`, `addProduct()`, `updateProduct()`, `deleteProduct()`, `addOrder()`, `updateOrderStatus()`.
      * Tự động đồng bộ đọc/ghi với `localStorage`.
   2. **Quản lý Định tuyến tổng & Git (`src/App.jsx`):**
      * Khai báo Router cấp cao nhất, bọc `ShopProvider`.
-     * Quản lý nhánh `main`, thiết lập Branch Protection, duyệt Pull Request (Code Review), giải quyết xung đột khi merge.
+     * Quản lý nhánh `main` và nhánh làm việc `linh`, duyệt Code Review, giải quyết xung đột khi merge.
   3. **Xây dựng Trang Cửa Hàng Toàn Diện (`src/pages/ShopPage.jsx` & `ShopPage.css`):**
      * Lưới hiển thị danh sách toàn bộ sản phẩm.
      * **Bộ lọc đa chiều (Filter Sidebar):** Lọc theo khoảng giá ($0-$100, $100-$250, $250+), theo danh mục, theo Size và Màu sắc.
      * **Sắp xếp (Sorting):** Giá tăng dần, giá giảm dần, hàng mới nhất.
      * **Phân trang (Pagination):** Chia số trang (1, 2, 3...) hoặc nút "Load More".
-* **Files phụ trách:** `src/context/ShopContext.jsx`, `src/App.jsx`, `src/pages/ShopPage.jsx`, `src/pages/ShopPage.css`.
+  4. **Triển khai Trọn vẹn Luồng Tồn Kho Sản Phẩm (Inventory & Stock Management Flow):**
+     * **Tự động trừ tồn kho:** Khi khách hàng đặt đơn (`addOrder`), hệ thống tự động trừ số lượng tồn kho tương ứng của từng sản phẩm trong kho (`stock = currentStock - quantity`).
+     * **Tự động hoàn kho khi hủy đơn:** Khi Admin hoặc khách hủy đơn hàng (`updateOrderStatus` thành `"Cancelled"`), hệ thống tự động hoàn trả lại đúng số lượng vào kho sản phẩm.
+     * **Quản trị Tồn kho Admin (`AdminProducts.jsx`):** Thêm cột hiển thị tồn kho, gắn thẻ trạng thái màu (Còn hàng: xanh lá >10, Sắp hết: cam vàng 1-10, Hết hàng: đỏ =0), cho phép nhập và chỉnh sửa số lượng tồn kho trong Modal Thêm/Sửa sản phẩm.
+     * **Kiểm soát Tồn kho Client (`ProductDetailPage.jsx`, `QuickViewModal.jsx`, `ProductCard.jsx`):**
+       - Hiển thị badge trạng thái tồn kho chuẩn phong cách Warm Luxury.
+       - Ràng buộc bộ chọn số lượng không cho phép vượt quá số lượng hàng tồn kho còn lại.
+       - Hiển thị nhãn `SOLD OUT` trên danh sách sản phẩm.
+       - Tự động vô hiệu hóa nút `ADD TO BAG` và đổi thành `OUT OF STOCK` khi sản phẩm hết hàng.
+* **Files phụ trách:** `src/context/ShopContext.jsx`, `src/App.jsx`, `src/pages/ShopPage.jsx`, `src/pages/ShopPage.css`, `src/pages/admin/AdminProducts.jsx`, `src/pages/ProductDetailPage.jsx`, `src/components/QuickViewModal.jsx`, `src/components/ProductCard.jsx`.
 
 ---
 

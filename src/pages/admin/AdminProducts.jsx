@@ -9,6 +9,7 @@ const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1515886657613-9f3515b0
 const emptyForm = {
   name: '',
   price: '',
+  stock: '20',
   category: 'Women',
   image: FALLBACK_IMAGE,
   description: '',
@@ -18,10 +19,12 @@ const emptyForm = {
 const validate = (form) => {
   const errors = {};
   const price = Number(form.price);
-  if (!form.name.trim()) errors.name = 'Vui lòng nhập tên sản phẩm';
-  if (form.price === '' || Number.isNaN(price) || price <= 0) errors.price = 'Giá phải là số lớn hơn 0';
-  if (!/^https?:\/\/\S+$/i.test(form.image.trim())) errors.image = 'Link ảnh phải bắt đầu bằng http:// hoặc https://';
-  if (!form.description.trim()) errors.description = 'Vui lòng nhập mô tả sản phẩm';
+  const stock = Number(form.stock);
+  if (!form.name.trim()) errors.name = 'Please enter product name';
+  if (form.price === '' || Number.isNaN(price) || price <= 0) errors.price = 'Price must be greater than 0';
+  if (form.stock === '' || Number.isNaN(stock) || stock < 0) errors.stock = 'Stock must be a non-negative number';
+  if (!/^https?:\/\/\S+$/i.test(form.image.trim())) errors.image = 'Image URL must start with http:// or https://';
+  if (!form.description.trim()) errors.description = 'Please enter product description';
   return errors;
 };
 
@@ -69,7 +72,7 @@ export default function AdminProducts() {
     const defaultCategory =
       categoryOptions.find((c) => c.toLowerCase() === 'women') || categoryOptions[0] || 'Women';
     setEditingProduct(null);
-    setForm({ ...emptyForm, category: defaultCategory });
+    setForm({ ...emptyForm, category: defaultCategory, stock: '20' });
     setErrors({});
     setIsModalOpen(true);
   };
@@ -79,6 +82,7 @@ export default function AdminProducts() {
     setForm({
       name: product.name || '',
       price: String(product.price ?? ''),
+      stock: String(product.stock ?? 20),
       category: product.category || categoryOptions[0] || 'Women',
       image: product.image || '',
       description: product.description || '',
@@ -97,6 +101,7 @@ export default function AdminProducts() {
     const payload = {
       name: form.name.trim(),
       price: Number(form.price),
+      stock: Number(form.stock) >= 0 ? Number(form.stock) : 0,
       category: form.category,
       image: form.image.trim(),
       description: form.description.trim(),
@@ -108,7 +113,7 @@ export default function AdminProducts() {
         ...payload,
         images: [payload.image, ...(editingProduct.images || []).slice(1)],
       });
-      showToast('Đã cập nhật sản phẩm');
+      showToast('Product updated successfully');
     } else {
       addProduct({
         ...payload,
@@ -118,15 +123,15 @@ export default function AdminProducts() {
         colors: ['#C8AE84', '#775B3F'],
         isNew: true,
       });
-      showToast('Đã thêm sản phẩm mới');
+      showToast('Product added successfully');
     }
     closeModal();
   };
 
   const handleDelete = (product) => {
-    if (!window.confirm(`Bạn có chắc muốn xóa sản phẩm "${product.name}"?`)) return;
+    if (!window.confirm(`Are you sure you want to delete product "${product.name}"?`)) return;
     deleteProduct(product.id);
-    showToast('Đã xóa sản phẩm');
+    showToast('Product deleted successfully');
   };
 
   return (
@@ -141,7 +146,7 @@ export default function AdminProducts() {
       <div className="admin-page-header">
         <div>
           <h1 className="admin-title">PRODUCT MANAGEMENT</h1>
-          <p className="admin-subtitle">Thêm, xem, sửa, xóa sản phẩm trong kho.</p>
+          <p className="admin-subtitle">Create, view, update, and delete products in inventory.</p>
         </div>
         <button type="button" className="admin-primary-btn" onClick={handleOpenCreate}>
           <Plus size={18} /> Add New Product
@@ -153,7 +158,7 @@ export default function AdminProducts() {
           <Search size={18} color="#94A3B8" />
           <input
             type="text"
-            placeholder="Tìm theo tên hoặc danh mục..."
+            placeholder="Search by product name or category..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -164,7 +169,7 @@ export default function AdminProducts() {
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
-        <span className="admin-count">{displayedProducts.length} sản phẩm</span>
+        <span className="admin-count">{displayedProducts.length} products</span>
       </div>
 
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -175,6 +180,7 @@ export default function AdminProducts() {
                 <th>Product</th>
                 <th>Category</th>
                 <th>Price</th>
+                <th>Stock</th>
                 <th>Tag / Status</th>
                 <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
@@ -182,7 +188,7 @@ export default function AdminProducts() {
             <tbody>
               {displayedProducts.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="admin-empty">Không tìm thấy sản phẩm phù hợp.</td>
+                  <td colSpan="6" className="admin-empty">No matching products found.</td>
                 </tr>
               ) : (
                 displayedProducts.map((p) => (
@@ -199,6 +205,19 @@ export default function AdminProducts() {
                     <td><span className="admin-cat-badge">{p.category || '—'}</span></td>
                     <td style={{ fontWeight: 600, color: '#0F172A' }}>${p.price}</td>
                     <td>
+                      <span style={{
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        backgroundColor: (p.stock ?? 0) === 0 ? '#FEE2E2' : (p.stock ?? 0) <= 5 ? '#FEF3C7' : '#F0FDF4',
+                        color: (p.stock ?? 0) === 0 ? '#B91C1C' : (p.stock ?? 0) <= 5 ? '#B45309' : '#15803D',
+                        border: `1px solid ${(p.stock ?? 0) === 0 ? '#FECACA' : (p.stock ?? 0) <= 5 ? '#FDE68A' : '#BBF7D0'}`
+                      }}>
+                        {(p.stock ?? 0) === 0 ? '0 (Out of stock)' : (p.stock ?? 0) <= 5 ? `${p.stock} (Low stock)` : `${p.stock} in stock`}
+                      </span>
+                    </td>
+                    <td>
                       {p.tag ? (
                         <span style={{ fontSize: '0.75rem', color: '#775B3F', fontWeight: 600 }}>{p.tag}</span>
                       ) : (
@@ -207,13 +226,13 @@ export default function AdminProducts() {
                     </td>
                     <td>
                       <div className="admin-actions">
-                        <Link to={`/product/${p.id}`} target="_blank" title="Xem trên cửa hàng" className="admin-icon-btn">
+                        <Link to={`/product/${p.id}`} target="_blank" title="View on store" className="admin-icon-btn">
                           <Eye size={15} />
                         </Link>
-                        <button type="button" title="Sửa" className="admin-icon-btn edit" onClick={() => handleOpenEdit(p)}>
+                        <button type="button" title="Edit" className="admin-icon-btn edit" onClick={() => handleOpenEdit(p)}>
                           <Edit2 size={15} />
                         </button>
-                        <button type="button" title="Xóa" className="admin-icon-btn danger" onClick={() => handleDelete(p)}>
+                        <button type="button" title="Delete" className="admin-icon-btn danger" onClick={() => handleDelete(p)}>
                           <Trash2 size={15} />
                         </button>
                       </div>
@@ -238,20 +257,20 @@ export default function AdminProducts() {
 
             <form onSubmit={handleSubmit} noValidate>
               <div className="admin-field">
-                <label>Tên sản phẩm *</label>
+                <label>Product Name *</label>
                 <input
                   type="text"
                   className={`admin-input ${errors.name ? 'invalid' : ''}`}
                   value={form.name}
                   onChange={(e) => updateField('name', e.target.value)}
-                  placeholder="VD: Silk Minimal Dress"
+                  placeholder="e.g. Silk Minimal Dress"
                 />
                 {errors.name && <span className="admin-error">{errors.name}</span>}
               </div>
 
               <div className="admin-field admin-field-row">
                 <div>
-                  <label>Giá ($) *</label>
+                  <label>Price ($) *</label>
                   <input
                     type="number"
                     min="0"
@@ -263,21 +282,34 @@ export default function AdminProducts() {
                   {errors.price && <span className="admin-error">{errors.price}</span>}
                 </div>
                 <div>
-                  <label>Danh mục</label>
-                  <select
-                    className="admin-input"
-                    value={form.category}
-                    onChange={(e) => updateField('category', e.target.value)}
-                  >
-                    {categoryOptions.map((c) => (
-                      <option key={c} value={c}>{c}</option>
-                    ))}
-                  </select>
+                  <label>Stock Quantity *</label>
+                  <input
+                    type="number"
+                    min="0"
+                    className={`admin-input ${errors.stock ? 'invalid' : ''}`}
+                    value={form.stock}
+                    onChange={(e) => updateField('stock', e.target.value)}
+                    placeholder="20"
+                  />
+                  {errors.stock && <span className="admin-error">{errors.stock}</span>}
                 </div>
               </div>
 
               <div className="admin-field">
-                <label>Link ảnh *</label>
+                <label>Category</label>
+                <select
+                  className="admin-input"
+                  value={form.category}
+                  onChange={(e) => updateField('category', e.target.value)}
+                >
+                  {categoryOptions.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="admin-field">
+                <label>Image URL *</label>
                 <input
                   type="text"
                   className={`admin-input ${errors.image ? 'invalid' : ''}`}
@@ -289,24 +321,24 @@ export default function AdminProducts() {
               </div>
 
               <div className="admin-field">
-                <label>Tag (không bắt buộc)</label>
+                <label>Tag (Optional)</label>
                 <input
                   type="text"
                   className="admin-input"
                   value={form.tag}
                   onChange={(e) => updateField('tag', e.target.value)}
-                  placeholder="VD: New Season, Bestseller"
+                  placeholder="e.g. New Season, Bestseller"
                 />
               </div>
 
               <div className="admin-field">
-                <label>Mô tả *</label>
+                <label>Description *</label>
                 <textarea
                   rows="3"
                   className={`admin-input ${errors.description ? 'invalid' : ''}`}
                   value={form.description}
                   onChange={(e) => updateField('description', e.target.value)}
-                  placeholder="Chất liệu, form dáng, xuất xứ..."
+                  placeholder="Fabric, silhouette, origin details..."
                 />
                 {errors.description && <span className="admin-error">{errors.description}</span>}
               </div>

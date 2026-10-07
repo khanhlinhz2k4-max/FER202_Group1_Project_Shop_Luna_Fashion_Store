@@ -21,30 +21,32 @@ export default function AdminOrders() {
 
   return (
     <div>
-      <div style={{ marginBottom: '24px' }}>
-        <h1 style={{ fontSize: '1.7rem', fontWeight: 700, margin: '0 0 6px', color: '#0F172A' }}>ORDER FULFILLMENT</h1>
-        <p style={{ color: '#64748B', margin: 0, fontSize: '0.9rem' }}>
-          Inspect orders placed by customers and progress status (Pending → Shipping → Delivered).
-        </p>
+      <div className="admin-page-header">
+        <div>
+          <h1 className="admin-title">ORDER FULFILLMENT</h1>
+          <p className="admin-subtitle">
+            Inspect orders placed by customers and progress status (Pending → Shipping → Delivered).
+          </p>
+        </div>
       </div>
 
       {/* Filter bar */}
       <div className="admin-card" style={{ marginBottom: '24px', padding: '16px 20px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '240px', backgroundColor: '#F8FAFC', padding: '8px 14px', borderRadius: '6px', border: '1px solid #E2E8F0' }}>
-          <Search size={18} color="#94A3B8" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '240px', backgroundColor: '#FAF7F2', padding: '8px 14px', borderRadius: '4px', border: '1px solid #E7DDCE' }}>
+          <Search size={18} color="#8F7965" />
           <input
             type="text"
             placeholder="Search by Order ID, customer name or phone..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            style={{ border: 'none', background: 'none', outline: 'none', width: '100%', fontSize: '0.88rem' }}
+            style={{ border: 'none', background: 'none', outline: 'none', width: '100%', fontSize: '0.88rem', color: '#2C2117' }}
           />
         </div>
 
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          style={{ padding: '8px 14px', borderRadius: '6px', border: '1px solid #E2E8F0', outline: 'none', backgroundColor: '#fff', fontSize: '0.88rem' }}
+          style={{ padding: '8px 14px', borderRadius: '4px', border: '1px solid #E7DDCE', outline: 'none', backgroundColor: '#fff', fontSize: '0.88rem', color: '#2C2117' }}
         >
           <option value="all">All Statuses</option>
           <option value="pending">Pending</option>

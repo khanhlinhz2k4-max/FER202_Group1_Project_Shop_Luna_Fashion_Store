@@ -11,6 +11,7 @@ export const products = [
     image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=900",
     secondaryImage: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=900",
     isNew: true,
+    stock: 18,
     colors: ["#C8AE84", "#FEE3AF", "#775B3F"],
     sizes: ["XS", "S", "M", "L"]
   },
@@ -25,6 +26,7 @@ export const products = [
     image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=900",
     secondaryImage: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=900",
     isNew: true,
+    stock: 12,
     colors: ["#CAA072", "#E0B77C", "#775B3F"],
     sizes: ["S", "M", "L"]
   },
@@ -40,6 +42,7 @@ export const products = [
     image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=900",
     secondaryImage: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&q=80&w=900",
     isNew: true,
+    stock: 25,
     colors: ["#FEE3AF", "#C8AE84"],
     sizes: ["XS", "S", "M", "L", "XL"]
   },
@@ -54,6 +57,7 @@ export const products = [
     image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=900",
     secondaryImage: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=900",
     isNew: true,
+    stock: 15,
     colors: ["#C8AE84", "#775B3F", "#2C2117"],
     sizes: ["XS", "S", "M", "L"]
   },
@@ -67,6 +71,7 @@ export const products = [
     description: "A masterclass in modern proportion. Handcrafted double-faced wool with a belted waist and storm flap detailing.",
     image: "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&q=80&w=900",
     isNew: false,
+    stock: 4,
     colors: ["#CAA072", "#775B3F", "#2C2117"],
     sizes: ["S", "M", "L"]
   },
@@ -80,6 +85,7 @@ export const products = [
     description: "Minimalist silk-satin camisole with a delicate V-neckline and French seams. Ideal under blazers or paired with denim.",
     image: "https://images.unsplash.com/photo-1485968579580-b6d095142e6e?auto=format&fit=crop&q=80&w=900",
     isNew: false,
+    stock: 20,
     colors: ["#FEE3AF", "#E0B77C", "#CAA072"],
     sizes: ["XS", "S", "M"]
   },
@@ -93,6 +99,7 @@ export const products = [
     description: "Full-grain caramel Italian leather with brushed gold hardware. Structured yet soft, designed to patina beautifully with age.",
     image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=80&w=900",
     isNew: true,
+    stock: 8,
     colors: ["#775B3F", "#CAA072", "#2C2117"],
     sizes: ["One Size", "ALL", "M"]
   },
@@ -106,6 +113,7 @@ export const products = [
     description: "Clean contemporary silhouette cut from heavyweight French washed linen. Layered seamlessly over tees or styled buttoned up.",
     image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=900",
     isNew: false,
+    stock: 14,
     colors: ["#C8AE84", "#FEE3AF", "#775B3F"],
     sizes: ["S", "M", "L", "XL"]
   }
