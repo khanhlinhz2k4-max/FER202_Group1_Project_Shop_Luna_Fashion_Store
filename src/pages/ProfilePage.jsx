@@ -22,7 +22,9 @@ import {
   Edit2,
   ArrowRight,
   Shield,
-  Lock
+  Lock,
+  Mail,
+  UserCheck
 } from 'lucide-react';
 import './ProfilePage.css';
 
@@ -34,7 +36,7 @@ import './ProfilePage.css';
  *  - Membership Tier Badge (Atelier VIP Member)
  *  - 5 Tab điều hướng chuyên biệt:
  *     1. My Orders (Đơn hàng đã mua)
- *     2. Personal Details (Thông tin cá nhân)
+ *     2. Personal Details (Thông tin cá nhân & Thẻ định danh)
  *     3. Password & Security (Bảo mật & Đổi mật khẩu độc lập)
  *     4. Address Book (Sổ địa chỉ nhận hàng)
  *     5. Saved Wishlist (Danh sách yêu thích & kết nối TV3)
@@ -133,13 +135,12 @@ export default function ProfilePage() {
 
     const res = updateProfile({ 
       name: name.trim(), 
-      phone: phone.trim(), 
-      address: address.trim() 
+      phone: phone.trim() 
     });
 
     if (res?.success) {
-      setInfoSuccess('Your personal profile has been updated successfully.');
-      setAddresses(prev => prev.map(a => a.isDefault ? { ...a, recipient: name.trim(), phone: phone.trim(), detail: address.trim() } : a));
+      setInfoSuccess('Personal details updated successfully.');
+      setAddresses(prev => prev.map(a => a.isDefault ? { ...a, recipient: name.trim(), phone: phone.trim() } : a));
       setTimeout(() => setInfoSuccess(''), 4000);
     }
   };
@@ -266,6 +267,8 @@ export default function ProfilePage() {
     .slice(0, 2)
     .join('')
     .toUpperCase();
+
+  const primaryAddress = addresses.find(a => a.isDefault)?.detail || address || 'No address set yet';
 
   return (
     <div className="profile-page-container">
@@ -475,12 +478,12 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* TAB 2: PERSONAL DETAILS */}
+          {/* TAB 2: PERSONAL DETAILS (REFINED & HARMONIOUS) */}
           {activeTab === 'info' && (
             <div>
               <h2 className="profile-section-heading">PERSONAL INFORMATION</h2>
               <p className="profile-section-desc">
-                Update your contact details and default delivery destination for future orders.
+                Manage your primary identity details and contact information.
               </p>
 
               {infoSuccess && (
@@ -511,16 +514,6 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="profile-form-group">
-                    <label className="profile-label">Email Address (Read-only)</label>
-                    <input
-                      type="email"
-                      className="profile-input"
-                      value={currentUser.email}
-                      disabled
-                    />
-                  </div>
-
-                  <div className="profile-form-group">
                     <label className="profile-label">Phone Number</label>
                     <input
                       type="tel"
@@ -532,33 +525,49 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="profile-form-group">
-                    <label className="profile-label">System Role</label>
-                    <input
-                      type="text"
-                      className="profile-input"
-                      value={currentUser.role === 'admin' ? 'Administrator' : 'Lune Client Member'}
-                      disabled
-                    />
+                    <label className="profile-label">Email Address (Verified)</label>
+                    <div className="profile-input-locked">
+                      <Mail size={16} className="locked-icon" />
+                      <span className="locked-text">{currentUser.email}</span>
+                      <span className="verified-pill">
+                        <CheckCircle size={12} /> Verified
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="profile-form-group profile-form-full">
-                    <label className="profile-label">Default Delivery Address</label>
-                    <input
-                      type="text"
-                      className="profile-input"
-                      value={address}
-                      onChange={e => setAddress(e.target.value)}
-                      placeholder="Street, Ward, District, City"
-                    />
-                    <small style={{ color: '#8C7B6D', fontSize: '0.78rem', marginTop: '4px' }}>
-                      Tip: You can manage and save multiple destinations in the <strong>Address Book</strong> tab.
-                    </small>
+                  <div className="profile-form-group">
+                    <label className="profile-label">Member Account Status</label>
+                    <div className="profile-input-locked">
+                      <UserCheck size={16} className="locked-icon" />
+                      <span className="locked-text">LUNE VIP #{currentUser.id?.slice(-6).toUpperCase() || 'MEMBER'}</span>
+                      <span className="active-pill">Active</span>
+                    </div>
                   </div>
                 </div>
 
-                <button type="submit" className="profile-submit-btn">
-                  Save Changes
-                </button>
+                {/* Primary Destination Link Banner */}
+                <div className="profile-destination-banner">
+                  <div className="destination-banner-icon">
+                    <MapPin size={22} />
+                  </div>
+                  <div className="destination-banner-info">
+                    <h4 className="destination-banner-title">Primary Delivery Destination</h4>
+                    <p className="destination-banner-address">{primaryAddress}</p>
+                  </div>
+                  <button
+                    type="button"
+                    className="destination-banner-btn"
+                    onClick={() => setActiveTab('addresses')}
+                  >
+                    Manage in Address Book <ArrowRight size={14} />
+                  </button>
+                </div>
+
+                <div className="profile-form-actions">
+                  <button type="submit" className="profile-submit-btn">
+                    <CheckCircle size={16} /> Save Changes
+                  </button>
+                </div>
               </form>
             </div>
           )}
@@ -652,15 +661,16 @@ export default function ProfilePage() {
                   </ul>
                 </div>
 
-                <button
-                  type="submit"
-                  className="profile-submit-btn"
-                  disabled={isChangingPass}
-                  style={{ marginTop: '20px' }}
-                >
-                  <KeyRound size={16} />
-                  {isChangingPass ? 'Updating...' : 'Update Password'}
-                </button>
+                <div className="profile-form-actions">
+                  <button
+                    type="submit"
+                    className="profile-submit-btn"
+                    disabled={isChangingPass}
+                  >
+                    <KeyRound size={16} />
+                    {isChangingPass ? 'Updating...' : 'Update Password'}
+                  </button>
+                </div>
               </form>
             </div>
           )}

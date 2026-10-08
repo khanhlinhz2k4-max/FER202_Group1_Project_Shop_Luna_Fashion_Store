@@ -119,81 +119,9 @@ export default function LoginPage() {
     setIsLoading(true);
 
     setTimeout(() => {
-      // Fetch users from 'lune_users' and contextUsers
-      let users = [];
-      try {
-        const stored = localStorage.getItem('lune_users');
-        users = stored ? JSON.parse(stored) : [];
-        if (!Array.isArray(users)) users = [];
-      } catch {
-        users = [];
-      }
+      const result = contextLogin(identifier, password);
 
-      // Merge with context users if any are missing
-      if (Array.isArray(contextUsers)) {
-        contextUsers.forEach(cu => {
-          if (!users.some(u => (u.email || '').toLowerCase() === (cu.email || '').toLowerCase())) {
-            users.push({
-              id: cu.id,
-              fullName: cu.name,
-              name: cu.name,
-              email: cu.email,
-              username: cu.username || (cu.email ? cu.email.split('@')[0] : 'user'),
-              password: cu.password,
-              role: cu.role || 'user',
-              phone: cu.phone || '',
-              address: cu.address || ''
-            });
-          }
-        });
-      }
-
-      // Check matching user by email OR username (case-insensitive)
-      const inputTrimmed = identifier.trim().toLowerCase();
-      let matchedUser = users.find(
-        u => ((u.email || '').toLowerCase() === inputTrimmed || (u.username || '').toLowerCase() === inputTrimmed)
-      );
-
-      // Direct fallback for hardcoded default admin
-      if (!matchedUser && (inputTrimmed === 'admin@lune.com' || inputTrimmed === 'admin') && (password === 'admin123' || password === 'Admin@123')) {
-        matchedUser = {
-          id: 'user-admin',
-          fullName: 'Lune Administrator',
-          name: 'Lune Administrator',
-          email: 'admin@lune.com',
-          username: 'admin',
-          password: 'Admin@123',
-          role: 'admin'
-        };
-      }
-
-      // Direct fallback for hardcoded default demo customer
-      if (!matchedUser && (inputTrimmed === 'customer@lune.com' || inputTrimmed === 'linhnguyen') && (password === 'user123' || password === 'Password@123')) {
-        matchedUser = {
-          id: 'user-demo',
-          fullName: 'Linh Nguyen',
-          name: 'Linh Nguyen',
-          email: 'customer@lune.com',
-          username: 'linhnguyen',
-          password: 'Password@123',
-          role: 'user',
-          phone: '+84 987 654 321',
-          address: '789 Nguyen Hue, District 1, HCMC'
-        };
-      }
-
-      const isPasswordMatched = Boolean(
-        matchedUser && (
-          matchedUser.password === password ||
-          // Admin accepts both Admin@123 and admin123
-          (matchedUser.role === 'admin' && (password === 'admin123' || password === 'Admin@123')) ||
-          (inputTrimmed === 'admin@lune.com' && (password === 'admin123' || password === 'Admin@123')) ||
-          // Customer demo accepts both Password@123 and user123
-          (matchedUser.role === 'user' && (password === 'user123' || password === 'Password@123'))
-        )
-      );
-
-      if (!matchedUser || !isPasswordMatched) {
+      if (!result.success) {
         setIsLoading(false);
         setErrorMsg('Invalid email/username or password. Please verify your credentials.');
         setFieldErrors({
@@ -203,30 +131,18 @@ export default function LoginPage() {
         return;
       }
 
+      const matchedUser = result.user;
+
       // Authentication Success
       setIsLoading(false);
       setLoginSuccess(true);
       const displayName = matchedUser.fullName || matchedUser.name || 'Valued Member';
       setLoggedInName(displayName);
 
-      // Context sync
-      contextLogin(matchedUser.email, matchedUser.password);
-
       try {
-        const sessionUser = {
-          id: matchedUser.id || `user-${Date.now()}`,
-          name: displayName,
-          email: matchedUser.email,
-          username: matchedUser.username || matchedUser.email?.split('@')[0],
-          role: matchedUser.role || 'user',
-          phone: matchedUser.phone || '',
-          address: matchedUser.address || ''
-        };
-
         localStorage.setItem('lune_user_authenticated', 'true');
         localStorage.setItem('lune_user_name', displayName);
         localStorage.setItem('lune_user_email', matchedUser.email);
-        localStorage.setItem('lune_current_user', JSON.stringify(sessionUser));
         
         if (rememberMe) {
           localStorage.setItem('lune_remembered_identifier', identifier.trim());
@@ -317,6 +233,32 @@ export default function LoginPage() {
                 <span>Welcome back, {loggedInName}! Entering atelier...</span>
               </div>
             )}
+
+            {/* Quick Fill Demo */}
+            <div className="demo-accounts" style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <button 
+                type="button" 
+                className="btn-secondary"
+                style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer', borderRadius: '4px' }}
+                onClick={() => {
+                  setIdentifier('admin@lune.com');
+                  setPassword('Admin@123');
+                }}
+              >
+                Demo Admin
+              </button>
+              <button 
+                type="button" 
+                className="btn-secondary"
+                style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer', borderRadius: '4px' }}
+                onClick={() => {
+                  setIdentifier('customer@lune.com');
+                  setPassword('Password@123');
+                }}
+              >
+                Demo Customer
+              </button>
+            </div>
 
             {/* Form */}
             <form onSubmit={handleLogin} className="auth-actual-form" noValidate>
