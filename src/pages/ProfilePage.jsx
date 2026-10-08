@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { 
   User, 
@@ -13,16 +13,32 @@ import {
   XCircle,
   Eye,
   EyeOff,
-  ShoppingBag
+  ShoppingBag,
+  Heart,
+  MapPin,
+  Sparkles,
+  Plus,
+  Trash2,
+  Edit2,
+  ArrowRight,
+  Shield,
+  Lock
 } from 'lucide-react';
 import './ProfilePage.css';
 
 /**
  * ProfilePage Component
  * Phụ trách: Thành viên 5 (Xác thực, phân quyền & Quản lý hồ sơ khách hàng)
+ * Nâng cấp & Hoàn thiện UI bởi: Thành viên 1 (Leader)
  * Chức năng:
- *  - Tab Thông tin cá nhân: Xem/sửa họ tên, số điện thoại, địa chỉ mặc định, ĐỔI MẬT KHẨU.
- *  - Tab Đơn hàng của tôi (My Orders): Danh sách đơn hàng đã mua, xem trạng thái (Pending, Shipping, Delivered), Hủy đơn (Pending).
+ *  - Membership Tier Badge (Atelier VIP Member)
+ *  - 5 Tab điều hướng chuyên biệt:
+ *     1. My Orders (Đơn hàng đã mua)
+ *     2. Personal Details (Thông tin cá nhân)
+ *     3. Password & Security (Bảo mật & Đổi mật khẩu độc lập)
+ *     4. Address Book (Sổ địa chỉ nhận hàng)
+ *     5. Saved Wishlist (Danh sách yêu thích & kết nối TV3)
+ *  - Nút Đăng xuất an toàn (Sign Out) tích hợp ngay dưới chân thanh menu.
  */
 export default function ProfilePage() {
   const { 
@@ -31,11 +47,14 @@ export default function ProfilePage() {
     updateProfile, 
     changePassword, 
     orders, 
-    updateOrderStatus 
+    updateOrderStatus,
+    wishlist,
+    removeFromWishlist,
+    addToCart
   } = useShop();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState('orders'); // 'orders' or 'info'
+  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'info' | 'security' | 'addresses' | 'wishlist'
 
   // Personal Info Form State
   const [name, setName] = useState(currentUser?.name || '');
@@ -56,6 +75,33 @@ export default function ProfilePage() {
 
   // Orders Filter
   const [orderFilter, setOrderFilter] = useState('all');
+
+  // Address Book State
+  const [addresses, setAddresses] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`lune_addresses_${currentUser?.email}`);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return [
+      {
+        id: 'addr-default',
+        label: 'Primary Residence (Home)',
+        recipient: currentUser?.name || 'Valued Member',
+        phone: currentUser?.phone || '+84 987 654 321',
+        detail: currentUser?.address || '789 Nguyen Hue Boulevard, District 1, Ho Chi Minh City',
+        isDefault: true
+      }
+    ];
+  });
+
+  const [newAddressForm, setNewAddressForm] = useState({
+    label: '',
+    recipient: '',
+    phone: '',
+    detail: ''
+  });
+  const [showAddAddressModal, setShowAddAddressModal] = useState(false);
+  const [addressSuccess, setAddressSuccess] = useState('');
 
   // If unauthenticated, redirect to login
   if (!currentUser) {
@@ -93,6 +139,7 @@ export default function ProfilePage() {
 
     if (res?.success) {
       setInfoSuccess('Your personal profile has been updated successfully.');
+      setAddresses(prev => prev.map(a => a.isDefault ? { ...a, recipient: name.trim(), phone: phone.trim(), detail: address.trim() } : a));
       setTimeout(() => setInfoSuccess(''), 4000);
     }
   };
@@ -142,6 +189,71 @@ export default function ProfilePage() {
     }
   };
 
+  // Handle Add New Address
+  const handleAddAddress = (e) => {
+    e.preventDefault();
+    if (!newAddressForm.detail.trim() || !newAddressForm.recipient.trim()) return;
+
+    const newAddr = {
+      id: `addr-${Date.now()}`,
+      label: newAddressForm.label || 'Secondary Address',
+      recipient: newAddressForm.recipient,
+      phone: newAddressForm.phone || currentUser.phone || '',
+      detail: newAddressForm.detail,
+      isDefault: addresses.length === 0
+    };
+
+    const updated = [...addresses, newAddr];
+    setAddresses(updated);
+    try {
+      localStorage.setItem(`lune_addresses_${currentUser.email}`, JSON.stringify(updated));
+    } catch (e) {}
+
+    setNewAddressForm({ label: '', recipient: '', phone: '', detail: '' });
+    setShowAddAddressModal(false);
+    setAddressSuccess('New delivery destination added to your Address Book.');
+    setTimeout(() => setAddressSuccess(''), 4000);
+  };
+
+  // Handle Set Default Address
+  const handleSetDefaultAddress = (id) => {
+    const target = addresses.find(a => a.id === id);
+    const updated = addresses.map(a => ({
+      ...a,
+      isDefault: a.id === id
+    }));
+    setAddresses(updated);
+    try {
+      localStorage.setItem(`lune_addresses_${currentUser.email}`, JSON.stringify(updated));
+    } catch (e) {}
+
+    if (target) {
+      setAddress(target.detail);
+      updateProfile({ address: target.detail, phone: target.phone });
+    }
+
+    setAddressSuccess('Default shipping destination updated.');
+    setTimeout(() => setAddressSuccess(''), 3000);
+  };
+
+  // Handle Delete Address
+  const handleDeleteAddress = (id) => {
+    if (addresses.length <= 1) {
+      alert('You must maintain at least one delivery address in your account.');
+      return;
+    }
+    const updated = addresses.filter(a => a.id !== id);
+    if (addresses.find(a => a.id === id)?.isDefault && updated.length > 0) {
+      updated[0].isDefault = true;
+      setAddress(updated[0].detail);
+      updateProfile({ address: updated[0].detail });
+    }
+    setAddresses(updated);
+    try {
+      localStorage.setItem(`lune_addresses_${currentUser.email}`, JSON.stringify(updated));
+    } catch (e) {}
+  };
+
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -177,26 +289,75 @@ export default function ProfilePage() {
             <div className="profile-avatar-circle">{initials}</div>
             <h3 className="profile-user-name">{currentUser.name}</h3>
             <p className="profile-user-email">{currentUser.email}</p>
+            
+            {/* Membership Tier Badge */}
+            <div className="profile-tier-badge">
+              <Sparkles size={12} className="tier-icon" />
+              <span>{currentUser.role === 'admin' ? 'ATELIER AMBASSADOR' : 'ATELIER GOLD VIP'}</span>
+            </div>
           </div>
 
-          <button
-            type="button"
-            className={`profile-nav-btn ${activeTab === 'orders' ? 'active' : ''}`}
-            onClick={() => setActiveTab('orders')}
-          >
-            <Package size={18} />
-            <span>My Orders</span>
-            <span className="profile-nav-badge">{userOrders.length}</span>
-          </button>
+          <nav className="profile-nav-menu">
+            <button
+              type="button"
+              className={`profile-nav-btn ${activeTab === 'orders' ? 'active' : ''}`}
+              onClick={() => setActiveTab('orders')}
+            >
+              <Package size={18} />
+              <span>My Orders</span>
+              <span className="profile-nav-badge">{userOrders.length}</span>
+            </button>
 
-          <button
-            type="button"
-            className={`profile-nav-btn ${activeTab === 'info' ? 'active' : ''}`}
-            onClick={() => setActiveTab('info')}
-          >
-            <User size={18} />
-            <span>Personal Details</span>
-          </button>
+            <button
+              type="button"
+              className={`profile-nav-btn ${activeTab === 'info' ? 'active' : ''}`}
+              onClick={() => setActiveTab('info')}
+            >
+              <User size={18} />
+              <span>Personal Details</span>
+            </button>
+
+            <button
+              type="button"
+              className={`profile-nav-btn ${activeTab === 'security' ? 'active' : ''}`}
+              onClick={() => setActiveTab('security')}
+            >
+              <Shield size={18} />
+              <span>Password & Security</span>
+            </button>
+
+            <button
+              type="button"
+              className={`profile-nav-btn ${activeTab === 'addresses' ? 'active' : ''}`}
+              onClick={() => setActiveTab('addresses')}
+            >
+              <MapPin size={18} />
+              <span>Address Book</span>
+              <span className="profile-nav-badge">{addresses.length}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`profile-nav-btn ${activeTab === 'wishlist' ? 'active' : ''}`}
+              onClick={() => setActiveTab('wishlist')}
+            >
+              <Heart size={18} />
+              <span>Saved Wishlist</span>
+              <span className="profile-nav-badge">{wishlist.length}</span>
+            </button>
+          </nav>
+
+          {/* Sidebar Footer Logout Action */}
+          <div className="profile-sidebar-footer">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="profile-sidebar-logout-btn"
+            >
+              <LogOut size={16} />
+              <span>Sign Out Account</span>
+            </button>
+          </div>
         </aside>
 
         {/* Content Area */}
@@ -314,7 +475,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {/* TAB 2: PERSONAL DETAILS & CHANGE PASSWORD */}
+          {/* TAB 2: PERSONAL DETAILS */}
           {activeTab === 'info' && (
             <div>
               <h2 className="profile-section-heading">PERSONAL INFORMATION</h2>
@@ -389,6 +550,9 @@ export default function ProfilePage() {
                       onChange={e => setAddress(e.target.value)}
                       placeholder="Street, Ward, District, City"
                     />
+                    <small style={{ color: '#8C7B6D', fontSize: '0.78rem', marginTop: '4px' }}>
+                      Tip: You can manage and save multiple destinations in the <strong>Address Book</strong> tab.
+                    </small>
                   </div>
                 </div>
 
@@ -396,96 +560,315 @@ export default function ProfilePage() {
                   Save Changes
                 </button>
               </form>
+            </div>
+          )}
 
-              {/* CHANGE PASSWORD SUB-SECTION */}
-              <div className="profile-password-section">
-                <h3 className="profile-section-heading" style={{ fontSize: '1.1rem' }}>
-                  CHANGE PASSWORD
-                </h3>
-                <p className="profile-section-desc">
-                  Ensure your account is protected with a secure and unique password.
-                </p>
+          {/* TAB 3: PASSWORD & SECURITY (INDEPENDENT TAB) */}
+          {activeTab === 'security' && (
+            <div>
+              <h2 className="profile-section-heading">PASSWORD & SECURITY</h2>
+              <p className="profile-section-desc">
+                Ensure your account is protected with a secure and unique password.
+              </p>
 
-                {passSuccess && (
-                  <div className="profile-alert-success">
-                    <CheckCircle size={18} />
-                    <span>{passSuccess}</span>
-                  </div>
-                )}
-                {passError && (
-                  <div className="profile-alert-error">
-                    <AlertCircle size={18} />
-                    <span>{passError}</span>
-                  </div>
-                )}
+              {passSuccess && (
+                <div className="profile-alert-success">
+                  <CheckCircle size={18} />
+                  <span>{passSuccess}</span>
+                </div>
+              )}
+              {passError && (
+                <div className="profile-alert-error">
+                  <AlertCircle size={18} />
+                  <span>{passError}</span>
+                </div>
+              )}
 
-                <form onSubmit={handleChangePassword}>
-                  <div className="profile-form-grid">
-                    <div className="profile-form-group profile-form-full">
-                      <label className="profile-label">Current Password *</label>
-                      <div style={{ position: 'relative' }}>
-                        <input
-                          type={showOldPass ? 'text' : 'password'}
-                          className="profile-input"
-                          value={oldPassword}
-                          onChange={e => setOldPassword(e.target.value)}
-                          placeholder="Enter your current password"
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowOldPass(!showOldPass)}
-                          style={{ position: 'absolute', right: 12, top: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#7D6B5A' }}
-                        >
-                          {showOldPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="profile-form-group">
-                      <label className="profile-label">New Password *</label>
-                      <div style={{ position: 'relative' }}>
-                        <input
-                          type={showNewPass ? 'text' : 'password'}
-                          className="profile-input"
-                          value={newPassword}
-                          onChange={e => setNewPassword(e.target.value)}
-                          placeholder="At least 6 characters"
-                          required
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowNewPass(!showNewPass)}
-                          style={{ position: 'absolute', right: 12, top: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#7D6B5A' }}
-                        >
-                          {showNewPass ? <EyeOff size={16} /> : <Eye size={16} />}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="profile-form-group">
-                      <label className="profile-label">Confirm New Password *</label>
+              <form onSubmit={handleChangePassword}>
+                <div className="profile-form-grid">
+                  <div className="profile-form-group profile-form-full">
+                    <label className="profile-label">Current Password *</label>
+                    <div style={{ position: 'relative' }}>
                       <input
-                        type="password"
+                        type={showOldPass ? 'text' : 'password'}
                         className="profile-input"
-                        value={confirmPassword}
-                        onChange={e => setConfirmPassword(e.target.value)}
-                        placeholder="Re-enter new password"
+                        value={oldPassword}
+                        onChange={e => setOldPassword(e.target.value)}
+                        placeholder="Enter your current password"
                         required
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowOldPass(!showOldPass)}
+                        style={{ position: 'absolute', right: 12, top: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#7D6B5A' }}
+                      >
+                        {showOldPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
                     </div>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="profile-submit-btn"
-                    disabled={isChangingPass}
-                  >
-                    <KeyRound size={16} />
-                    {isChangingPass ? 'Updating...' : 'Update Password'}
-                  </button>
-                </form>
+                  <div className="profile-form-group">
+                    <label className="profile-label">New Password *</label>
+                    <div style={{ position: 'relative' }}>
+                      <input
+                        type={showNewPass ? 'text' : 'password'}
+                        className="profile-input"
+                        value={newPassword}
+                        onChange={e => setNewPassword(e.target.value)}
+                        placeholder="At least 6 characters"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPass(!showNewPass)}
+                        style={{ position: 'absolute', right: 12, top: 12, background: 'none', border: 'none', cursor: 'pointer', color: '#7D6B5A' }}
+                      >
+                        {showNewPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="profile-form-group">
+                    <label className="profile-label">Confirm New Password *</label>
+                    <input
+                      type="password"
+                      className="profile-input"
+                      value={confirmPassword}
+                      onChange={e => setConfirmPassword(e.target.value)}
+                      placeholder="Re-enter new password"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="security-guidelines-box">
+                  <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#2C2117', margin: '0 0 6px' }}>
+                    Password Requirements:
+                  </h4>
+                  <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.8rem', color: '#6B5645', lineHeight: 1.6 }}>
+                    <li>Must be at least 6 characters in length.</li>
+                    <li>Avoid using common dictionary words or easily guessable dates.</li>
+                    <li>For optimal protection, combine letters, numbers, and symbols.</li>
+                  </ul>
+                </div>
+
+                <button
+                  type="submit"
+                  className="profile-submit-btn"
+                  disabled={isChangingPass}
+                  style={{ marginTop: '20px' }}
+                >
+                  <KeyRound size={16} />
+                  {isChangingPass ? 'Updating...' : 'Update Password'}
+                </button>
+              </form>
+            </div>
+          )}
+
+          {/* TAB 4: ADDRESS BOOK */}
+          {activeTab === 'addresses' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '12px' }}>
+                <h2 className="profile-section-heading">ADDRESS BOOK</h2>
+                <button
+                  type="button"
+                  className="profile-action-outline-btn"
+                  onClick={() => setShowAddAddressModal(true)}
+                >
+                  <Plus size={15} /> Add Destination
+                </button>
               </div>
+              <p className="profile-section-desc">
+                Manage your delivery destinations for expedited checkout on upcoming purchases.
+              </p>
+
+              {addressSuccess && (
+                <div className="profile-alert-success" style={{ marginBottom: '20px' }}>
+                  <CheckCircle size={18} />
+                  <span>{addressSuccess}</span>
+                </div>
+              )}
+
+              <div className="address-cards-grid">
+                {addresses.map(addr => (
+                  <div key={addr.id} className={`address-card ${addr.isDefault ? 'is-default' : ''}`}>
+                    <div className="address-card-header">
+                      <span className="address-card-label">{addr.label}</span>
+                      {addr.isDefault && (
+                        <span className="address-default-badge">
+                          <CheckCircle size={12} /> Default Destination
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="address-card-body">
+                      <h4 className="address-recipient-name">{addr.recipient}</h4>
+                      <p className="address-phone">{addr.phone}</p>
+                      <p className="address-detail">{addr.detail}</p>
+                    </div>
+
+                    <div className="address-card-actions">
+                      {!addr.isDefault && (
+                        <button
+                          type="button"
+                          className="address-set-default-btn"
+                          onClick={() => handleSetDefaultAddress(addr.id)}
+                        >
+                          Set as Default
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="address-delete-btn"
+                        onClick={() => handleDeleteAddress(addr.id)}
+                        title="Delete Address"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add Address Modal */}
+              {showAddAddressModal && (
+                <div className="profile-modal-backdrop" onClick={() => setShowAddAddressModal(false)}>
+                  <div className="profile-modal-box" onClick={e => e.stopPropagation()}>
+                    <div className="profile-modal-header">
+                      <h3>Add Delivery Destination</h3>
+                      <button type="button" onClick={() => setShowAddAddressModal(false)} className="profile-modal-close">
+                        ✕
+                      </button>
+                    </div>
+                    <form onSubmit={handleAddAddress} className="profile-modal-form">
+                      <div className="profile-form-group">
+                        <label className="profile-label">Address Tag / Label</label>
+                        <input
+                          type="text"
+                          className="profile-input"
+                          placeholder="e.g. Office, Vacation Home"
+                          value={newAddressForm.label}
+                          onChange={e => setNewAddressForm({ ...newAddressForm, label: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="profile-form-group">
+                        <label className="profile-label">Recipient Name *</label>
+                        <input
+                          type="text"
+                          className="profile-input"
+                          placeholder="Full recipient name"
+                          value={newAddressForm.recipient}
+                          onChange={e => setNewAddressForm({ ...newAddressForm, recipient: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="profile-form-group">
+                        <label className="profile-label">Phone Number *</label>
+                        <input
+                          type="tel"
+                          className="profile-input"
+                          placeholder="+84 900 000 000"
+                          value={newAddressForm.phone}
+                          onChange={e => setNewAddressForm({ ...newAddressForm, phone: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div className="profile-form-group">
+                        <label className="profile-label">Detailed Address *</label>
+                        <textarea
+                          className="profile-input"
+                          rows="3"
+                          placeholder="House number, street name, ward, district, city"
+                          value={newAddressForm.detail}
+                          onChange={e => setNewAddressForm({ ...newAddressForm, detail: e.target.value })}
+                          required
+                        />
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                        <button
+                          type="button"
+                          className="profile-cancel-btn"
+                          onClick={() => setShowAddAddressModal(false)}
+                          style={{ flex: 1 }}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="profile-submit-btn"
+                          style={{ flex: 1.5 }}
+                        >
+                          Save Address
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 5: SAVED WISHLIST PREVIEW & QUICK LINK */}
+          {activeTab === 'wishlist' && (
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '12px' }}>
+                <h2 className="profile-section-heading">SAVED WISHLIST</h2>
+                <Link to="/wishlist" className="profile-action-outline-btn">
+                  Open Dedicated Page <ArrowRight size={14} />
+                </Link>
+              </div>
+              <p className="profile-section-desc">
+                Garments and accessories saved to your personal lookbook ({wishlist.length} {wishlist.length === 1 ? 'piece' : 'pieces'}).
+              </p>
+
+              {wishlist.length === 0 ? (
+                <div className="empty-orders-view">
+                  <Heart size={48} strokeWidth={1.5} style={{ opacity: 0.35, margin: '0 auto 12px', color: '#775B3F' }} />
+                  <p>Your saved wishlist is currently empty.</p>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/shop')}
+                    className="profile-submit-btn"
+                  >
+                    <ShoppingBag size={16} /> Discover Styles
+                  </button>
+                </div>
+              ) : (
+                <div className="profile-wishlist-grid">
+                  {wishlist.map(item => (
+                    <div key={item.id} className="profile-wishlist-card">
+                      <div className="profile-wishlist-img-wrap">
+                        <img src={item.image} alt={item.name} className="profile-wishlist-img" />
+                      </div>
+                      <div className="profile-wishlist-info">
+                        <h4 className="profile-wishlist-title">{item.name}</h4>
+                        <div className="profile-wishlist-price">${item.price}</div>
+                        <div className="profile-wishlist-actions">
+                          <button
+                            type="button"
+                            className="profile-wishlist-add-btn"
+                            onClick={() => {
+                              addToCart(item, item.sizes?.[0] || 'M', item.colors?.[0] || 'Default', 1);
+                              alert(`Added "${item.name}" to bag.`);
+                            }}
+                          >
+                            <ShoppingBag size={14} /> Add to Bag
+                          </button>
+                          <button
+                            type="button"
+                            className="profile-wishlist-remove-btn"
+                            onClick={() => removeFromWishlist(item.id)}
+                            title="Remove from Wishlist"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </main>

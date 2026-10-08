@@ -92,7 +92,11 @@
        - Ràng buộc bộ chọn số lượng không cho phép vượt quá số lượng hàng tồn kho còn lại.
        - Hiển thị nhãn `SOLD OUT` trên danh sách sản phẩm.
        - Tự động vô hiệu hóa nút `ADD TO BAG` và đổi thành `OUT OF STOCK` khi sản phẩm hết hàng.
-* **Files phụ trách:** `src/context/ShopContext.jsx`, `src/App.jsx`, `src/pages/ShopPage.jsx`, `src/pages/ShopPage.css`, `src/pages/admin/AdminProducts.jsx`, `src/pages/ProductDetailPage.jsx`, `src/components/QuickViewModal.jsx`, `src/components/ProductCard.jsx`.
+   5. **Hoàn thiện & Nâng cấp Thẩm mỹ Hồ sơ Cá nhân (Profile Polish & Ecosystem Integration):**
+      * Bổ sung Huy hiệu hạng thành viên danh giá (*Atelier Gold VIP / Atelier Ambassador*).
+      * Mở rộng cấu trúc thành 5 Tab chuyên nghiệp: *My Orders*, *Personal Details*, *Password & Security (Bảo mật & Đổi mật khẩu độc lập)*, *Address Book (Sổ địa chỉ nhận hàng)* và *Saved Wishlist (Xem nhanh & liên kết mượt mà sang Wishlist của TV3)*.
+      * Tích hợp nút Đăng xuất nhanh (*Sign Out Account*) ngay dưới chân thẻ menu bên trái giúp thanh điều hướng cân đối, sang trọng và tiện lợi.
+* **Files phụ trách:** `src/context/ShopContext.jsx`, `src/App.jsx`, `src/pages/ShopPage.jsx`, `src/pages/ShopPage.css`, `src/pages/admin/AdminProducts.jsx`, `src/pages/ProductDetailPage.jsx`, `src/components/QuickViewModal.jsx`, `src/components/ProductCard.jsx`, `src/pages/ProfilePage.jsx`, `src/pages/ProfilePage.css`.
 
 ---
 

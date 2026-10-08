@@ -98,7 +98,7 @@ graph TD
 | `/order-success` | **Đặt hàng thành công** | Màn hình hiển thị mã đơn hàng chính thức, tóm tắt các sản phẩm đã mua và lời cảm ơn từ thương hiệu. | Mọi đối tượng |
 | `/login` | **Đăng nhập (Sign In)** | Cổng định danh người dùng vào hệ thống bằng tài khoản và mật khẩu đã tạo. | Mọi đối tượng |
 | `/register` | **Đăng ký (Sign Up)** | Màn hình đăng ký thành viên mới với các quy tắc xác thực biểu mẫu đầy đủ. | Mọi đối tượng |
-| `/profile` | **Hồ sơ cá nhân (Account Profile)** | Bảng điều khiển tài khoản: cập nhật hồ sơ, đổi mật khẩu và theo dõi lịch sử đơn hàng cá nhân ("My Orders"). | Thành viên đã đăng nhập |
+| `/profile` | **Hồ sơ cá nhân (Account Profile)** | Bảng điều khiển tài khoản đa năng với 5 Tab độc lập: theo dõi lịch sử đơn hàng ("My Orders"), cập nhật hồ sơ cá nhân ("Personal Details"), đổi mật khẩu bảo mật chuyên biệt ("Password & Security"), quản lý sổ địa chỉ nhận hàng ("Address Book"), xem nhanh danh sách yêu thích ("Saved Wishlist"), nút đăng xuất an toàn và huy hiệu thành viên (Atelier VIP Member). | Thành viên đã đăng nhập |
 
 ### 2. Kiến trúc phân hệ Quản trị (Admin Portal)
 | Đường dẫn (Route) | Tên màn hình / Chức năng | Mô tả vai trò kiến trúc | Điều kiện bảo vệ |
@@ -227,7 +227,7 @@ sequenceDiagram
     Route->>Auth: Kiểm tra xem đã đăng nhập chưa?
     alt Đã đăng nhập
         Route-->>Prof: Cho phép mở giao diện hồ sơ
-        Prof-->>User: Hiển thị tab thông tin cá nhân & tab "My Orders"
+        Prof-->>User: Hiển thị 5 Tab chuyên biệt (My Orders, Personal Details, Password & Security, Address Book, Saved Wishlist), Huy hiệu VIP & Đăng xuất nhanh
     else Chưa đăng nhập
         Route-->>Log: Chặn truy cập và chuyển hướng về /login
     end

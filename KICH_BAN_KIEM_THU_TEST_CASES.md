@@ -103,6 +103,11 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 | **TC-AUTH-07** | Đăng xuất an toàn | 1. Bấm vào menu tài khoản trên Navbar.<br>2. Bấm nút "Đăng xuất". | Click Đăng xuất | Xóa phiên đăng nhập hiện tại; Navbar trở về trạng thái Khách vãng lai; điều hướng an toàn về `/`. | [ ] PASS<br>[ ] FAIL |
 | **TC-GUARD-01**| Bảo vệ đường dẫn Hồ sơ (`/profile`) | 1. Khi CHƯA đăng nhập, gõ trực tiếp URL `/profile` trên trình duyệt. | Khách chưa đăng nhập | Bộ bảo vệ (ProtectedRoute) phát hiện chưa đăng nhập, tự động chặn lại và đá văng về trang `/login`. | [ ] PASS<br>[ ] FAIL |
 | **TC-PROF-01** | Xem danh sách đơn hàng đã mua (My Orders)| 1. Đăng nhập tài khoản đã từng mua hàng.<br>2. Vào `/profile` -> Tab "Đơn hàng của tôi". | Tài khoản có lịch sử mua | Hiển thị chính xác các đơn hàng của tài khoản này, gồm mã `LUNE-XXXX`, ngày mua, tổng tiền và nhãn trạng thái có màu sắc chuẩn. | [ ] PASS<br>[ ] FAIL |
+| **TC-PROF-02** | Quản lý Sổ địa chỉ nhận hàng (Address Book) | 1. Tại `/profile`, chọn Tab "Address Book".<br>2. Bấm "Add Destination", điền nhãn, tên, SĐT, địa chỉ.<br>3. Bấm "Set as Default". | Thông tin địa chỉ mới | Thẻ địa chỉ mới xuất hiện ngay; địa chỉ mặc định được gắn nhãn badge "DEFAULT DESTINATION" màu đồng ấm; tự động đồng bộ vào thông tin giao hàng cá nhân. | [x] PASS<br>[ ] FAIL |
+| **TC-PROF-03** | Tích hợp Danh sách yêu thích (Saved Wishlist)| 1. Thả tim 1 sản phẩm ngoài trang Shop.<br>2. Vào `/profile`, chọn Tab "Saved Wishlist".<br>3. Bấm nút "Add to Bag" hoặc bấm "Open Dedicated Page". | Thao tác trên tab Wishlist | Hiển thị đúng số lượng món đã lưu; bấm "Add to Bag" đưa ngay sản phẩm vào giỏ; bấm liên kết sẽ chuyển mượt mà sang trang Wishlist chuyên biệt của TV3. | [x] PASS<br>[ ] FAIL |
+| **TC-PROF-04** | Đăng xuất nhanh từ Sidebar Profile | 1. Tại thanh menu bên trái Profile, bấm nút "Sign Out Account" màu đỏ thanh lịch. | Click nút Sign Out | Xóa phiên đăng nhập ngay lập tức; điều hướng an toàn về Trang chủ; thanh Header cập nhật lại trạng thái khách vãng lai. | [x] PASS<br>[ ] FAIL |
+| **TC-PROF-05** | Nhận diện Huy hiệu hạng thành viên (Tier Badge) | 1. Đăng nhập tài khoản thường và tài khoản Admin.<br>2. Quan sát khung thẻ người dùng bên trái Profile. | Tài khoản đăng nhập | Dưới ảnh đại diện hiển thị huy hiệu chuẩn sang trọng: `ATELIER GOLD VIP` đối với khách hàng và `ATELIER AMBASSADOR` đối với Quản trị viên. | [x] PASS<br>[ ] FAIL |
+| **TC-PROF-06** | Đổi mật khẩu độc lập (Password & Security Tab) | 1. Tại `/profile`, chọn Tab riêng "Password & Security".<br>2. Nhập mật khẩu hiện tại, mật khẩu mới $\ge 6$ ký tự, xác nhận mật khẩu.<br>3. Bấm "Update Password". | Dữ liệu mật khẩu hợp lệ | Hiển thị thông báo màu xanh "Password changed successfully!"; mật khẩu mới được lưu bền vững; đăng xuất và đăng nhập lại bằng mật khẩu mới thành công. | [x] PASS<br>[ ] FAIL |
 
 ---
 
@@ -135,8 +140,8 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 
 ## 🏆 III. BIÊN BẢN NGHIỆM THU CUỐI CÙNG (FINAL SIGN-OFF)
 
-* **Tổng số ca kiểm thử:** 45 Test Cases
-* **Số ca Đạt (PASS):** 45 / 45
+* **Tổng số ca kiểm thử:** 50 Test Cases
+* **Số ca Đạt (PASS):** 50 / 50
 * **Tỷ lệ hoàn thành:** 100%
 * **Xác nhận của Trưởng nhóm (Leader):** ___________________________ (Ký và ghi rõ họ tên)
 * **Kết luận:** *Đủ điều kiện đóng gói sản phẩm và báo cáo bảo vệ đồ án FER202 trước hội đồng chấm thi.*
