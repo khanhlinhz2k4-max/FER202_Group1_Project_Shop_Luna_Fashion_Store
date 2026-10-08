@@ -203,7 +203,7 @@ export default function AdminUsers() {
           </div>
           <div>
             <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>Total Users</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', color: '#2C2117' }}>{totalUsersCount}</h3>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{totalUsersCount}</h3>
           </div>
         </div>
 
@@ -213,7 +213,7 @@ export default function AdminUsers() {
           </div>
           <div>
             <span style={{ fontSize: '0.75rem', color: '#775B3F', fontWeight: 600, textTransform: 'uppercase' }}>Administrators</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', color: '#775B3F' }}>{adminCount}</h3>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#775B3F' }}>{adminCount}</h3>
           </div>
         </div>
 
@@ -223,7 +223,7 @@ export default function AdminUsers() {
           </div>
           <div>
             <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>Clients</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', color: '#2C2117' }}>{customerCount}</h3>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{customerCount}</h3>
           </div>
         </div>
       </div>

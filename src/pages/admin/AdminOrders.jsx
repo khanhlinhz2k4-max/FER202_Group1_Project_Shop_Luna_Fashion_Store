@@ -215,7 +215,7 @@ export default function AdminOrders() {
           </div>
           <div>
             <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>Total Orders</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', color: '#2C2117' }}>{totalOrdersCount}</h3>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{totalOrdersCount}</h3>
           </div>
         </div>
 
@@ -225,7 +225,7 @@ export default function AdminOrders() {
           </div>
           <div>
             <span style={{ fontSize: '0.75rem', color: '#92400E', fontWeight: 600, textTransform: 'uppercase' }}>Pending</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', color: '#92400E' }}>{pendingCount}</h3>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#92400E' }}>{pendingCount}</h3>
           </div>
         </div>
 
@@ -235,7 +235,7 @@ export default function AdminOrders() {
           </div>
           <div>
             <span style={{ fontSize: '0.75rem', color: '#0369A1', fontWeight: 600, textTransform: 'uppercase' }}>Shipping</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', color: '#0369A1' }}>{shippingCount}</h3>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#0369A1' }}>{shippingCount}</h3>
           </div>
         </div>
 
@@ -245,7 +245,7 @@ export default function AdminOrders() {
           </div>
           <div>
             <span style={{ fontSize: '0.75rem', color: '#166534', fontWeight: 600, textTransform: 'uppercase' }}>Delivered</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', color: '#166534' }}>{deliveredCount}</h3>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#166534' }}>{deliveredCount}</h3>
           </div>
         </div>
 
@@ -255,7 +255,7 @@ export default function AdminOrders() {
           </div>
           <div>
             <span style={{ fontSize: '0.75rem', color: '#775B3F', fontWeight: 600, textTransform: 'uppercase' }}>Revenue</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', color: '#775B3F' }}>${totalRevenue.toLocaleString()}</h3>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#775B3F' }}>${totalRevenue.toLocaleString()}</h3>
           </div>
         </div>
       </div>
