@@ -1,0 +1,301 @@
+/* ==========================================================================
+   LUNE FASHION STORE — HOME PAGE ENHANCEMENTS
+   Hero Banner Carousel, Category Filter Tabs & Smooth Transitions
+   ========================================================================== */
+
+/* 1. HERO CAROUSEL CONTAINER */
+.hero-section {
+  position: relative;
+  min-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  background-color: #EFE7DC;
+}
+
+.hero-slides-viewport {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.85s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.85s ease;
+  will-change: opacity;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+.hero-slide-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  filter: brightness(0.95) saturate(1.05);
+  transform: scale(1.04);
+  transition: transform 7s ease-out;
+}
+
+.hero-slide.active .hero-slide-bg {
+  transform: scale(1);
+}
+
+.hero-scrim-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    rgba(250, 247, 242, 0.95) 0%, 
+    rgba(250, 247, 242, 0.88) 42%, 
+    rgba(250, 247, 242, 0.35) 75%, 
+    rgba(250, 247, 242, 0.1) 100%
+  );
+}
+
+@media (max-width: 900px) {
+  .hero-scrim-overlay {
+    background: linear-gradient(
+      180deg, 
+      rgba(250, 247, 242, 0.94) 0%, 
+      rgba(250, 247, 242, 0.86) 60%, 
+      rgba(250, 247, 242, 0.5) 100%
+    );
+  }
+}
+
+/* Hero Content Area */
+.hero-content-layer {
+  position: relative;
+  z-index: 5;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding-top: 5.5rem;
+  padding-bottom: 5rem;
+}
+
+.hero-slide-content {
+  animation: heroTextFadeIn 0.8s ease-out;
+}
+
+@keyframes heroTextFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Carousel Arrow Navigation Buttons */
+.hero-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(250, 247, 242, 0.82);
+  border: 1px solid rgba(119, 91, 63, 0.2);
+  color: var(--primary-brown);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px rgba(44, 33, 23, 0.08);
+}
+
+.hero-nav-arrow:hover {
+  background-color: var(--primary-brown);
+  color: var(--light-cream);
+  border-color: var(--primary-brown);
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 6px 20px rgba(119, 91, 63, 0.25);
+}
+
+.hero-nav-arrow.prev {
+  left: 2rem;
+}
+
+.hero-nav-arrow.next {
+  right: 2rem;
+}
+
+@media (max-width: 768px) {
+  .hero-nav-arrow {
+    width: 38px;
+    height: 38px;
+  }
+  .hero-nav-arrow.prev {
+    left: 0.75rem;
+  }
+  .hero-nav-arrow.next {
+    right: 0.75rem;
+  }
+}
+
+/* Dots & Slide Indicators */
+.hero-indicators-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: 2rem;
+}
+
+.hero-dot {
+  width: 28px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(119, 91, 63, 0.25);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.35s ease;
+}
+
+.hero-dot:hover {
+  background-color: rgba(119, 91, 63, 0.55);
+}
+
+.hero-dot.active {
+  width: 44px;
+  background-color: var(--primary-brown);
+  box-shadow: 0 1px 4px rgba(119, 91, 63, 0.25);
+}
+
+.hero-slide-counter {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--primary-brown);
+  margin-left: 0.75rem;
+}
+
+/* 2. CATEGORY FILTER TABS (NEW ARRIVALS) */
+.category-filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 1.75rem 0 2.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+  overflow-x: auto;
+}
+
+.category-filter-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.category-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.35rem;
+  background-color: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 2px;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.category-tab-btn:hover {
+  border-color: var(--primary-brown);
+  color: var(--primary-brown);
+  background-color: rgba(254, 227, 175, 0.2);
+}
+
+.category-tab-btn.active {
+  background-color: var(--primary-brown);
+  color: var(--light-cream);
+  border-color: var(--primary-brown);
+  box-shadow: 0 2px 8px rgba(119, 91, 63, 0.18);
+}
+
+.category-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background-color: rgba(119, 91, 63, 0.1);
+  color: var(--primary-brown);
+  transition: all 0.25s ease;
+}
+
+.category-tab-btn.active .category-tab-count {
+  background-color: rgba(254, 227, 175, 0.25);
+  color: var(--light-cream);
+}
+
+/* Category Filter Transition on Product Grid */
+.products-grid-animated {
+  animation: productsFadeIn 0.4s ease-out;
+}
+
+@keyframes productsFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Empty State if Category Tab has no products */
+.tab-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3.5rem 1rem;
+  background-color: var(--bg-page);
+  border: 1px dashed var(--border-subtle);
+  border-radius: 4px;
+}
+
+.tab-empty-title {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.tab-empty-desc {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
