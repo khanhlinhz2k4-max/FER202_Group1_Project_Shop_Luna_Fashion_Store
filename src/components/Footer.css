@@ -1,0 +1,321 @@
+/* ==========================================================================
+   LUNE FASHION STORE — FOOTER ENHANCEMENTS
+   Pillars, Policy Modal, Validated Newsletter, Toast Notification
+   ========================================================================== */
+
+/* Pillars Hover & Clickable Interactive Cue */
+.pillar-clickable {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0.85rem;
+  border-radius: 4px;
+}
+
+.pillar-clickable:hover {
+  background-color: rgba(254, 227, 175, 0.12);
+  transform: translateY(-2px);
+}
+
+.pillar-clickable:hover .pillar-icon-wrap {
+  background-color: var(--primary-brown);
+  color: var(--light-cream);
+  border-color: var(--primary-brown);
+}
+
+/* Newsletter Input & Validation */
+.newsletter-form-container {
+  position: relative;
+}
+
+.newsletter-form.has-error .newsletter-input-wrap {
+  border-color: #B91C1C !important;
+  box-shadow: 0 0 0 1px #B91C1C;
+}
+
+.newsletter-error-message {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  animation: fadeInError 0.2s ease-out;
+}
+
+@keyframes fadeInError {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Success state inside form */
+.subscribe-success-box {
+  padding: 1rem 1.25rem;
+  background-color: rgba(254, 227, 175, 0.2);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  animation: fadeInSuccess 0.3s ease-out;
+}
+
+@keyframes fadeInSuccess {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.subscribe-success-icon {
+  color: var(--primary-brown);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.subscribe-success-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--primary-brown);
+  margin-bottom: 0.2rem;
+}
+
+.subscribe-success-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.subscribe-promo-code {
+  display: inline-block;
+  margin-top: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  background-color: var(--primary-brown);
+  color: var(--light-cream);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  border-radius: 2px;
+}
+
+/* Toast Notification (Floating bottom-right) */
+.footer-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 99999;
+  max-width: 420px;
+  background-color: #FAF7F2;
+  border: 1px solid var(--primary-brown);
+  border-left: 5px solid var(--primary-brown);
+  border-radius: 4px;
+  padding: 1.15rem 1.25rem;
+  box-shadow: 0 12px 32px rgba(44, 33, 23, 0.2);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  animation: toastSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--primary-brown);
+  color: var(--light-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.toast-content {
+  flex: 1;
+}
+
+.toast-title {
+  font-family: var(--font-serif);
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.toast-message {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.toast-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.toast-close-btn:hover {
+  color: var(--primary-brown);
+}
+
+/* Policy Details Modal */
+.policy-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(44, 33, 23, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeInPolicyModal 0.25s ease-out;
+}
+
+@keyframes fadeInPolicyModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.policy-modal-content {
+  background-color: #FAF7F2;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  max-width: 680px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 60px rgba(44, 33, 23, 0.25);
+  position: relative;
+  padding: 2.25rem 2.5rem;
+  animation: scaleUpPolicyModal 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleUpPolicyModal {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.policy-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 1.25rem;
+}
+
+.policy-modal-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--primary-brown);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.policy-modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.policy-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.policy-modal-close:hover {
+  background-color: var(--bg-subtle);
+  color: var(--primary-brown);
+}
+
+.policy-section-block {
+  margin-bottom: 1.75rem;
+}
+
+.policy-section-block h3 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-brown);
+  margin-bottom: 0.65rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.policy-section-block p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 0.65rem;
+}
+
+.policy-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+
+@media (max-width: 640px) {
+  .policy-steps-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.policy-step-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-light);
+  padding: 1rem;
+  border-radius: 2px;
+}
+
+.policy-step-num {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--primary-brown);
+  margin-bottom: 0.25rem;
+}
+
+.policy-step-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.policy-modal-footer {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: flex-end;
+}

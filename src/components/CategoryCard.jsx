@@ -1,10 +1,22 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
-export default function CategoryCard({ category }) {
+export default function CategoryCard({ category, onSelectCategory }) {
+  const handleClick = (e) => {
+    if (onSelectCategory) {
+      e.preventDefault();
+      onSelectCategory(category.id);
+    }
+  };
+
   return (
     <div className="category-card">
-      <a href="#new-arrivals" className="category-card-inner">
+      <a 
+        href="#new-arrivals" 
+        className="category-card-inner"
+        onClick={handleClick}
+        aria-label={`Explore ${category.title} collection`}
+      >
         <div className="category-image-wrap">
           <img 
             src={category.image} 

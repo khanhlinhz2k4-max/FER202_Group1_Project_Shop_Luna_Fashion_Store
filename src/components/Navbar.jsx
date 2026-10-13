@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Search, 
@@ -7,12 +7,24 @@ import {
   User, 
   Menu, 
   X, 
-  ArrowRight,
-  LogOut,
-  Shield,
-  Package
+  ArrowRight, 
+  LogOut, 
+  Shield, 
+  Package,
+  TrendingUp 
 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import './Navbar.css';
+
+const TRENDING_SEARCHES = [
+  "Linen Blazer",
+  "Silk Dress",
+  "Cashmere Cardigan",
+  "Wide-Leg Trousers",
+  "Leather Bag",
+  "Trench Coat",
+  "Overshirt"
+];
 
 export default function Navbar() {
   const { cartCount, openCart, wishlist, currentUser, logout, products } = useShop();
@@ -37,19 +49,42 @@ export default function Navbar() {
     setMobileMenuOpen(false);
     setSearchOpen(false);
     setUserMenuOpen(false);
-  }, [location]);
+  }, [location.pathname]);
 
-  const handleSearchSubmit = (e) => {
-    if (e.key === 'Enter' && searchQuery.trim()) {
-      navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
+  // Execute search and redirect to /shop?search=<query>
+  const executeSearch = (customQuery) => {
+    const q = (customQuery !== undefined ? customQuery : searchQuery).trim();
+    if (q) {
+      navigate(`/shop?search=${encodeURIComponent(q)}`);
       setSearchOpen(false);
     }
   };
 
-  // Live search matched products preview (max 4)
-  const searchResults = searchQuery.trim()
-    ? products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 4)
-    : [];
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      executeSearch();
+    } else if (e.key === 'Escape') {
+      setSearchOpen(false);
+    }
+  };
+
+  const handleTrendingClick = (tag) => {
+    setSearchQuery(tag);
+    executeSearch(tag);
+  };
+
+  // Live search matched products preview (max 6)
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return (products || []).filter(p => {
+      const matchName = p.name?.toLowerCase().includes(q);
+      const matchCat = p.category?.toLowerCase().includes(q);
+      const matchType = p.garmentType?.toLowerCase().includes(q);
+      return matchName || matchCat || matchType;
+    }).slice(0, 6);
+  }, [searchQuery, products]);
 
   const handleLogout = () => {
     logout();
@@ -57,7 +92,7 @@ export default function Navbar() {
     navigate('/');
   };
 
-  // Clean navigation links
+  // Navigation links
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Shop All', path: '/shop' },
@@ -69,277 +104,344 @@ export default function Navbar() {
   return (
     <>
       <header className={`lune-header ${isScrolled ? 'scrolled' : ''}`}>
-      {/* Editorial Announcement Bar */}
-      <div className="announcement-bar">
-        <p>
-          <span>SPRING / SUMMER 2026</span>
-          <span className="announcement-divider">/</span>
-          <span>COMPLIMENTARY SHIPPING ON ORDERS OVER $250</span>
-          <span className="announcement-divider">/</span>
-          <Link to="/shop" className="announcement-link">DISCOVER THE RUNWAY</Link>
-        </p>
-      </div>
+        {/* Editorial Announcement Bar */}
+        <div className="announcement-bar">
+          <p>
+            <span>SPRING / SUMMER 2026</span>
+            <span className="announcement-divider">/</span>
+            <span>COMPLIMENTARY SHIPPING ON ORDERS OVER $250</span>
+            <span className="announcement-divider">/</span>
+            <Link to="/shop" className="announcement-link">DISCOVER THE RUNWAY</Link>
+          </p>
+        </div>
 
-      {/* Main Navigation Bar */}
-      <div className="navbar-container">
-        {/* Mobile Menu Toggle */}
-        <button 
-          className="mobile-menu-btn"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle navigation menu"
-        >
-          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
-
-        {/* Brand Logo */}
-        <Link to="/" className="brand-logo">
-          <span className="brand-name">LUNE</span>
-          <span className="brand-tagline">FASHION STORE</span>
-        </Link>
-
-        {/* Desktop Navigation Links */}
-        <nav className="desktop-nav" aria-label="Main Navigation">
-          <ul className="nav-list">
-            {navLinks.map((link) => {
-              const isCurrent = location.pathname === link.path;
-              return (
-                <li key={link.name} className="nav-item">
-                  {link.path.startsWith('/#') ? (
-                    <a href={link.path} className="nav-link">
-                      {link.name}
-                    </a>
-                  ) : (
-                    <Link 
-                      to={link.path} 
-                      className={`nav-link ${isCurrent ? 'active' : ''}`}
-                    >
-                      {link.name}
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-
-        {/* Header Actions */}
-        <div className="header-actions">
-          {/* Search Trigger */}
+        {/* Main Navigation Bar */}
+        <div className="navbar-container">
+          {/* Mobile Menu Toggle */}
           <button 
-            className="action-btn" 
-            onClick={() => setSearchOpen(!searchOpen)}
-            aria-label="Search collection"
+            className="mobile-menu-btn"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle navigation menu"
           >
-            <Search size={19} strokeWidth={1.75} />
+            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
 
-          {/* Wishlist Link (Customers & Guests only) */}
-          {currentUser?.role !== 'admin' && (
-            <Link 
-              to="/wishlist" 
-              className="action-btn" 
-              aria-label="Wishlist"
-              title={`Wishlist: ${wishlist.length} saved items`}
-            >
-              <Heart size={19} strokeWidth={1.75} />
-              {wishlist.length > 0 && <span className="action-badge">{wishlist.length}</span>}
-            </Link>
-          )}
+          {/* Brand Logo */}
+          <Link to="/" className="brand-logo">
+            <span className="brand-name">LUNE</span>
+            <span className="brand-tagline">FASHION STORE</span>
+          </Link>
 
-          {/* Shopping Bag / Cart Trigger (Customers & Guests only) */}
-          {currentUser?.role !== 'admin' && (
-            <button 
-              className="action-btn bag-btn" 
-              aria-label="Shopping Bag"
-              onClick={openCart}
-            >
-              <ShoppingBag size={19} strokeWidth={1.75} />
-              {cartCount > 0 && <span className="action-badge">{cartCount}</span>}
-            </button>
-          )}
-
-          {/* Quick Admin Portal Button on Topbar (Admin only) */}
-          {currentUser?.role === 'admin' && (
-            <Link
-              to="/admin"
-              className="action-btn"
-              title="Go to Admin Portal"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                backgroundColor: '#F9F2E7',
-                border: '1px solid #C8AE84',
-                borderRadius: '4px',
-                color: '#775B3F',
-                fontSize: '0.78rem',
-                fontWeight: 600,
-                textDecoration: 'none',
-                letterSpacing: '0.04em'
-              }}
-            >
-              <Shield size={14} color="#775B3F" />
-              <span>DASHBOARD</span>
-            </Link>
-          )}
-
-          {/* User Account / Login or Profile */}
-          {currentUser ? (
-            <div className="user-menu-container">
-              <button 
-                type="button" 
-                className="action-btn login-action"
-                onClick={() => setUserMenuOpen(!userMenuOpen)}
-                aria-label="User Account Menu"
-              >
-                <User size={19} strokeWidth={1.75} />
-                <span className="login-text">
-                  {currentUser.role === 'admin' ? 'ADMIN' : currentUser.name.split(' ')[0].toUpperCase()}
-                </span>
-              </button>
-
-              {userMenuOpen && (
-                <>
-                  <div 
-                    className="dropdown-backdrop" 
-                    onClick={() => setUserMenuOpen(false)}
-                    style={{ position: 'fixed', inset: 0, zIndex: 90 }}
-                  />
-                  <div className="user-account-dropdown">
-                    <div className="dropdown-user-info">
-                      <span className="dropdown-tag">
-                        {currentUser.role === 'admin' ? '🛡️ STORE ADMINISTRATOR' : 'LUNE MEMBER'}
-                      </span>
-                      <span className="dropdown-name">{currentUser.name}</span>
-                    </div>
-
-                    <div className="dropdown-divider"></div>
-
-                    {/* Role-based Navigation: Admin vs Customer */}
-                    {currentUser.role === 'admin' ? (
-                      <Link 
-                        to="/admin" 
-                        className="dropdown-link"
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#B45309', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}
-                        onClick={() => setUserMenuOpen(false)}
-                      >
-                        <Shield size={16} /> Admin Portal
-                      </Link>
+          {/* Desktop Navigation Links */}
+          <nav className="desktop-nav" aria-label="Main Navigation">
+            <ul className="nav-list">
+              {navLinks.map((link) => {
+                const isCurrent = location.pathname === link.path;
+                return (
+                  <li key={link.name} className="nav-item">
+                    {link.path.startsWith('/#') ? (
+                      <a href={link.path} className="nav-link">
+                        {link.name}
+                      </a>
                     ) : (
                       <Link 
-                        to="/profile" 
-                        className="dropdown-link"
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#1C1917', textDecoration: 'none', fontSize: '0.85rem' }}
-                        onClick={() => setUserMenuOpen(false)}
+                        to={link.path} 
+                        className={`nav-link ${isCurrent ? 'active' : ''}`}
                       >
-                        <Package size={16} /> My Account & Orders
+                        {link.name}
                       </Link>
                     )}
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
 
-                    <div className="dropdown-divider"></div>
-
-                    <button 
-                      type="button" 
-                      className="dropdown-logout-btn"
-                      onClick={handleLogout}
-                    >
-                      <LogOut size={14} />
-                      <span>Sign Out</span>
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          ) : (
-            <Link to="/login" className="action-btn login-action" aria-label="User Account">
-              <User size={19} strokeWidth={1.75} />
-              <span className="login-text">LOGIN</span>
-            </Link>
-          )}
-        </div>
-      </div>
-
-      {/* Expandable Live Search Drawer */}
-      {searchOpen && (
-        <div className="search-bar-dropdown">
-          <div className="search-inner container" style={{ position: 'relative' }}>
-            <Search size={18} className="search-input-icon" />
-            <input 
-              type="text" 
-              placeholder="Search products by title or category (Press Enter to view all)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleSearchSubmit}
-              autoFocus
-            />
+          {/* Header Actions */}
+          <div className="header-actions">
+            {/* Search Trigger */}
             <button 
-              className="search-close-btn"
-              onClick={() => setSearchOpen(false)}
-              aria-label="Close search"
+              className={`action-btn ${searchOpen ? 'active' : ''}`} 
+              onClick={() => setSearchOpen(!searchOpen)}
+              aria-label="Search collection"
             >
-              <X size={18} />
+              <Search size={19} strokeWidth={1.75} />
             </button>
 
-            {/* Live Search Quick Results */}
-            {searchResults.length > 0 && (
-              <div style={{
-                position: 'absolute',
-                top: '100%',
-                left: 0,
-                right: 0,
-                backgroundColor: '#fff',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                border: '1px solid #E7E5E4',
-                marginTop: '8px',
-                padding: '12px 16px',
-                zIndex: 99
-              }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#78716C', marginBottom: '8px', textTransform: 'uppercase' }}>
-                  Quick Suggestions ({searchResults.length})
-                </div>
-                {searchResults.map(p => (
-                  <Link
-                    key={p.id}
-                    to={`/product/${p.id}`}
-                    onClick={() => setSearchOpen(false)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '8px 0',
-                      borderBottom: '1px solid #F5EFE6',
-                      textDecoration: 'none',
-                      color: '#1C1917'
-                    }}
-                  >
-                    <img src={p.image} alt={p.name} style={{ width: '40px', height: '48px', objectFit: 'cover' }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.88rem', fontWeight: 500 }}>{p.name}</div>
-                      <div style={{ fontSize: '0.78rem', color: '#78716C' }}>${p.price} • {p.category}</div>
+            {/* Wishlist Link (Customers & Guests only) */}
+            {currentUser?.role !== 'admin' && (
+              <Link 
+                to="/wishlist" 
+                className="action-btn" 
+                aria-label="Wishlist"
+                title={`Wishlist: ${wishlist.length} saved items`}
+              >
+                <Heart size={19} strokeWidth={1.75} />
+                {wishlist.length > 0 && <span className="action-badge">{wishlist.length}</span>}
+              </Link>
+            )}
+
+            {/* Shopping Bag / Cart Trigger (Customers & Guests only) */}
+            {currentUser?.role !== 'admin' && (
+              <button 
+                className="action-btn bag-btn" 
+                aria-label="Shopping Bag"
+                onClick={openCart}
+              >
+                <ShoppingBag size={19} strokeWidth={1.75} />
+                {cartCount > 0 && <span className="action-badge">{cartCount}</span>}
+              </button>
+            )}
+
+            {/* Quick Admin Portal Button on Topbar (Admin only) */}
+            {currentUser?.role === 'admin' && (
+              <Link
+                to="/admin"
+                className="action-btn"
+                title="Go to Admin Portal"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  backgroundColor: '#F9F2E7',
+                  border: '1px solid #C8AE84',
+                  borderRadius: '4px',
+                  color: '#775B3F',
+                  fontSize: '0.78rem',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  letterSpacing: '0.04em'
+                }}
+              >
+                <Shield size={14} color="#775B3F" />
+                <span>DASHBOARD</span>
+              </Link>
+            )}
+
+            {/* User Account / Login or Profile */}
+            {currentUser ? (
+              <div className="user-menu-container">
+                <button 
+                  type="button" 
+                  className="action-btn login-action"
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  aria-label="User Account Menu"
+                >
+                  <User size={19} strokeWidth={1.75} />
+                  <span className="login-text">
+                    {currentUser.role === 'admin' ? 'ADMIN' : currentUser.name.split(' ')[0].toUpperCase()}
+                  </span>
+                </button>
+
+                {userMenuOpen && (
+                  <>
+                    <div 
+                      className="dropdown-backdrop" 
+                      onClick={() => setUserMenuOpen(false)}
+                      style={{ position: 'fixed', inset: 0, zIndex: 90 }}
+                    />
+                    <div className="user-account-dropdown">
+                      <div className="dropdown-user-info">
+                        <span className="dropdown-tag">
+                          {currentUser.role === 'admin' ? '🛡️ STORE ADMINISTRATOR' : 'LUNE MEMBER'}
+                        </span>
+                        <span className="dropdown-name">{currentUser.name}</span>
+                      </div>
+
+                      <div className="dropdown-divider"></div>
+
+                      {/* Role-based Navigation: Admin vs Customer */}
+                      {currentUser.role === 'admin' ? (
+                        <Link 
+                          to="/admin" 
+                          className="dropdown-link"
+                          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#B45309', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <Shield size={16} /> Admin Portal
+                        </Link>
+                      ) : (
+                        <Link 
+                          to="/profile" 
+                          className="dropdown-link"
+                          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#1C1917', textDecoration: 'none', fontSize: '0.85rem' }}
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <Package size={16} /> My Account & Orders
+                        </Link>
+                      )}
+
+                      <div className="dropdown-divider"></div>
+
+                      <button 
+                        type="button" 
+                        className="dropdown-logout-btn"
+                        onClick={handleLogout}
+                      >
+                        <LogOut size={14} />
+                        <span>Sign Out</span>
+                      </button>
                     </div>
-                  </Link>
-                ))}
+                  </>
+                )}
               </div>
+            ) : (
+              <Link to="/login" className="action-btn login-action" aria-label="User Account">
+                <User size={19} strokeWidth={1.75} />
+                <span className="login-text">LOGIN</span>
+              </Link>
             )}
           </div>
         </div>
-      )}
 
-    </header>
+        {/* Expandable Live Search Drawer */}
+        {searchOpen && (
+          <div className="search-bar-dropdown">
+            <div className="container">
+              <div className="search-inner-wrapper">
+                <div className="search-input-box">
+                  <Search size={18} className="search-input-icon" />
+                  <input 
+                    type="text" 
+                    placeholder="Search silhouettes, materials or styles (Press Enter to view all)..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleSearchKeyDown}
+                    autoFocus
+                  />
+                  {searchQuery && (
+                    <button 
+                      type="button" 
+                      className="search-clear-btn" 
+                      onClick={() => setSearchQuery('')}
+                      aria-label="Clear search query"
+                    >
+                      <X size={15} />
+                    </button>
+                  )}
+                  <button 
+                    type="button" 
+                    className="search-close-btn"
+                    onClick={() => setSearchOpen(false)}
+                    aria-label="Close search drawer"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
 
-    {/* Mobile Menu Backdrop Overlay (Independent element to prevent backdrop-filter bleeding bug) */}
-    <div 
-      className={`mobile-nav-overlay ${mobileMenuOpen ? 'open' : ''}`}
-      onClick={() => setMobileMenuOpen(false)}
-    />
+                {/* Trending Searches Section (Active when input is empty) */}
+                {!searchQuery.trim() && (
+                  <div className="search-trending-section">
+                    <div className="search-trending-label">
+                      <TrendingUp size={13} />
+                      <span>TRENDING SEARCHES</span>
+                    </div>
+                    <div className="trending-chips-wrap">
+                      {TRENDING_SEARCHES.map(tag => (
+                        <button
+                          key={tag}
+                          type="button"
+                          className="trending-chip"
+                          onClick={() => handleTrendingClick(tag)}
+                        >
+                          <span>{tag}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-    {/* Mobile Menu Content Drawer */}
-    <div 
-      className={`mobile-nav-content ${mobileMenuOpen ? 'open' : ''}`}
-      onClick={(e) => e.stopPropagation()}
-    >
-        {/* Drawer Header with Brand Gold Glow */}
+                {/* Live Search Suggestions Dropdown */}
+                {searchQuery.trim() && searchResults.length > 0 && (
+                  <div className="search-results-panel">
+                    <div className="search-results-header">
+                      <span>QUICK SUGGESTIONS ({searchResults.length})</span>
+                      <span>PRESS ENTER TO VIEW ALL</span>
+                    </div>
+                    <div className="search-results-list">
+                      {searchResults.map(p => (
+                        <Link
+                          key={p.id}
+                          to={`/product/${p.id}`}
+                          onClick={() => setSearchOpen(false)}
+                          className="search-result-item"
+                        >
+                          <img 
+                            src={p.image} 
+                            alt={p.name} 
+                            className="search-result-thumb" 
+                          />
+                          <div className="search-result-info">
+                            <div className="search-result-name">{p.name}</div>
+                            <div className="search-result-meta">
+                              <span className="search-result-category">{p.category}</span>
+                              {p.garmentType && <span>• {p.garmentType}</span>}
+                            </div>
+                          </div>
+                          <div className="search-result-pricing">
+                            <span className="search-result-price">${p.price}</span>
+                            {p.originalPrice && (
+                              <span className="search-result-orig-price">${p.originalPrice}</span>
+                            )}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="search-results-footer">
+                      <button
+                        type="button"
+                        className="search-view-all-btn"
+                        onClick={() => executeSearch()}
+                      >
+                        <span>VIEW ALL RESULTS FOR "{searchQuery.trim()}"</span>
+                        <ArrowRight size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Empty State when no items match */}
+                {searchQuery.trim() && searchResults.length === 0 && (
+                  <div className="search-results-panel">
+                    <div className="search-empty-state">
+                      <h4 className="search-empty-title">No matching silhouettes found</h4>
+                      <p className="search-empty-desc">
+                        We couldn't find any pieces matching "{searchQuery.trim()}". Try searching with another keyword or explore popular trending styles:
+                      </p>
+                      <div className="trending-chips-wrap" style={{ justifyContent: 'center' }}>
+                        {TRENDING_SEARCHES.map(tag => (
+                          <button
+                            key={tag}
+                            type="button"
+                            className="trending-chip"
+                            onClick={() => handleTrendingClick(tag)}
+                          >
+                            <span>{tag}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+
+      {/* Mobile Menu Backdrop Overlay */}
+      <div 
+        className={`mobile-nav-overlay ${mobileMenuOpen ? 'open' : ''}`}
+        onClick={() => setMobileMenuOpen(false)}
+      />
+
+      {/* Mobile Menu Content Drawer */}
+      <div 
+        className={`mobile-nav-content ${mobileMenuOpen ? 'open' : ''}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Drawer Header */}
         <div className="mobile-nav-header">
           <Link to="/" onClick={() => setMobileMenuOpen(false)} className="brand-logo">
             <span className="brand-name">LUNE</span>
