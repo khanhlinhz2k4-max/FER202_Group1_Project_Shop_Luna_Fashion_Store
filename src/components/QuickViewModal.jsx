@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { X, Heart, ShoppingBag, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
+import StarRating from './StarRating';
 
 export default function QuickViewModal({
   product,
@@ -11,8 +13,11 @@ export default function QuickViewModal({
   const {
     addToCart,
     toggleWishlist,
-    isInWishlist
+    isInWishlist,
+    getProductRatingStats
   } = useShop();
+
+  const { t, tp } = useLanguage();
 
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -165,29 +170,39 @@ export default function QuickViewModal({
           <div
             style={{
               color: '#A16207',
-              fontSize: '0.72rem',
+              fontSize: 'var(--text-badge)',
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               marginBottom: '10px'
             }}
           >
-            {product.category}
+            {tp(product, 'garmentType') || product.category}
           </div>
 
 
           {/* Product Name */}
           <h2
             style={{
-              fontFamily: 'serif',
-              fontSize: '1.8rem',
+              fontFamily: 'var(--font-serif)',
+              fontSize: 'var(--text-h2)',
               fontWeight: 500,
               lineHeight: 1.2,
-              margin: '0 0 12px',
+              margin: '0 0 10px',
               color: '#1C1917'
             }}
           >
-            {product.name}
+            {tp(product, 'name')}
           </h2>
+
+          {/* Rating */}
+          <div style={{ marginBottom: '14px' }}>
+            <StarRating 
+              rating={getProductRatingStats && product?.id ? getProductRatingStats(product.id).averageRating : 5.0}
+              count={getProductRatingStats && product?.id ? getProductRatingStats(product.id).totalReviews : 0}
+              size={13}
+              showScore={true}
+            />
+          </div>
 
 
           {/* Price */}
@@ -234,7 +249,7 @@ export default function QuickViewModal({
               margin: '0 0 24px'
             }}
           >
-            {product.description}
+            {tp(product, 'description')}
           </p>
 
 
@@ -259,7 +274,7 @@ export default function QuickViewModal({
                   marginBottom: '11px'
                 }}
               >
-                COLOR
+                {t('productDetail.colorLabel')}
               </div>
 
               <div
@@ -313,7 +328,7 @@ export default function QuickViewModal({
                   marginBottom: '11px'
                 }}
               >
-                SIZE
+                {t('productDetail.sizeLabel')}
               </div>
 
               <div
@@ -375,7 +390,7 @@ export default function QuickViewModal({
                 }}
               >
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#DC2626' }} />
-                OUT OF STOCK
+                {t('productDetail.outOfStock')}
               </div>
             ) : stock <= 5 ? (
               <div
@@ -392,7 +407,7 @@ export default function QuickViewModal({
                 }}
               >
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#D97706' }} />
-                LOW STOCK: ONLY {stock} LEFT
+                {t('productDetail.lowStock')} {stock} {t('productDetail.unitsLeft')}
               </div>
             ) : (
               <div
@@ -409,7 +424,7 @@ export default function QuickViewModal({
                 }}
               >
                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-                IN STOCK ({stock} units available)
+                {t('productDetail.stockAvailable')} ({stock})
               </div>
             )}
           </div>
@@ -425,7 +440,7 @@ export default function QuickViewModal({
                 marginBottom: '11px'
               }}
             >
-              QUANTITY
+              {t('productDetail.quantityLabel')}
             </div>
 
             <div
@@ -536,7 +551,7 @@ export default function QuickViewModal({
               }}
             >
               <ShoppingBag size={15} />
-              {stock === 0 ? 'OUT OF STOCK' : 'ADD TO BAG'}
+              {stock === 0 ? t('common.soldOut') : t('common.addToBag')}
             </button>
 
 
@@ -591,7 +606,7 @@ export default function QuickViewModal({
               padding: '8px'
             }}
           >
-            VIEW FULL PRODUCT DETAILS
+            {t('common.viewDetails')}
           </Link>
 
         </div>

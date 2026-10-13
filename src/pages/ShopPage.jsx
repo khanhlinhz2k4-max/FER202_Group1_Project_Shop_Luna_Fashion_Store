@@ -1,19 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
 import ProductCard from '../components/ProductCard';
 import { RotateCcw, Check, ArrowUpDown } from 'lucide-react';
 import './ShopPage.css';
-
-const GARMENT_CATEGORIES = [
-  { id: 'all', label: 'All Garments' },
-  { id: 'Coats & Outerwear', label: 'Coats & Outerwear' },
-  { id: 'Silk Dresses', label: 'Silk Dresses' },
-  { id: 'Blazers & Tailoring', label: 'Blazers & Tailoring' },
-  { id: 'Cashmere Knitwear', label: 'Cashmere Knitwear' },
-  { id: 'Pleated Trousers', label: 'Pleated Trousers' },
-  { id: 'Leather Goods', label: 'Leather Goods' },
-];
 
 const SIZES = ['ALL', 'XS', 'S', 'M', 'L', 'XL'];
 
@@ -29,9 +20,11 @@ const COLOR_PALETTE = [
 /**
  * ShopPage Component
  * Phụ trách: Thành viên 1 (Trưởng nhóm - System Architect & Trang Cửa hàng tổng hợp)
+ * Đa ngôn ngữ (i18n): Thành viên 1 (Leader)
  */
 export default function ShopPage() {
   const { products } = useShop();
+  const { t } = useLanguage();
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Search keyword & category from URL
@@ -52,8 +45,23 @@ export default function ShopPage() {
     setSelectedGarment('all');
   }, [urlCategory]);
 
+  // Automatically reset to page 1 whenever any filter, category, or search criteria changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchKeyword, urlCategory, selectedGarment, selectedSize, selectedColor, maxPrice, sortBy]);
+
   // Dynamically filter available garment categories based on the current URL category (e.g. Men vs Women)
   const availableGarmentCategories = useMemo(() => {
+    const garmentList = [
+      { id: 'all', label: t('shop.allGarments') },
+      { id: 'Coats & Outerwear', label: t('shop.coatsOuterwear') },
+      { id: 'Silk Dresses', label: t('shop.silkDresses') },
+      { id: 'Blazers & Tailoring', label: t('shop.blazersTailoring') },
+      { id: 'Cashmere Knitwear', label: t('shop.cashmereKnitwear') },
+      { id: 'Pleated Trousers', label: t('shop.pleatedTrousers') },
+      { id: 'Leather Goods', label: t('shop.leatherGoods') },
+    ];
+
     let relevantProducts = products;
     if (urlCategory && urlCategory !== 'all') {
       relevantProducts = products.filter(
@@ -62,8 +70,8 @@ export default function ShopPage() {
     }
     const availableTypes = new Set(relevantProducts.map(p => p.garmentType).filter(Boolean));
 
-    return GARMENT_CATEGORIES.filter(cat => cat.id === 'all' || availableTypes.has(cat.id));
-  }, [products, urlCategory]);
+    return garmentList.filter(cat => cat.id === 'all' || availableTypes.has(cat.id));
+  }, [products, urlCategory, t]);
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
@@ -122,6 +130,14 @@ export default function ShopPage() {
 
   // Pagination calculation
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  // Safety guard: if current page exceeds total pages, pull back to page 1
+  useEffect(() => {
+    if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [totalPages, currentPage]);
+
   const paginatedProducts = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     return filteredProducts.slice(start, start + itemsPerPage);
@@ -141,11 +157,11 @@ export default function ShopPage() {
     <div className="shop-page-container">
       {/* Header */}
       <div className="shop-header">
-        <h1 className="shop-title">THE CURATED COLLECTION</h1>
+        <h1 className="shop-title">{t('shop.headerTitle')}</h1>
         <p className="shop-subtitle">
-          Timeless silhouettes, sustainable textiles, and refined craftsmanship.
-          {searchKeyword && <span> (Results for: "<strong>{searchKeyword}</strong>")</span>}
-          {urlCategory && <span> &bull; Gender: <strong style={{ textTransform: 'capitalize' }}>{urlCategory}</strong></span>}
+          {t('shop.headerSubtitle')}
+          {searchKeyword && <span> ({t('shop.resultsFor')} "<strong>{searchKeyword}</strong>")</span>}
+          {urlCategory && <span> &bull; {t('shop.genderCategory')} <strong style={{ textTransform: 'capitalize' }}>{urlCategory}</strong></span>}
         </p>
       </div>
 
@@ -154,16 +170,16 @@ export default function ShopPage() {
         <aside className="filter-sidebar-card">
           {/* Header & Reset */}
           <div className="filter-header">
-            <span className="filter-title">FILTER BY</span>
-            <button type="button" className="filter-reset-btn" onClick={handleReset} title="Reset all filters">
+            <span className="filter-title">{t('common.filterBy')}</span>
+            <button type="button" className="filter-reset-btn" onClick={handleReset} title={t('common.reset')}>
               <RotateCcw size={12} />
-              <span>RESET</span>
+              <span>{t('common.reset')}</span>
             </button>
           </div>
 
           {/* Categories / Garment Type */}
           <div className="filter-section">
-            <span className="filter-section-title">CATEGORIES</span>
+            <span className="filter-section-title">{t('shop.filterCategories')}</span>
             <div className="filter-category-list">
               {availableGarmentCategories.map(cat => {
                 const isActive = selectedGarment === cat.id;
@@ -186,7 +202,7 @@ export default function ShopPage() {
 
           {/* Sizes */}
           <div className="filter-section">
-            <span className="filter-section-title">SIZE</span>
+            <span className="filter-section-title">{t('shop.filterSize')}</span>
             <div className="filter-size-grid">
               {SIZES.map(s => {
                 const isActive = selectedSize === s;
@@ -208,7 +224,7 @@ export default function ShopPage() {
 
           {/* Color Palette */}
           <div className="filter-section">
-            <span className="filter-section-title">COLOR PALETTE</span>
+            <span className="filter-section-title">{t('shop.filterColor')}</span>
             <div className="filter-color-palette">
               <button
                 type="button"
@@ -216,7 +232,7 @@ export default function ShopPage() {
                 onClick={() => { setSelectedColor('ALL'); setCurrentPage(1); }}
                 title="All Colors"
               >
-                <span>ALL</span>
+                <span>{t('common.all')}</span>
               </button>
 
               {COLOR_PALETTE.filter(c => c.id !== 'ALL').map(c => {
@@ -241,7 +257,7 @@ export default function ShopPage() {
             {/* Max Price Slider */}
             <div className="filter-section">
               <div className="filter-price-header">
-                <span className="filter-section-title" style={{ marginBottom: 0 }}>MAX PRICE</span>
+                <span className="filter-section-title" style={{ marginBottom: 0 }}>{t('shop.filterMaxPrice')}</span>
                 <span className="filter-price-value">${maxPrice}</span>
               </div>
               <input
@@ -268,7 +284,7 @@ export default function ShopPage() {
           {/* Top Sort Bar */}
           <div className="shop-toolbar">
             <span className="shop-count">
-              Showing <strong>{filteredProducts.length}</strong> styles
+              {t('shop.showingProducts')} <strong>{filteredProducts.length}</strong> {t('common.items')}
             </span>
 
             <div className="shop-sort-wrap">
@@ -278,9 +294,9 @@ export default function ShopPage() {
                 onChange={e => setSortBy(e.target.value)}
                 className="shop-sort-select"
               >
-                <option value="newest">Sort by: Newest Arrival</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
+                <option value="newest">{t('shop.sortNewest')}</option>
+                <option value="price-asc">{t('shop.sortPriceAsc')}</option>
+                <option value="price-desc">{t('shop.sortPriceDesc')}</option>
               </select>
             </div>
           </div>
@@ -288,12 +304,12 @@ export default function ShopPage() {
           {/* Product Grid */}
           {filteredProducts.length === 0 ? (
             <div className="shop-empty-state">
-              <p className="shop-empty-text">No products match your selected criteria.</p>
+              <p className="shop-empty-text">{t('shop.noProductsTitle')}</p>
               <button 
                 onClick={handleReset}
                 className="shop-empty-btn"
               >
-                Reset All Filters
+                {t('common.reset')}
               </button>
             </div>
           ) : (

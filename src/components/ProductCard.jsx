@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Eye, ShoppingBag } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
 import QuickViewModal from './QuickViewModal';
+import StarRating from './StarRating';
 
 export default function ProductCard({ product }) {
-  const { addToCart, toggleWishlist, isInWishlist } = useShop();
+  const { addToCart, toggleWishlist, isInWishlist, getProductRatingStats } = useShop();
+  const { t, tp } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const navigate = useNavigate();
@@ -13,6 +16,7 @@ export default function ProductCard({ product }) {
   const isFavorited = isInWishlist(product.id);
   const stock = product.stock !== undefined ? product.stock : 20;
   const isOutOfStock = stock === 0;
+  const ratingStats = getProductRatingStats ? getProductRatingStats(product.id) : { averageRating: 5.0, totalReviews: 0 };
 
   const handleWishlistClick = (e) => {
     e.preventDefault();
@@ -76,10 +80,10 @@ export default function ProductCard({ product }) {
                 borderRadius: '2px'
               }}
             >
-              SOLD OUT
+              {t('common.soldOut')}
             </span>
           ) : product.tag ? (
-            <span className="product-tag">{product.tag}</span>
+            <span className="product-tag">{tp(product, 'tag')}</span>
           ) : null}
 
           {/* Wishlist Button */}
@@ -129,7 +133,7 @@ export default function ProductCard({ product }) {
                 borderRight: '1px solid rgba(255,255,255,0.2)'
               }}
             >
-              <Eye size={14} /> QUICK VIEW
+              <Eye size={14} /> {t('common.quickView')}
             </button>
 
             <button
@@ -152,16 +156,25 @@ export default function ProductCard({ product }) {
                 gap: '6px'
               }}
             >
-              <ShoppingBag size={14} /> {isOutOfStock ? 'SOLD OUT' : 'ADD TO BAG'}
+              <ShoppingBag size={14} /> {isOutOfStock ? t('common.soldOut') : t('common.addToBag')}
             </button>
           </div>
         </div>
 
         {/* Product Details */}
         <div className="product-info">
-          <div className="product-category-meta">{product.category}</div>
+          <div className="product-category-meta">{tp(product, 'garmentType') || product.category}</div>
           
-          <h3 className="product-title">{product.name}</h3>
+          <h3 className="product-title">{tp(product, 'name')}</h3>
+
+          <div style={{ margin: '4px 0 6px' }}>
+            <StarRating 
+              rating={ratingStats.averageRating} 
+              count={ratingStats.totalReviews} 
+              size={12} 
+              showScore={true} 
+            />
+          </div>
 
           <div className="product-pricing">
             <span className="current-price">${Number(product.price).toFixed(2)}</span>

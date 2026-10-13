@@ -14,11 +14,25 @@ import {
   Mail
 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function LoginPage() {
-  const { login: contextLogin, users: contextUsers } = useShop();
+  const { login: contextLogin, currentUser } = useShop();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
+
+  // If already authenticated, redirect immediately away from login
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.role === 'admin' || currentUser.email === 'admin@lune.com') {
+        navigate('/admin', { replace: true });
+      } else {
+        const destination = location.state?.redirect || location.state?.from?.pathname || '/';
+        navigate(destination, { replace: true });
+      }
+    }
+  }, [currentUser, navigate, location.state]);
 
   // Prefill if redirected from Register or Remember Me
   const prefillEmail = location.state?.registeredEmail || '';
@@ -36,7 +50,7 @@ export default function LoginPage() {
 
   // Registration notice if user was redirected from RegisterPage or ProtectedRoute
   const [registeredNotice, setRegisteredNotice] = useState(
-    location.state?.justRegistered ? `Account registered! Sign in to access your LUNE account.` : (location.state?.notice || '')
+    location.state?.justRegistered ? t('login.justRegisteredNotice') : (location.state?.notice || '')
   );
 
   // Forgot password modal
@@ -157,10 +171,11 @@ export default function LoginPage() {
         if (matchedUser.role === 'admin' || matchedUser.email === 'admin@lune.com') {
           navigate('/admin');
         } else {
-          navigate(location.state?.from?.pathname || '/');
+          const destination = location.state?.redirect || location.state?.from?.pathname || '/';
+          navigate(destination);
         }
-      }, 1000);
-    }, 600);
+      }, 350);
+    }, 400);
   };
 
   const handleForgotSubmit = (e) => {
@@ -182,9 +197,9 @@ export default function LoginPage() {
           <div className="auth-visual-scrim"></div>
           
           <div className="auth-visual-quote">
-            <span className="auth-visual-tag">LUNE FASHION STORE</span>
-            <h3>"Simplicity is the keynote of all true elegance."</h3>
-            <p>Access your curated wishlists, seasonal lookbooks, and private member promotions.</p>
+            <span className="auth-visual-tag">{t('register.editorialTag', 'LUNE FASHION STORE')}</span>
+            <h3>{t('login.editorialQuote', '"Simplicity is the keynote of all true elegance."')}</h3>
+            <p>{t('login.editorialDesc', 'Access your curated wishlists, seasonal lookbooks, and private member promotions.')}</p>
           </div>
         </div>
 
@@ -194,7 +209,7 @@ export default function LoginPage() {
             {/* Back to Home Link */}
             <Link to="/" className="auth-back-link">
               <ArrowLeft size={16} />
-              <span>Back to LUNE Home</span>
+              <span>{t('login.backToHome', 'Back to LUNE Home')}</span>
             </Link>
 
             {/* Brand Header */}
@@ -203,9 +218,9 @@ export default function LoginPage() {
                 <span className="brand-name">LUNE</span>
                 <span className="brand-tagline">FASHION STORE</span>
               </Link>
-              <h1 className="auth-heading">Client Sign In</h1>
+              <h1 className="auth-heading">{t('login.title', 'Client Sign In')}</h1>
               <p className="auth-subheading">
-                Welcome back. Sign in to experience your personalized wardrobe.
+                {t('login.subtitle', 'Welcome back. Sign in to experience your personalized wardrobe.')}
               </p>
             </div>
 
@@ -230,47 +245,23 @@ export default function LoginPage() {
             {loginSuccess && (
               <div className="auth-alert success">
                 <CheckCircle size={18} />
-                <span>Welcome back, {loggedInName}! Entering atelier...</span>
+                <span>{t('login.welcomeEntering', 'Welcome back,')} {loggedInName}! {t('login.enteringAtelier', 'Entering atelier...')}</span>
               </div>
             )}
 
-            {/* Quick Fill Demo */}
-            <div className="demo-accounts" style={{ marginBottom: '1.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <button 
-                type="button" 
-                className="btn-secondary"
-                style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer', borderRadius: '4px' }}
-                onClick={() => {
-                  setIdentifier('admin@lune.com');
-                  setPassword('Admin@123');
-                }}
-              >
-                Demo Admin
-              </button>
-              <button 
-                type="button" 
-                className="btn-secondary"
-                style={{ flex: 1, padding: '0.5rem', fontSize: '0.8rem', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--surface-color)', border: '1px solid var(--border-color)', color: 'var(--text-primary)', cursor: 'pointer', borderRadius: '4px' }}
-                onClick={() => {
-                  setIdentifier('customer@lune.com');
-                  setPassword('Password@123');
-                }}
-              >
-                Demo Customer
-              </button>
-            </div>
+
 
             {/* Form */}
             <form onSubmit={handleLogin} className="auth-actual-form" noValidate>
               {/* Email / Username */}
               <div className={`form-group ${fieldErrors.identifier ? 'has-error' : ''}`}>
-                <label htmlFor="identifier">Email or Username</label>
+                <label htmlFor="identifier">{t('login.identifierLabel', 'Email or Username')}</label>
                 <div className="input-with-icon">
                   <User size={16} className="input-field-icon" />
                   <input
                     id="identifier"
                     type="text"
-                    placeholder="name@example.com or username"
+                    placeholder={t('login.identifierPlaceholder', 'name@example.com or username')}
                     value={identifier}
                     onChange={(e) => {
                       setIdentifier(e.target.value);
@@ -289,7 +280,7 @@ export default function LoginPage() {
               {/* Password */}
               <div className={`form-group ${fieldErrors.password ? 'has-error' : ''}`}>
                 <div className="label-with-action">
-                  <label htmlFor="password">Password</label>
+                  <label htmlFor="password">{t('login.passwordLabel', 'Password')}</label>
                   <button 
                     type="button" 
                     className="forgot-pass-btn"
@@ -299,7 +290,7 @@ export default function LoginPage() {
                       setForgotSent(false);
                     }}
                   >
-                    Forgot password?
+                    {t('login.forgotPassword', 'Forgot password?')}
                   </button>
                 </div>
                 <div className="input-with-icon">
@@ -307,7 +298,7 @@ export default function LoginPage() {
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
+                    placeholder={t('login.passwordPlaceholder', 'Enter your password')}
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -340,7 +331,7 @@ export default function LoginPage() {
                     onChange={(e) => setRememberMe(e.target.checked)}
                   />
                   <span className="checkbox-custom"></span>
-                  <span className="checkbox-label">Remember my login</span>
+                  <span className="checkbox-label">{t('login.rememberMe', 'Remember my login')}</span>
                 </label>
               </div>
 
@@ -351,10 +342,10 @@ export default function LoginPage() {
                 disabled={isLoading || loginSuccess}
               >
                 {isLoading ? (
-                  <span>AUTHENTICATING...</span>
+                  <span>{t('login.signingIn', 'AUTHENTICATING...')}</span>
                 ) : (
                   <>
-                    <span>SIGN IN</span>
+                    <span>{t('login.signInBtn', 'SIGN IN')}</span>
                     <ArrowRight size={15} />
                   </>
                 )}
@@ -362,7 +353,7 @@ export default function LoginPage() {
 
               {/* Divider */}
               <div className="auth-divider">
-                <span>or continue with</span>
+                <span>{t('login.orContinueWith', 'or continue with')}</span>
               </div>
 
               {/* Social Buttons */}
@@ -436,9 +427,9 @@ export default function LoginPage() {
 
             {/* Switch to Register */}
             <div className="auth-footer-prompt">
-              <span>Don't have a LUNE account?</span>{' '}
+              <span>{t('login.noAccount', "Don't have a LUNE account?")}</span>{' '}
               <Link to="/register" className="auth-accent-link">
-                Create a LUNE account
+                {t('login.createAccount', 'Create a LUNE account')}
               </Link>
             </div>
           </div>
@@ -452,7 +443,7 @@ export default function LoginPage() {
             <div className="auth-modal-header">
               <div className="modal-title-with-icon">
                 <KeyRound size={20} className="modal-title-icon" />
-                <h3>Reset Your Password</h3>
+                <h3>{t('login.resetPasswordTitle', 'Reset Your Password')}</h3>
               </div>
               <button 
                 type="button" 
@@ -468,10 +459,10 @@ export default function LoginPage() {
               {!forgotSent ? (
                 <form onSubmit={handleForgotSubmit}>
                   <p style={{ marginBottom: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.86rem', lineHeight: '1.6' }}>
-                    Enter the email associated with your LUNE account. We will send a secure link to reset your password.
+                    {t('login.resetPasswordDesc', 'Enter the email associated with your LUNE account. We will send a secure link to reset your password.')}
                   </p>
                   <div className="form-group">
-                    <label htmlFor="forgotEmail">Account Email</label>
+                    <label htmlFor="forgotEmail">{t('login.accountEmailLabel', 'Account Email')}</label>
                     <div className="input-with-icon">
                       <Mail size={16} className="input-field-icon" />
                       <input 
@@ -492,14 +483,14 @@ export default function LoginPage() {
                       style={{ flex: 1, padding: '0.75rem' }}
                       onClick={() => setShowForgotModal(false)}
                     >
-                      CANCEL
+                      {t('login.cancelBtn', 'CANCEL')}
                     </button>
                     <button 
                       type="submit" 
                       className="btn-primary modal-action-btn"
                       style={{ flex: 1.5 }}
                     >
-                      SEND RECOVERY LINK
+                      {t('login.sendRecoveryBtn', 'SEND RECOVERY LINK')}
                     </button>
                   </div>
                 </form>
@@ -507,10 +498,10 @@ export default function LoginPage() {
                 <div className="forgot-success-box">
                   <CheckCircle size={36} color="#0E6245" style={{ margin: '0 auto 1rem auto', display: 'block' }} />
                   <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '0.5rem', textAlign: 'center' }}>
-                    Instructions Dispatched
+                    {t('login.instructionsDispatched', 'Instructions Dispatched')}
                   </h4>
                   <p style={{ textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                    A temporary recovery code has been sent to <strong>{forgotEmail}</strong> (Simulated demo mode).
+                    {t('login.recoverySentDesc', 'A temporary recovery code has been sent to')} <strong>{forgotEmail}</strong> {t('login.simulatedDemo', '(Simulated demo mode).')}
                   </p>
                   <button 
                     type="button" 
@@ -518,7 +509,7 @@ export default function LoginPage() {
                     style={{ width: '100%', marginTop: '1.5rem' }}
                     onClick={() => setShowForgotModal(false)}
                   >
-                    RETURN TO SIGN IN
+                    {t('login.returnToSignIn', 'RETURN TO SIGN IN')}
                   </button>
                 </div>
               )}

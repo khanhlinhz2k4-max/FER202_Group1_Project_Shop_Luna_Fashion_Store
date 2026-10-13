@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
 import { 
   User, 
   Package, 
@@ -24,8 +25,12 @@ import {
   Shield,
   Lock,
   Mail,
-  UserCheck
+  UserCheck,
+  Printer
 } from 'lucide-react';
+import OrderTimeline from '../components/OrderTimeline';
+import InvoiceModal from '../components/InvoiceModal';
+import ReviewModal from '../components/ReviewModal';
 import './ProfilePage.css';
 
 /**
@@ -49,14 +54,30 @@ export default function ProfilePage() {
     updateProfile, 
     changePassword, 
     orders, 
+    products = [],
     updateOrderStatus,
     wishlist,
     removeFromWishlist,
     addToCart
   } = useShop();
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'info' | 'security' | 'addresses' | 'wishlist'
+
+  // Invoice & Review Modal States
+  const [selectedInvoiceOrder, setSelectedInvoiceOrder] = useState(null);
+  const [isInvoiceOpen, setIsInvoiceOpen] = useState(false);
+  const [selectedReviewProduct, setSelectedReviewProduct] = useState(null);
+  const [selectedReviewOrderId, setSelectedReviewOrderId] = useState(null);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+
+  const handleOpenReview = (item, orderId) => {
+    const prod = products.find(p => p.id === item.id) || item;
+    setSelectedReviewProduct(prod);
+    setSelectedReviewOrderId(orderId);
+    setIsReviewOpen(true);
+  };
 
   // Personal Info Form State
   const [name, setName] = useState(currentUser?.name || '');
@@ -129,7 +150,7 @@ export default function ProfilePage() {
     setInfoError('');
 
     if (!name.trim()) {
-      setInfoError('Full name cannot be empty.');
+      setInfoError(t('profile.nameNotEmpty', 'Full name cannot be empty.'));
       return;
     }
 
@@ -139,7 +160,7 @@ export default function ProfilePage() {
     });
 
     if (res?.success) {
-      setInfoSuccess('Personal details updated successfully.');
+      setInfoSuccess(t('profile.infoUpdatedSuccess', 'Personal details updated successfully.'));
       setAddresses(prev => prev.map(a => a.isDefault ? { ...a, recipient: name.trim(), phone: phone.trim() } : a));
       setTimeout(() => setInfoSuccess(''), 4000);
     }
@@ -152,15 +173,15 @@ export default function ProfilePage() {
     setPassError('');
 
     if (!oldPassword) {
-      setPassError('Please enter your current password.');
+      setPassError(t('profile.enterOldPass', 'Please enter your current password.'));
       return;
     }
     if (!newPassword || newPassword.length < 6) {
-      setPassError('New password must be at least 6 characters long.');
+      setPassError(t('profile.passMin6', 'New password must be at least 6 characters long.'));
       return;
     }
     if (newPassword !== confirmPassword) {
-      setPassError('New password and confirmation password do not match.');
+      setPassError(t('profile.passMismatch', 'New password and confirmation password do not match.'));
       return;
     }
 
@@ -169,7 +190,7 @@ export default function ProfilePage() {
       const res = changePassword(currentUser.id, oldPassword, newPassword);
       setIsChangingPass(false);
       if (res.success) {
-        setPassSuccess('Password changed successfully! Keep it confidential.');
+        setPassSuccess(t('profile.passSuccessNotice', 'Password changed successfully! Keep it confidential.'));
         setOldPassword('');
         setNewPassword('');
         setConfirmPassword('');
@@ -183,7 +204,7 @@ export default function ProfilePage() {
   // Handle Order Cancellation by Customer
   const handleCancelOrder = (orderId) => {
     const confirmCancel = window.confirm(
-      `Are you sure you want to cancel Order ${orderId}? The reserved items will be restored to store inventory.`
+      `${t('profile.confirmCancelTitle', 'Are you sure you want to cancel Order')} ${orderId}? ${t('profile.confirmCancelDesc', 'The reserved items will be restored to store inventory.')}`
     );
     if (confirmCancel) {
       updateOrderStatus(orderId, 'Cancelled');
@@ -212,7 +233,7 @@ export default function ProfilePage() {
 
     setNewAddressForm({ label: '', recipient: '', phone: '', detail: '' });
     setShowAddAddressModal(false);
-    setAddressSuccess('New delivery destination added to your Address Book.');
+    setAddressSuccess(t('profile.addressAddedSuccess', 'New delivery destination added to your Address Book.'));
     setTimeout(() => setAddressSuccess(''), 4000);
   };
 
@@ -233,14 +254,14 @@ export default function ProfilePage() {
       updateProfile({ address: target.detail, phone: target.phone });
     }
 
-    setAddressSuccess('Default shipping destination updated.');
+    setAddressSuccess(t('profile.defaultAddressUpdated', 'Default shipping destination updated.'));
     setTimeout(() => setAddressSuccess(''), 3000);
   };
 
   // Handle Delete Address
   const handleDeleteAddress = (id) => {
     if (addresses.length <= 1) {
-      alert('You must maintain at least one delivery address in your account.');
+      alert(t('profile.mustKeepOneAddress', 'You must maintain at least one delivery address in your account.'));
       return;
     }
     const updated = addresses.filter(a => a.id !== id);
@@ -275,13 +296,13 @@ export default function ProfilePage() {
       {/* Page Header */}
       <div className="profile-header">
         <div>
-          <h1 className="profile-title">CLIENT ACCOUNT</h1>
+          <h1 className="profile-title">{t('profile.clientAccount', 'CLIENT ACCOUNT')}</h1>
           <p className="profile-subtitle">
-            Welcome back, <strong>{currentUser.name}</strong> • Member Portal
+            {t('profile.welcomeBack', 'Welcome back')}, <strong>{currentUser.name}</strong> • {t('profile.memberPortal', 'Member Portal')}
           </p>
         </div>
         <button type="button" onClick={handleLogout} className="profile-logout-btn">
-          <LogOut size={16} /> Sign Out
+          <LogOut size={16} /> {t('profile.signOutBtn', 'Sign Out')}
         </button>
       </div>
 
@@ -296,7 +317,7 @@ export default function ProfilePage() {
             {/* Membership Tier Badge */}
             <div className="profile-tier-badge">
               <Sparkles size={12} className="tier-icon" />
-              <span>{currentUser.role === 'admin' ? 'ATELIER AMBASSADOR' : 'ATELIER GOLD VIP'}</span>
+              <span>{currentUser.role === 'admin' ? t('profile.ambassadorBadge', 'ATELIER AMBASSADOR') : t('profile.vipBadge', 'ATELIER GOLD VIP')}</span>
             </div>
           </div>
 
@@ -307,7 +328,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('orders')}
             >
               <Package size={18} />
-              <span>My Orders</span>
+              <span>{t('profile.tabOrders', 'My Orders')}</span>
               <span className="profile-nav-badge">{userOrders.length}</span>
             </button>
 
@@ -317,7 +338,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('info')}
             >
               <User size={18} />
-              <span>Personal Details</span>
+              <span>{t('profile.tabInfo', 'Personal Details')}</span>
             </button>
 
             <button
@@ -326,7 +347,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('security')}
             >
               <Shield size={18} />
-              <span>Password & Security</span>
+              <span>{t('profile.tabSecurity', 'Password & Security')}</span>
             </button>
 
             <button
@@ -335,7 +356,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('addresses')}
             >
               <MapPin size={18} />
-              <span>Address Book</span>
+              <span>{t('profile.tabAddresses', 'Address Book')}</span>
               <span className="profile-nav-badge">{addresses.length}</span>
             </button>
 
@@ -345,7 +366,7 @@ export default function ProfilePage() {
               onClick={() => setActiveTab('wishlist')}
             >
               <Heart size={18} />
-              <span>Saved Wishlist</span>
+              <span>{t('profile.tabWishlist', 'Saved Wishlist')}</span>
               <span className="profile-nav-badge">{wishlist.length}</span>
             </button>
           </nav>
@@ -358,7 +379,7 @@ export default function ProfilePage() {
               className="profile-sidebar-logout-btn"
             >
               <LogOut size={16} />
-              <span>Sign Out Account</span>
+              <span>{t('profile.signOutBtn', 'Sign Out Account')}</span>
             </button>
           </div>
         </aside>
@@ -369,25 +390,31 @@ export default function ProfilePage() {
           {activeTab === 'orders' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '12px' }}>
-                <h2 className="profile-section-heading">ORDER HISTORY</h2>
+                <h2 className="profile-section-heading">{t('profile.orderHistoryTitle', 'ORDER HISTORY')}</h2>
                 <span style={{ fontSize: '0.85rem', color: '#6B5645' }}>
-                  Total Orders: <strong>{userOrders.length}</strong>
+                  {t('profile.totalOrdersLabel', 'Total Orders:')} <strong>{userOrders.length}</strong>
                 </span>
               </div>
               <p className="profile-section-desc">
-                Review past purchases, current shipping progress, and order receipts.
+                {t('profile.orderHistoryDesc', 'Review past purchases, current shipping progress, and order receipts.')}
               </p>
 
               {/* Status Filter Bar */}
               <div className="orders-filter-bar">
-                {['all', 'pending', 'shipping', 'delivered', 'cancelled'].map(st => (
+                {[
+                  { id: 'all', label: t('profile.statusAll', 'All') },
+                  { id: 'pending', label: t('profile.statusPending', 'Pending') },
+                  { id: 'shipping', label: t('profile.statusShipping', 'Shipping') },
+                  { id: 'delivered', label: t('profile.statusDelivered', 'Delivered') },
+                  { id: 'cancelled', label: t('profile.statusCancelled', 'Cancelled') }
+                ].map(({ id: st, label }) => (
                   <button
                     key={st}
                     type="button"
                     className={`orders-filter-btn ${orderFilter === st ? 'active' : ''}`}
                     onClick={() => setOrderFilter(st)}
                   >
-                    {st.charAt(0).toUpperCase() + st.slice(1)}
+                    {label}
                   </button>
                 ))}
               </div>
@@ -395,25 +422,30 @@ export default function ProfilePage() {
               {displayedOrders.length === 0 ? (
                 <div className="empty-orders-view">
                   <Package size={48} style={{ opacity: 0.35, margin: '0 auto 12px', color: '#775B3F' }} />
-                  <p>No orders found matching the selected filter.</p>
+                  <p>{t('profile.noOrdersFilter', 'No orders found matching the selected filter.')}</p>
                   <button
                     type="button"
                     onClick={() => navigate('/shop')}
                     className="profile-submit-btn"
                   >
-                    <ShoppingBag size={16} /> Explore Collection
+                    <ShoppingBag size={16} /> {t('profile.exploreCollectionBtn', 'Explore Collection')}
                   </button>
                 </div>
               ) : (
                 displayedOrders.map(order => {
                   const statusKey = (order.status || 'pending').toLowerCase();
+                  const statusLabel = 
+                    statusKey === 'pending' ? t('profile.statusPending', 'Pending') :
+                    statusKey === 'shipping' ? t('profile.statusShipping', 'Shipping') :
+                    statusKey === 'delivered' ? t('profile.statusDelivered', 'Delivered') :
+                    statusKey === 'cancelled' ? t('profile.statusCancelled', 'Cancelled') : order.status;
                   return (
                     <div key={order.id} className="order-card">
                       <div className="order-card-header">
                         <div>
                           <div className="order-card-id">{order.id}</div>
                           <div className="order-card-date">
-                            Ordered on {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {t('profile.orderedOn', 'Ordered on')} {new Date(order.createdAt).toLocaleDateString()} {t('profile.atTime', 'at')} {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                           </div>
                         </div>
 
@@ -423,9 +455,14 @@ export default function ProfilePage() {
                             {statusKey === 'shipping' && <Truck size={12} />}
                             {statusKey === 'delivered' && <CheckCircle size={12} />}
                             {statusKey === 'cancelled' && <XCircle size={12} />}
-                            {order.status}
+                            {statusLabel}
                           </span>
                         </div>
+                      </div>
+
+                      {/* Stepped Visual Order Timeline */}
+                      <div style={{ padding: '0 20px' }}>
+                        <OrderTimeline status={order.status} compact={true} />
                       </div>
 
                       <div className="order-card-body">
@@ -439,8 +476,27 @@ export default function ProfilePage() {
                             <div className="order-item-details">
                               <h4 className="order-item-name">{item.name}</h4>
                               <div className="order-item-meta">
-                                Size: <strong>{item.selectedSize || 'Standard'}</strong> • Quantity: <strong>{item.quantity}</strong>
+                                {t('profile.sizeLabel', 'Size:')} <strong>{item.selectedSize || 'Standard'}</strong> • {t('profile.qtyLabel', 'Quantity:')} <strong>{item.quantity}</strong>
                               </div>
+                              {order.status === 'Delivered' && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenReview(item, order.id)}
+                                  style={{
+                                    marginTop: '6px',
+                                    padding: '3px 10px',
+                                    fontSize: '0.74rem',
+                                    fontWeight: 600,
+                                    color: '#775B3F',
+                                    backgroundColor: '#FAF7F2',
+                                    border: '1px solid #C8AE84',
+                                    borderRadius: '2px',
+                                    cursor: 'pointer'
+                                  }}
+                                >
+                                  ★ {t('profile.writeReviewBtn', 'Write Review')}
+                                </button>
+                              )}
                             </div>
                             <div className="order-item-price">
                               ${(item.price * item.quantity).toLocaleString()}
@@ -449,27 +505,52 @@ export default function ProfilePage() {
                         ))}
 
                         <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px dashed #E7DDCE', fontSize: '0.82rem', color: '#6B5645' }}>
-                          <div><strong>Delivery Address:</strong> {order.customer?.address || 'Standard Address'}</div>
-                          <div><strong>Payment Method:</strong> {order.paymentMethod || 'Cash on Delivery'}</div>
+                          <div><strong>{t('profile.deliveryAddressLabel', 'Delivery Address:')}</strong> {order.customer?.address || 'Standard Address'}</div>
+                          <div><strong>{t('profile.paymentMethodLabel', 'Payment Method:')}</strong> {order.paymentMethod || 'Cash on Delivery'}</div>
                         </div>
                       </div>
 
                       <div className="order-card-footer">
                         <div>
-                          <span style={{ fontSize: '0.82rem', color: '#6B5645' }}>Total Amount: </span>
+                          <span style={{ fontSize: '0.82rem', color: '#6B5645' }}>{t('profile.orderTotal', 'Total Amount:')} </span>
                           <span className="order-total-amount">${order.totalAmount}</span>
                         </div>
 
-                        {/* Customer can cancel if order is still Pending */}
-                        {order.status === 'Pending' && (
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                           <button
                             type="button"
-                            className="order-cancel-btn"
-                            onClick={() => handleCancelOrder(order.id)}
+                            onClick={() => {
+                              setSelectedInvoiceOrder(order);
+                              setIsInvoiceOpen(true);
+                            }}
+                            style={{
+                              padding: '7px 14px',
+                              fontSize: '0.78rem',
+                              fontWeight: 600,
+                              color: '#2C2117',
+                              backgroundColor: '#FAF7F2',
+                              border: '1px solid #C8AE84',
+                              borderRadius: '2px',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px'
+                            }}
                           >
-                            Cancel Order
+                            <Printer size={13} /> {t('profile.printInvoiceBtn', 'Print Invoice')}
                           </button>
-                        )}
+
+                          {/* Customer can cancel if order is still Pending */}
+                          {order.status === 'Pending' && (
+                            <button
+                              type="button"
+                              className="order-cancel-btn"
+                              onClick={() => handleCancelOrder(order.id)}
+                            >
+                              {t('profile.cancelOrderBtn', 'Cancel Order')}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
@@ -481,9 +562,9 @@ export default function ProfilePage() {
           {/* TAB 2: PERSONAL DETAILS (REFINED & HARMONIOUS) */}
           {activeTab === 'info' && (
             <div>
-              <h2 className="profile-section-heading">PERSONAL INFORMATION</h2>
+              <h2 className="profile-section-heading">{t('profile.personalInfoTitle', 'PERSONAL DETAILS')}</h2>
               <p className="profile-section-desc">
-                Manage your primary identity details and contact information.
+                {t('profile.personalInfoDesc', 'Manage your primary identity details and contact information.')}
               </p>
 
               {infoSuccess && (
@@ -502,7 +583,7 @@ export default function ProfilePage() {
               <form onSubmit={handleUpdateProfile}>
                 <div className="profile-form-grid">
                   <div className="profile-form-group">
-                    <label className="profile-label">Full Name *</label>
+                    <label className="profile-label">{t('profile.fullNameLabel', 'Full Name *')}</label>
                     <input
                       type="text"
                       className="profile-input"
@@ -514,7 +595,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="profile-form-group">
-                    <label className="profile-label">Phone Number</label>
+                    <label className="profile-label">{t('profile.phoneLabel', 'Phone Number')}</label>
                     <input
                       type="tel"
                       className="profile-input"
@@ -525,22 +606,22 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="profile-form-group">
-                    <label className="profile-label">Email Address (Verified)</label>
+                    <label className="profile-label">{t('profile.emailLabel', 'Email Address (Verified)')}</label>
                     <div className="profile-input-locked">
                       <Mail size={16} className="locked-icon" />
                       <span className="locked-text">{currentUser.email}</span>
                       <span className="verified-pill">
-                        <CheckCircle size={12} /> Verified
+                        <CheckCircle size={12} /> {t('profile.verifiedPill', 'Verified')}
                       </span>
                     </div>
                   </div>
 
                   <div className="profile-form-group">
-                    <label className="profile-label">Member Account Status</label>
+                    <label className="profile-label">{t('profile.accountStatusLabel', 'Member Account Status')}</label>
                     <div className="profile-input-locked">
                       <UserCheck size={16} className="locked-icon" />
                       <span className="locked-text">LUNE VIP #{currentUser.id?.slice(-6).toUpperCase() || 'MEMBER'}</span>
-                      <span className="active-pill">Active</span>
+                      <span className="active-pill">{t('profile.activePill', 'Active')}</span>
                     </div>
                   </div>
                 </div>
@@ -551,7 +632,7 @@ export default function ProfilePage() {
                     <MapPin size={22} />
                   </div>
                   <div className="destination-banner-info">
-                    <h4 className="destination-banner-title">Primary Delivery Destination</h4>
+                    <h4 className="destination-banner-title">{t('profile.primaryDestinationTitle', 'Primary Delivery Destination')}</h4>
                     <p className="destination-banner-address">{primaryAddress}</p>
                   </div>
                   <button
@@ -559,13 +640,13 @@ export default function ProfilePage() {
                     className="destination-banner-btn"
                     onClick={() => setActiveTab('addresses')}
                   >
-                    Manage in Address Book <ArrowRight size={14} />
+                    {t('profile.manageAddressBookBtn', 'Manage in Address Book')} <ArrowRight size={14} />
                   </button>
                 </div>
 
                 <div className="profile-form-actions">
                   <button type="submit" className="profile-submit-btn">
-                    <CheckCircle size={16} /> Save Changes
+                    <CheckCircle size={16} /> {t('profile.saveInfoBtn', 'Save Changes')}
                   </button>
                 </div>
               </form>
@@ -575,9 +656,9 @@ export default function ProfilePage() {
           {/* TAB 3: PASSWORD & SECURITY (INDEPENDENT TAB) */}
           {activeTab === 'security' && (
             <div>
-              <h2 className="profile-section-heading">PASSWORD & SECURITY</h2>
+              <h2 className="profile-section-heading">{t('profile.securityTitle', 'PASSWORD & SECURITY')}</h2>
               <p className="profile-section-desc">
-                Ensure your account is protected with a secure and unique password.
+                {t('profile.securityDesc', 'Ensure your account is protected with a secure and unique password.')}
               </p>
 
               {passSuccess && (
@@ -596,7 +677,7 @@ export default function ProfilePage() {
               <form onSubmit={handleChangePassword}>
                 <div className="profile-form-grid">
                   <div className="profile-form-group profile-form-full">
-                    <label className="profile-label">Current Password *</label>
+                    <label className="profile-label">{t('profile.oldPasswordLabel', 'Current Password *')}</label>
                     <div style={{ position: 'relative' }}>
                       <input
                         type={showOldPass ? 'text' : 'password'}
@@ -617,7 +698,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="profile-form-group">
-                    <label className="profile-label">New Password *</label>
+                    <label className="profile-label">{t('profile.newPasswordLabel', 'New Password *')}</label>
                     <div style={{ position: 'relative' }}>
                       <input
                         type={showNewPass ? 'text' : 'password'}
@@ -638,7 +719,7 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="profile-form-group">
-                    <label className="profile-label">Confirm New Password *</label>
+                    <label className="profile-label">{t('profile.confirmNewPasswordLabel', 'Confirm New Password *')}</label>
                     <input
                       type="password"
                       className="profile-input"
@@ -652,12 +733,12 @@ export default function ProfilePage() {
 
                 <div className="security-guidelines-box">
                   <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: '#2C2117', margin: '0 0 6px' }}>
-                    Password Requirements:
+                    {t('profile.reqTitle', 'Password Requirements:')}
                   </h4>
                   <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '0.8rem', color: '#6B5645', lineHeight: 1.6 }}>
-                    <li>Must be at least 6 characters in length.</li>
-                    <li>Avoid using common dictionary words or easily guessable dates.</li>
-                    <li>For optimal protection, combine letters, numbers, and symbols.</li>
+                    <li>{t('profile.req1', 'Must be at least 6 characters in length.')}</li>
+                    <li>{t('profile.req2', 'Avoid using common dictionary words or easily guessable dates.')}</li>
+                    <li>{t('profile.req3', 'For optimal protection, combine letters, numbers, and symbols.')}</li>
                   </ul>
                 </div>
 
@@ -668,7 +749,7 @@ export default function ProfilePage() {
                     disabled={isChangingPass}
                   >
                     <KeyRound size={16} />
-                    {isChangingPass ? 'Updating...' : 'Update Password'}
+                    {isChangingPass ? t('profile.updatingBtn', 'Updating...') : t('profile.changePasswordBtn', 'Update Password')}
                   </button>
                 </div>
               </form>
@@ -679,17 +760,17 @@ export default function ProfilePage() {
           {activeTab === 'addresses' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '12px' }}>
-                <h2 className="profile-section-heading">ADDRESS BOOK</h2>
+                <h2 className="profile-section-heading">{t('profile.addressesTitle', 'DELIVERY ADDRESS BOOK')}</h2>
                 <button
                   type="button"
                   className="profile-action-outline-btn"
                   onClick={() => setShowAddAddressModal(true)}
                 >
-                  <Plus size={15} /> Add Destination
+                  <Plus size={15} /> {t('profile.addDestinationBtn', 'Add Destination')}
                 </button>
               </div>
               <p className="profile-section-desc">
-                Manage your delivery destinations for expedited checkout on upcoming purchases.
+                {t('profile.addressesDesc', 'Manage your delivery destinations for expedited checkout on upcoming purchases.')}
               </p>
 
               {addressSuccess && (
@@ -706,7 +787,7 @@ export default function ProfilePage() {
                       <span className="address-card-label">{addr.label}</span>
                       {addr.isDefault && (
                         <span className="address-default-badge">
-                          <CheckCircle size={12} /> Default Destination
+                          <CheckCircle size={12} /> {t('profile.defaultBadge', 'Default Destination')}
                         </span>
                       )}
                     </div>
@@ -724,14 +805,14 @@ export default function ProfilePage() {
                           className="address-set-default-btn"
                           onClick={() => handleSetDefaultAddress(addr.id)}
                         >
-                          Set as Default
+                          {t('profile.setDefaultBtn', 'Set as Default')}
                         </button>
                       )}
                       <button
                         type="button"
                         className="address-delete-btn"
                         onClick={() => handleDeleteAddress(addr.id)}
-                        title="Delete Address"
+                        title={t('common.delete', 'Delete')}
                       >
                         <Trash2 size={15} />
                       </button>
@@ -745,14 +826,14 @@ export default function ProfilePage() {
                 <div className="profile-modal-backdrop" onClick={() => setShowAddAddressModal(false)}>
                   <div className="profile-modal-box" onClick={e => e.stopPropagation()}>
                     <div className="profile-modal-header">
-                      <h3>Add Delivery Destination</h3>
+                      <h3>{t('profile.addModalHeading', 'Add Delivery Destination')}</h3>
                       <button type="button" onClick={() => setShowAddAddressModal(false)} className="profile-modal-close">
                         ✕
                       </button>
                     </div>
                     <form onSubmit={handleAddAddress} className="profile-modal-form">
                       <div className="profile-form-group">
-                        <label className="profile-label">Address Tag / Label</label>
+                        <label className="profile-label">{t('profile.addrTagLabel', 'Address Tag / Label')}</label>
                         <input
                           type="text"
                           className="profile-input"
@@ -763,7 +844,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div className="profile-form-group">
-                        <label className="profile-label">Recipient Name *</label>
+                        <label className="profile-label">{t('profile.recipientLabel', 'Recipient Name *')}</label>
                         <input
                           type="text"
                           className="profile-input"
@@ -774,7 +855,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div className="profile-form-group">
-                        <label className="profile-label">Phone Number *</label>
+                        <label className="profile-label">{t('profile.phoneInputLabel', 'Phone Number *')}</label>
                         <input
                           type="tel"
                           className="profile-input"
@@ -785,7 +866,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div className="profile-form-group">
-                        <label className="profile-label">Detailed Address *</label>
+                        <label className="profile-label">{t('profile.addressDetailLabel', 'Detailed Address *')}</label>
                         <textarea
                           className="profile-input"
                           rows="3"
@@ -802,14 +883,14 @@ export default function ProfilePage() {
                           onClick={() => setShowAddAddressModal(false)}
                           style={{ flex: 1 }}
                         >
-                          Cancel
+                          {t('profile.cancelBtn', 'Cancel')}
                         </button>
                         <button
                           type="submit"
                           className="profile-submit-btn"
                           style={{ flex: 1.5 }}
                         >
-                          Save Address
+                          {t('profile.saveAddressBtn', 'Save Address')}
                         </button>
                       </div>
                     </form>
@@ -823,25 +904,25 @@ export default function ProfilePage() {
           {activeTab === 'wishlist' && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '12px' }}>
-                <h2 className="profile-section-heading">SAVED WISHLIST</h2>
+                <h2 className="profile-section-heading">{t('profile.tabWishlist', 'SAVED WISHLIST')}</h2>
                 <Link to="/wishlist" className="profile-action-outline-btn">
-                  Open Dedicated Page <ArrowRight size={14} />
+                  {t('profile.openDedicatedPage', 'Open Dedicated Page')} <ArrowRight size={14} />
                 </Link>
               </div>
               <p className="profile-section-desc">
-                Garments and accessories saved to your personal lookbook ({wishlist.length} {wishlist.length === 1 ? 'piece' : 'pieces'}).
+                {t('wishlist.subtitle', 'Your curated lookbook')} ({wishlist.length} {wishlist.length === 1 ? t('wishlist.pieceSingular', 'piece') : t('wishlist.piecePlural', 'pieces')}).
               </p>
 
               {wishlist.length === 0 ? (
                 <div className="empty-orders-view">
                   <Heart size={48} strokeWidth={1.5} style={{ opacity: 0.35, margin: '0 auto 12px', color: '#775B3F' }} />
-                  <p>Your saved wishlist is currently empty.</p>
+                  <p>{t('profile.emptyWishlistDesc', 'Your saved wishlist is currently empty.')}</p>
                   <button
                     type="button"
                     onClick={() => navigate('/shop')}
                     className="profile-submit-btn"
                   >
-                    <ShoppingBag size={16} /> Discover Styles
+                    <ShoppingBag size={16} /> {t('profile.discoverStylesBtn', 'Discover Styles')}
                   </button>
                 </div>
               ) : (
@@ -860,16 +941,16 @@ export default function ProfilePage() {
                             className="profile-wishlist-add-btn"
                             onClick={() => {
                               addToCart(item, item.sizes?.[0] || 'M', item.colors?.[0] || 'Default', 1);
-                              alert(`Added "${item.name}" to bag.`);
+                              alert(`${t('profile.addedToBagAlert', 'Added to bag:')} "${item.name}"`);
                             }}
                           >
-                            <ShoppingBag size={14} /> Add to Bag
+                            <ShoppingBag size={14} /> {t('profile.addToBagBtn', 'Add to Bag')}
                           </button>
                           <button
                             type="button"
                             className="profile-wishlist-remove-btn"
                             onClick={() => removeFromWishlist(item.id)}
-                            title="Remove from Wishlist"
+                            title={t('common.delete', 'Remove')}
                           >
                             <Trash2 size={14} />
                           </button>
@@ -883,6 +964,21 @@ export default function ProfilePage() {
           )}
         </main>
       </div>
+
+      {/* Invoice Modal for Viewing & Printing */}
+      <InvoiceModal
+        order={selectedInvoiceOrder}
+        isOpen={isInvoiceOpen}
+        onClose={() => setIsInvoiceOpen(false)}
+      />
+
+      {/* Review Modal for Verified Client Feedback */}
+      <ReviewModal
+        product={selectedReviewProduct}
+        orderId={selectedReviewOrderId}
+        isOpen={isReviewOpen}
+        onClose={() => setIsReviewOpen(false)}
+      />
     </div>
   );
 }

@@ -1,31 +1,78 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
 import { Heart, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 
 /**
  * WishlistPage Component
  * Phụ trách: Thành viên 3 (Trải nghiệm sản phẩm & Danh sách yêu thích)
+ * Nâng cấp: Thành viên 1 (Leader - Tích hợp Đa ngôn ngữ song ngữ EN/VI)
  * Harmonized with LUNE Warm Luxury Brand Guidelines
  */
 export default function WishlistPage() {
-  const { wishlist, removeFromWishlist, addToCart } = useShop();
+  const { wishlist, removeFromWishlist, addToCart, currentUser } = useShop();
+  const { t, tp } = useLanguage();
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '48px 24px 80px' }}>
-      <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '2.4rem', fontWeight: 500, margin: '0 0 8px', color: '#2C2117', letterSpacing: '0.04em' }}>
-          SAVED STYLES
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--text-h1)', fontWeight: 500, margin: '0 0 8px', color: '#2C2117', letterSpacing: '0.04em' }}>
+          {t('wishlist.title', 'SAVED STYLES')}
         </h1>
-        <p style={{ color: '#5C4A3A', fontSize: '0.92rem', letterSpacing: '0.02em' }}>
-          Your curated wishlist ({wishlist.length} {wishlist.length === 1 ? 'item' : 'items'})
+        <p style={{ color: '#5C4A3A', fontSize: 'var(--text-body)', letterSpacing: '0.02em' }}>
+          {t('wishlist.subtitle', 'Your curated lookbook')} ({wishlist.length} {wishlist.length === 1 ? t('wishlist.pieceSingular', 'piece') : t('wishlist.piecePlural', 'pieces')})
         </p>
       </div>
+
+      {/* Guest Mode Synchronization Banner (Non-blocking) */}
+      {!currentUser && wishlist.length > 0 && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px',
+          padding: '14px 22px',
+          backgroundColor: '#F9F2E7',
+          border: '1px solid #C8AE84',
+          borderRadius: '4px',
+          marginBottom: '32px',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Heart size={18} fill="#CAA072" stroke="#775B3F" />
+            <span style={{ fontSize: '0.86rem', color: '#5C4A3A' }}>
+              <strong>{t('wishlist.guestNoticeTitle', 'Browsing as Guest:')}</strong> {t('wishlist.guestNoticeDesc', 'Items are saved in this browser. Sign in anytime to sync your lookbook permanently across all devices.')}
+            </span>
+          </div>
+          <Link
+            to="/login"
+            state={{ redirect: '/wishlist' }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '7px 18px',
+              backgroundColor: '#775B3F',
+              color: '#FAF7F2',
+              fontSize: '0.78rem',
+              fontWeight: 600,
+              letterSpacing: '0.04em',
+              borderRadius: '2px',
+              textDecoration: 'none'
+            }}
+          >
+            {t('wishlist.signInToSync', 'SIGN IN TO SYNC')} <ArrowRight size={13} />
+          </Link>
+        </div>
+      )}
 
       {wishlist.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '80px 20px', backgroundColor: '#FFFFFF', border: '1px solid #E7DDCE', borderRadius: '4px' }}>
           <Heart size={48} strokeWidth={1} style={{ margin: '0 auto 16px', color: '#C8AE84' }} />
-          <p style={{ color: '#5C4A3A', marginBottom: '24px', fontSize: '0.95rem' }}>You haven't saved any items to your wishlist yet.</p>
+          <p style={{ color: '#5C4A3A', marginBottom: '24px', fontSize: '0.95rem' }}>
+            {t('wishlist.emptyTitle', "You haven't saved any items to your wishlist yet.")}
+          </p>
           <Link
             to="/shop"
             style={{
@@ -43,7 +90,7 @@ export default function WishlistPage() {
               transition: 'background-color 0.2s ease'
             }}
           >
-            EXPLORE THE COLLECTION <ArrowRight size={16} />
+            {t('wishlist.exploreBtn', 'EXPLORE THE COLLECTION')} <ArrowRight size={16} />
           </Link>
         </div>
       ) : (
@@ -69,7 +116,7 @@ export default function WishlistPage() {
               <div style={{ position: 'relative', height: '340px', backgroundColor: '#F5EFEB' }}>
                 <img
                   src={product.image}
-                  alt={product.name}
+                  alt={tp(product, 'name')}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
                 <button
@@ -88,7 +135,7 @@ export default function WishlistPage() {
                     justifyContent: 'center',
                     cursor: 'pointer'
                   }}
-                  title="Remove from Wishlist"
+                  title={t('wishlist.removeBtn', 'Remove')}
                 >
                   <Trash2 size={16} color="#B91C1C" />
                 </button>
@@ -96,7 +143,7 @@ export default function WishlistPage() {
 
               <div style={{ padding: '18px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
                 <div>
-                  <h3 style={{ margin: '0 0 6px', fontSize: '0.95rem', fontWeight: 500, color: '#2C2117' }}>{product.name}</h3>
+                  <h3 style={{ margin: '0 0 6px', fontSize: '0.95rem', fontWeight: 500, color: '#2C2117' }}>{tp(product, 'name')}</h3>
                   <p style={{ margin: 0, fontWeight: 600, color: '#775B3F' }}>${product.price}</p>
                 </div>
 
@@ -129,7 +176,7 @@ export default function WishlistPage() {
                       transition: 'background-color 0.2s ease'
                     }}
                   >
-                    <ShoppingBag size={14} /> MOVE TO BAG
+                    <ShoppingBag size={14} /> {t('wishlist.moveToBagBtn', 'MOVE TO BAG')}
                   </button>
                   <Link
                     to={`/product/${product.id}`}
@@ -146,7 +193,7 @@ export default function WishlistPage() {
                       alignItems: 'center'
                     }}
                   >
-                    View
+                    {t('common.details', 'View')}
                   </Link>
                 </div>
               </div>
@@ -157,3 +204,4 @@ export default function WishlistPage() {
     </div>
   );
 }
+

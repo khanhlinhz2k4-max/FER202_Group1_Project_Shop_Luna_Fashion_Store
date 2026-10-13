@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useShop } from '../../context/ShopContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   Users, 
   Shield, 
@@ -15,13 +16,11 @@ import {
 /**
  * AdminUsers Component
  * Phụ trách: Thành viên 5 (Quản lý Người dùng & Tài khoản với ĐẦY ĐỦ CRUD)
- *  - Create: "+ Add User" mở modal tạo tài khoản (admin/user)
- *  - Read: Bảng danh sách người dùng, KPIs tổng số, tìm kiếm, lọc theo vai trò
- *  - Update: Sửa thông tin tài khoản, cập nhật vai trò (phân quyền admin/user), reset mật khẩu
- *  - Delete: Xóa tài khoản người dùng (bảo vệ an toàn tài khoản hiện tại & master admin)
+ * Đồng bộ đa ngôn ngữ: Thành viên 1 & Thành viên 5
  */
 export default function AdminUsers() {
   const { users, currentUser, addUser, updateUser, deleteUser } = useShop();
+  const { t } = useLanguage();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
@@ -153,11 +152,11 @@ export default function AdminUsers() {
   // Open Delete Modal
   const handleOpenDelete = (user) => {
     if (currentUser && currentUser.id === user.id) {
-      alert("Safety constraint: You cannot delete your currently active account.");
+      alert(t('admin.users.cannotDeleteSelf', 'Safety constraint: You cannot delete your currently active account.'));
       return;
     }
     if (user.email === 'admin@lune.com') {
-      alert("Safety constraint: The primary root administrator cannot be deleted.");
+      alert(t('admin.users.cannotDeleteMaster', 'Safety constraint: The primary root administrator cannot be deleted.'));
       return;
     }
     setSelectedUser(user);
@@ -178,9 +177,9 @@ export default function AdminUsers() {
       {/* Page Header */}
       <div className="admin-page-header">
         <div>
-          <h1 className="admin-title">USER ACCOUNTS & ROLES</h1>
+          <h1 className="admin-title">{t('admin.users.title', 'USER ACCOUNTS & ROLES')}</h1>
           <p className="admin-subtitle">
-            Manage system users, customer accounts, and security role permissions.
+            {t('admin.users.subtitle', 'Manage system users, customer accounts, and security role permissions.')}
           </p>
         </div>
         <button
@@ -191,7 +190,7 @@ export default function AdminUsers() {
             setShowCreateModal(true);
           }}
         >
-          <UserPlus size={16} /> Add User
+          <UserPlus size={16} /> {t('admin.users.addNew', 'Add User')}
         </button>
       </div>
 
@@ -202,8 +201,8 @@ export default function AdminUsers() {
             <Users size={20} color="#775B3F" />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>Total Users</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{totalUsersCount}</h3>
+            <span style={{ fontSize: 'var(--text-badge)', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.users.totalAccounts', 'Total Users')}</span>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{totalUsersCount}</h3>
           </div>
         </div>
 
@@ -212,8 +211,8 @@ export default function AdminUsers() {
             <Shield size={20} color="#775B3F" />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#775B3F', fontWeight: 600, textTransform: 'uppercase' }}>Administrators</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#775B3F' }}>{adminCount}</h3>
+            <span style={{ fontSize: 'var(--text-badge)', color: '#775B3F', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.users.administrators', 'Administrators')}</span>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#775B3F' }}>{adminCount}</h3>
           </div>
         </div>
 
@@ -222,8 +221,8 @@ export default function AdminUsers() {
             <UserCheck size={20} color="#5C4A3A" />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>Clients</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{customerCount}</h3>
+            <span style={{ fontSize: 'var(--text-badge)', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.users.customers', 'Clients')}</span>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{customerCount}</h3>
           </div>
         </div>
       </div>
@@ -234,7 +233,7 @@ export default function AdminUsers() {
           <Search size={18} color="#8F7965" />
           <input
             type="text"
-            placeholder="Search by name, email, username or phone..."
+            placeholder={t('admin.users.searchPlaceholder', 'Search by name, email, username or phone...')}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             style={{ border: 'none', background: 'none', outline: 'none', width: '100%', fontSize: '0.88rem', color: '#2C2117' }}
@@ -246,9 +245,9 @@ export default function AdminUsers() {
           onChange={e => setRoleFilter(e.target.value)}
           style={{ padding: '9px 14px', borderRadius: '4px', border: '1px solid #E7DDCE', outline: 'none', backgroundColor: '#fff', fontSize: '0.88rem', color: '#2C2117', cursor: 'pointer' }}
         >
-          <option value="all">All Roles ({totalUsersCount})</option>
-          <option value="admin">Administrators ({adminCount})</option>
-          <option value="user">Customers ({customerCount})</option>
+          <option value="all">{t('admin.users.filterAll', 'All Roles')} ({totalUsersCount})</option>
+          <option value="admin">{t('admin.users.filterAdmin', 'Administrators')} ({adminCount})</option>
+          <option value="user">{t('admin.users.filterUser', 'Customers')} ({customerCount})</option>
         </select>
       </div>
 
@@ -258,19 +257,19 @@ export default function AdminUsers() {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>User / Client</th>
-                <th>Email Address</th>
-                <th>Phone Number</th>
-                <th>Delivery Address</th>
-                <th>Role (Permission)</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th>{t('admin.users.colUser', 'User / Client')}</th>
+                <th>{t('admin.users.labelEmail', 'Email Address')}</th>
+                <th>{t('admin.users.labelPhone', 'Phone Number')}</th>
+                <th>{t('admin.users.colAddress', 'Delivery Address')}</th>
+                <th>{t('admin.users.colRole', 'Role (Permission)')}</th>
+                <th style={{ textAlign: 'right' }}>{t('admin.users.colActions', 'Actions')}</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan="6" style={{ textAlign: 'center', padding: '48px', color: '#64748B' }}>
-                    No users found matching your criteria.
+                    {t('common.noResults', 'No users found matching your criteria.')}
                   </td>
                 </tr>
               ) : (
@@ -319,7 +318,7 @@ export default function AdminUsers() {
                           color: u.role === 'admin' ? '#775B3F' : '#5C4A3A',
                           border: u.role === 'admin' ? '1px solid #C8AE84' : 'none'
                         }}>
-                          {u.role === 'admin' ? '🛡️ Admin' : '👤 Customer'}
+                          {u.role === 'admin' ? `🛡️ ${t('admin.users.roleAdmin', 'Admin')}` : `👤 ${t('admin.users.roleCustomer', 'Customer')}`}
                         </span>
                       </td>
                       <td style={{ textAlign: 'right' }}>

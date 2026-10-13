@@ -86,6 +86,142 @@ const sampleUsers = [
   }
 ];
 
+// Sample initial reviews for testing luxury rating features
+const sampleReviews = [
+  {
+    id: 101,
+    productId: 1,
+    orderId: "LUNE-1049",
+    userName: "Elena Rostova",
+    userEmail: "elena@example.com",
+    rating: 5,
+    title: "Masterpiece of tailoring & linen texture",
+    comment: "The cut of this blazer is nothing short of exceptional. The linen-silk blend feels crisp yet supple, and the beige hue pairs seamlessly with monochrome palettes. Worth every single penny.",
+    date: "Oct 08, 2026",
+    verifiedBuyer: true
+  },
+  {
+    id: 102,
+    productId: 1,
+    orderId: null,
+    userName: "Minh Anh N.",
+    userEmail: "minhanh@example.com",
+    rating: 5,
+    title: "Perfect structured shoulders",
+    comment: "I wore this for an atelier opening in Saigon and received countless compliments. The fit is true to size (I am 165cm and wear size S).",
+    date: "Oct 10, 2026",
+    verifiedBuyer: true
+  },
+  {
+    id: 103,
+    productId: 1,
+    orderId: null,
+    userName: "Claire Dubois",
+    userEmail: "claire@example.com",
+    rating: 4,
+    title: "Timeless silhouette",
+    comment: "Breathable fabric and elegant horn buttons. Slightly roomy around the waist, which creates an effortless relaxed tailored vibe.",
+    date: "Sep 28, 2026",
+    verifiedBuyer: false
+  },
+  {
+    id: 104,
+    productId: 2,
+    orderId: "LUNE-1050",
+    userName: "Alexander Vance",
+    userEmail: "alex@example.com",
+    rating: 5,
+    title: "Drapes like water",
+    comment: "Purchased this as a gala gift. The mulberry silk catches ambient light with quiet luxury. The bias cut is remarkably flattering.",
+    date: "Oct 11, 2026",
+    verifiedBuyer: true
+  },
+  {
+    id: 105,
+    productId: 2,
+    orderId: null,
+    userName: "Camille Laurent",
+    userEmail: "camille@example.com",
+    rating: 5,
+    title: "Incredible craftsmanship",
+    comment: "Delicate straps yet surprisingly supportive. The open low back gives it a sensual yet ultra-refined presence.",
+    date: "Oct 05, 2026",
+    verifiedBuyer: true
+  },
+  {
+    id: 106,
+    productId: 3,
+    orderId: null,
+    userName: "Sophia T.",
+    userEmail: "sophia@example.com",
+    rating: 5,
+    title: "Cloud-like cashmere softness",
+    comment: "Substantial knit that does not pill easily. Perfect weight for autumn and winter layering in air-conditioned offices.",
+    date: "Oct 09, 2026",
+    verifiedBuyer: true
+  },
+  {
+    id: 107,
+    productId: 4,
+    orderId: null,
+    userName: "Isabella Martinez",
+    userEmail: "isabella@example.com",
+    rating: 5,
+    title: "Architectural drape",
+    comment: "The high-waisted pleats create elongated leg lines. Wrinkle-resistant fabric that stays pristine after a long day.",
+    date: "Oct 03, 2026",
+    verifiedBuyer: true
+  },
+  {
+    id: 108,
+    productId: 5,
+    orderId: null,
+    userName: "Marcus Thorne",
+    userEmail: "marcus@example.com",
+    rating: 5,
+    title: "Impeccable wool craftsmanship",
+    comment: "Sharp lapels and natural shoulder drape. Exactly what I expected from a boutique atelier brand.",
+    date: "Oct 06, 2026",
+    verifiedBuyer: true
+  },
+  {
+    id: 109,
+    productId: 6,
+    orderId: null,
+    userName: "Julian K.",
+    userEmail: "julian@example.com",
+    rating: 5,
+    title: "Subtle luster & breathable comfort",
+    comment: "Softest cotton shirt I have ever owned. The hidden placket keeps the chest silhouette ultra-clean.",
+    date: "Oct 04, 2026",
+    verifiedBuyer: true
+  },
+  {
+    id: 110,
+    productId: 7,
+    orderId: "LUNE-1050",
+    userName: "Alexander Vance",
+    userEmail: "alex@example.com",
+    rating: 5,
+    title: "Buttery smooth saddle leather",
+    comment: "Hardware has an understated brushed gold finish that looks heirloom quality. Beautiful stitching throughout.",
+    date: "Oct 12, 2026",
+    verifiedBuyer: true
+  },
+  {
+    id: 111,
+    productId: 8,
+    orderId: null,
+    userName: "Genevieve Moreau",
+    userEmail: "genevieve@example.com",
+    rating: 5,
+    title: "Warm amber acetate frame",
+    comment: "Lightweight on the bridge of the nose with excellent UV shielding. Looks like high-end vintage eyewear.",
+    date: "Oct 07, 2026",
+    verifiedBuyer: true
+  }
+];
+
 export function ShopProvider({ children }) {
   // 1. PRODUCTS STATE
   const [products, setProducts] = useState(() => {
@@ -119,15 +255,52 @@ export function ShopProvider({ children }) {
     }
   });
 
-  // 3. WISHLIST STATE
+  // 3. WISHLIST STATE (Synchronized with Current User)
   const [wishlist, setWishlist] = useState(() => {
     try {
+      const savedUser = localStorage.getItem('lune_current_user');
+      const user = savedUser ? JSON.parse(savedUser) : null;
+      if (user) {
+        const userWishlist = localStorage.getItem(`lune_wishlist_${user.email}`);
+        if (userWishlist) return JSON.parse(userWishlist);
+      }
       const saved = localStorage.getItem('lune_wishlist');
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
     }
   });
+
+  // Wishlist Floating Toast State (Non-blocking notification)
+  const [wishlistToast, setWishlistToast] = useState({
+    show: false,
+    isAdded: true,
+    productName: '',
+    message: ''
+  });
+
+  const showWishlistToast = (isAdded, productName = '', message = '') => {
+    setWishlistToast({
+      show: true,
+      isAdded,
+      productName,
+      message
+    });
+  };
+
+  const closeWishlistToast = () => {
+    setWishlistToast(prev => ({ ...prev, show: false }));
+  };
+
+  // Auto-dismiss toast after 3.5 seconds
+  useEffect(() => {
+    if (wishlistToast.show) {
+      const timer = setTimeout(() => {
+        closeWishlistToast();
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [wishlistToast.show]);
 
   // 4. ORDERS STATE
   const [orders, setOrders] = useState(() => {
@@ -169,6 +342,20 @@ export function ShopProvider({ children }) {
   // 6. UI STATE - CART DRAWER
   const [isCartOpen, setIsCartOpen] = useState(false);
 
+  // 7. REVIEWS STATE (WARM LUXURY REVIEWS)
+  const [reviews, setReviews] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lune_reviews');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error("Error reading lune_reviews:", e);
+    }
+    return sampleReviews;
+  });
+
   // Sync to LocalStorage
   useEffect(() => {
     localStorage.setItem('lune_products', JSON.stringify(products));
@@ -179,8 +366,11 @@ export function ShopProvider({ children }) {
   }, [cart]);
 
   useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem(`lune_wishlist_${currentUser.email}`, JSON.stringify(wishlist));
+    }
     localStorage.setItem('lune_wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
+  }, [wishlist, currentUser]);
 
   useEffect(() => {
     localStorage.setItem('lune_orders', JSON.stringify(orders));
@@ -191,8 +381,19 @@ export function ShopProvider({ children }) {
   }, [users]);
 
   useEffect(() => {
+    localStorage.setItem('lune_reviews', JSON.stringify(reviews));
+  }, [reviews]);
+
+  useEffect(() => {
     if (currentUser) {
       localStorage.setItem('lune_current_user', JSON.stringify(currentUser));
+      // Load user-specific wishlist
+      try {
+        const userWishlist = localStorage.getItem(`lune_wishlist_${currentUser.email}`);
+        if (userWishlist) {
+          setWishlist(JSON.parse(userWishlist));
+        }
+      } catch (e) {}
     } else {
       localStorage.removeItem('lune_current_user');
     }
@@ -256,16 +457,33 @@ export function ShopProvider({ children }) {
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
   const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  // ================= WISHLIST ACTIONS =================
+  // ================= WISHLIST ACTIONS (Instant 1-Click Toggle) =================
   const toggleWishlist = (product) => {
+    if (!product || !product.id) return false;
+
+    let willBeAdded = false;
     setWishlist(prev => {
       const exists = prev.some(item => item.id === product.id);
       if (exists) {
+        willBeAdded = false;
         return prev.filter(item => item.id !== product.id);
       } else {
+        willBeAdded = true;
         return [product, ...prev];
       }
     });
+
+    // Provide friendly non-blocking toast
+    const isAdding = !wishlist.some(item => item.id === product.id);
+    showWishlistToast(
+      isAdding,
+      product.name,
+      isAdding 
+        ? (currentUser ? "Saved to your personal wardrobe lookbook." : "Saved to your lookbook. Sign in anytime to sync across devices.")
+        : "Removed from your saved lookbook."
+    );
+
+    return true;
   };
 
   const isInWishlist = (productId) => {
@@ -370,6 +588,62 @@ export function ShopProvider({ children }) {
     setProducts(prev => prev.filter(prod => prod.id !== id));
   };
 
+  // ================= REVIEWS & RATINGS ACTIONS =================
+  const addReview = (reviewData) => {
+    const newReview = {
+      ...reviewData,
+      id: Date.now(),
+      productId: Number(reviewData.productId),
+      rating: Number(reviewData.rating) || 5,
+      date: reviewData.date || new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }),
+      verifiedBuyer: reviewData.verifiedBuyer !== undefined ? reviewData.verifiedBuyer : true
+    };
+
+    setReviews(prev => [newReview, ...prev]);
+    return newReview;
+  };
+
+  const getProductReviews = (productId) => {
+    return reviews.filter(r => Number(r.productId) === Number(productId));
+  };
+
+  const getProductRatingStats = (productId) => {
+    const prodReviews = reviews.filter(r => Number(r.productId) === Number(productId));
+    if (prodReviews.length === 0) {
+      return {
+        averageRating: 5.0,
+        totalReviews: 0,
+        distribution: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+        percentages: { 5: 100, 4: 0, 3: 0, 2: 0, 1: 0 }
+      };
+    }
+
+    const sum = prodReviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0);
+    const averageRating = Number((sum / prodReviews.length).toFixed(1));
+
+    const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    prodReviews.forEach(r => {
+      const star = Math.min(5, Math.max(1, Math.round(Number(r.rating) || 5)));
+      distribution[star] = (distribution[star] || 0) + 1;
+    });
+
+    const percentages = {};
+    for (let i = 1; i <= 5; i++) {
+      percentages[i] = Math.round((distribution[i] / prodReviews.length) * 100);
+    }
+
+    return {
+      averageRating,
+      totalReviews: prodReviews.length,
+      distribution,
+      percentages
+    };
+  };
+
   // ================= AUTH / USER ACTIONS (CRUD) =================
   const login = (identifier, password) => {
     const identNorm = (identifier || '').toLowerCase().trim();
@@ -392,6 +666,27 @@ export function ShopProvider({ children }) {
 
     if (user) {
       setCurrentUser(user);
+
+      // Smart Auto-Merge: Merge guest items into user's account wishlist
+      try {
+        const guestWishlistRaw = localStorage.getItem('lune_wishlist');
+        const guestItems = guestWishlistRaw ? JSON.parse(guestWishlistRaw) : [];
+        const userWishlistRaw = localStorage.getItem(`lune_wishlist_${user.email}`);
+        const userItems = userWishlistRaw ? JSON.parse(userWishlistRaw) : [];
+
+        const mergedMap = new Map();
+        [...guestItems, ...userItems].forEach(item => {
+          if (item && item.id) mergedMap.set(item.id, item);
+        });
+        const mergedList = Array.from(mergedMap.values());
+
+        setWishlist(mergedList);
+        localStorage.setItem(`lune_wishlist_${user.email}`, JSON.stringify(mergedList));
+        localStorage.setItem('lune_wishlist', JSON.stringify(mergedList));
+      } catch (e) {
+        console.error("Error auto-merging wishlist on login:", e);
+      }
+
       return { success: true, user };
     }
     return { success: false, message: "Invalid email/username or password" };
@@ -399,6 +694,8 @@ export function ShopProvider({ children }) {
 
   const logout = () => {
     setCurrentUser(null);
+    setWishlist([]);
+    localStorage.removeItem('lune_wishlist');
   };
 
   const register = (userData) => {
@@ -519,6 +816,9 @@ export function ShopProvider({ children }) {
       toggleWishlist,
       isInWishlist,
       removeFromWishlist,
+      wishlistToast,
+      showWishlistToast,
+      closeWishlistToast,
 
       // Order actions
       addOrder,
@@ -530,6 +830,12 @@ export function ShopProvider({ children }) {
       addProduct,
       updateProduct,
       deleteProduct,
+
+      // Reviews & Ratings
+      reviews,
+      addReview,
+      getProductReviews,
+      getProductRatingStats,
 
       // Auth & User CRUD actions
       login,

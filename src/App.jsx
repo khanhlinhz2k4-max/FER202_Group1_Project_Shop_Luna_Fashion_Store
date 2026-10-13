@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ShopProvider } from './context/ShopContext';
+import { LanguageProvider } from './context/LanguageContext';
 
 // Components & Layouts
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
+import WishlistToast from './components/WishlistToast';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminLayout from './layouts/AdminLayout';
 
@@ -28,13 +30,28 @@ import AdminUsers from './pages/admin/AdminUsers';
 
 import './App.css';
 
-// Automatically scroll to top on every route transition
+// Automatically scroll to top on route change or smoothly scroll to hash target
 function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (hash) {
+      // Delay slightly to ensure destination DOM elements have mounted
+      const timer = setTimeout(() => {
+        try {
+          const target = document.querySelector(hash);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        } catch (e) {
+          window.scrollTo(0, 0);
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
 
   return null;
 }
@@ -58,6 +75,8 @@ function AppContent() {
       <ScrollToTop />
       {/* Global Slide-in Cart Drawer */}
       <CartDrawer />
+      {/* Global Non-blocking Wishlist Toast */}
+      <WishlistToast />
 
       <Routes>
         {/* ================= ADMIN PORTAL ROUTES ================= */}
@@ -103,9 +122,11 @@ function AppContent() {
 export default function App() {
   return (
     <BrowserRouter>
-      <ShopProvider>
-        <AppContent />
-      </ShopProvider>
+      <LanguageProvider>
+        <ShopProvider>
+          <AppContent />
+        </ShopProvider>
+      </LanguageProvider>
     </BrowserRouter>
   );
 }

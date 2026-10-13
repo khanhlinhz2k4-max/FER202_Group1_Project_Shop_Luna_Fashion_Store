@@ -12,9 +12,11 @@ import {
   X,
   CheckCircle2
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 import './Footer.css';
 
 export default function Footer() {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [subscribed, setSubscribed] = useState(() => {
@@ -42,11 +44,11 @@ export default function Footer() {
   const validateEmail = (val) => {
     const trimmed = val.trim();
     if (!trimmed) {
-      return 'Please enter your email address.';
+      return t('footer.emailRequired', 'Please enter your email address.');
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(trimmed)) {
-      return 'Please enter a valid email address (e.g., name@domain.com).';
+      return t('footer.emailInvalid', 'Please enter a valid email address (e.g., name@domain.com).');
     }
     return '';
   };
@@ -92,57 +94,67 @@ export default function Footer() {
       <div className="footer-pillars">
         <div className="container">
           <div className="pillars-grid">
-            <div className="pillar-item">
+            <div 
+              className="pillar-item pillar-clickable"
+              onClick={() => openPolicyModal('delivery')}
+              title={t('footer.pillarDeliveryTooltip', 'Click to view our Complimentary Delivery & Packaging Standards')}
+            >
               <div className="pillar-icon-wrap">
                 <Truck size={20} strokeWidth={1.5} />
               </div>
               <div className="pillar-text">
-                <h4>Complimentary Delivery</h4>
-                <p>On all domestic purchases exceeding $150</p>
+                <h4 className="pillar-title">
+                  {t('footer.pillarDeliveryTitle', 'Complimentary Delivery')}
+                </h4>
+                <p>{t('footer.pillarDeliveryDesc', 'On all domestic purchases exceeding $150')}</p>
               </div>
             </div>
 
-            <div className="pillar-item">
+            <div 
+              className="pillar-item pillar-clickable"
+              onClick={() => openPolicyModal('sustainable')}
+              title={t('footer.pillarSustainableTooltip', 'Click to view our Sustainable Sourcing & Eco Ethics')}
+            >
               <div className="pillar-icon-wrap">
                 <Sparkles size={20} strokeWidth={1.5} />
               </div>
               <div className="pillar-text">
-                <h4>Sustainable Luxury</h4>
-                <p>Natural silks, organic linens, ethical ateliers</p>
+                <h4 className="pillar-title">
+                  {t('footer.pillarSustainableTitle', 'Sustainable Luxury')}
+                </h4>
+                <p>{t('footer.pillarSustainableDesc', 'Natural silks, organic linens, ethical ateliers')}</p>
               </div>
             </div>
 
             <div 
               className="pillar-item pillar-clickable"
               onClick={() => openPolicyModal('exchange')}
-              title="Click to view our 30-Day Exchange & Return Policy"
+              title={t('footer.pillarExchangeTooltip', 'Click to view our 30-Day Exchange & Return Policy')}
             >
               <div className="pillar-icon-wrap">
                 <RotateCcw size={20} strokeWidth={1.5} />
               </div>
               <div className="pillar-text">
-                <h4 style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  Atelier Exchanges
-                  <span style={{ fontSize: '0.65rem', color: '#CAA072', fontWeight: 400 }}>[INFO]</span>
+                <h4 className="pillar-title">
+                  {t('footer.pillarExchangeTitle', 'Atelier Exchanges')}
                 </h4>
-                <p>Seamless 30-day returns and bespoke fittings</p>
+                <p>{t('footer.pillarExchangeDesc', 'Seamless 30-day returns and bespoke fittings')}</p>
               </div>
             </div>
 
             <div 
               className="pillar-item pillar-clickable"
               onClick={() => openPolicyModal('warranty')}
-              title="Click to view our Garment Warranty & Seam Care Guarantee"
+              title={t('footer.pillarAuthTooltip', 'Click to view our Garment Warranty & Seam Care Guarantee')}
             >
               <div className="pillar-icon-wrap">
                 <ShieldCheck size={20} strokeWidth={1.5} />
               </div>
               <div className="pillar-text">
-                <h4 style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  Verified Authenticity
-                  <span style={{ fontSize: '0.65rem', color: '#CAA072', fontWeight: 400 }}>[INFO]</span>
+                <h4 className="pillar-title">
+                  {t('footer.pillarAuthTitle', 'Verified Authenticity')}
                 </h4>
-                <p>Lifetime seam warranty & serialized tags</p>
+                <p>{t('footer.pillarAuthDesc', 'Lifetime seam warranty & serialized tags')}</p>
               </div>
             </div>
           </div>
@@ -160,7 +172,7 @@ export default function Footer() {
                 <span className="logo-sub">FASHION STORE</span>
               </Link>
               <p className="brand-statement">
-                Curating timeless silhouettes with modern precision. Tailored for the individual who values subtle luxury, tactile natural fabrics, and enduring grace.
+                {t('footer.brandDesc')}
               </p>
               <div className="social-links">
                 <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="social-icon">
@@ -185,60 +197,60 @@ export default function Footer() {
 
             {/* Column 2: Runway Collections */}
             <div className="footer-col">
-              <h4 className="footer-heading">Collections</h4>
+              <h4 className="footer-heading">{t('footer.categoriesHeading', 'CATEGORIES')}</h4>
               <ul className="footer-links">
-                <li><Link to="/shop?category=women">Women's Wardrobe</Link></li>
-                <li><Link to="/shop?category=men">Men's Collection</Link></li>
-                <li><Link to="/shop">All Collections</Link></li>
-                <li><a href="/#categories">Product Categories</a></li>
-                <li><a href="/#about">About LUNE</a></li>
+                <li><Link to="/shop?category=women">{t('footer.womenLink', "Women's Collection")}</Link></li>
+                <li><Link to="/shop?category=men">{t('footer.menLink', "Men's Collection")}</Link></li>
+                <li><Link to="/shop">{t('footer.shopAllLink', 'Shop All Garments')}</Link></li>
+                <li><a href="/#categories">{t('footer.curatedLink', 'Curated Silhouettes')}</a></li>
+                <li><a href="/#new-arrivals">{t('footer.newCollectionLink', 'New Arrivals')}</a></li>
               </ul>
             </div>
 
             {/* Column 3: Customer Care & Policies */}
             <div className="footer-col">
-              <h4 className="footer-heading">Customer Care</h4>
+              <h4 className="footer-heading">{t('footer.clientCareTitle', 'CUSTOMER CARE')}</h4>
               <ul className="footer-links">
                 <li>
                   <button 
                     type="button" 
                     onClick={() => openPolicyModal('exchange')}
-                    style={{ background: 'none', border: 'none', color: 'inherit', font: 'inherit', padding: 0, cursor: 'pointer', textAlign: 'left' }}
+                    className="footer-link-btn"
                   >
-                    30-Day Return & Exchange Policy
+                    {t('footer.returnPolicy', '30-Day Exchange Policy')}
                   </button>
                 </li>
                 <li>
                   <button 
                     type="button" 
                     onClick={() => openPolicyModal('warranty')}
-                    style={{ background: 'none', border: 'none', color: 'inherit', font: 'inherit', padding: 0, cursor: 'pointer', textAlign: 'left' }}
+                    className="footer-link-btn"
                   >
-                    Garment Warranty & Care
+                    {t('footer.shippingPolicy', 'Garment Warranty & Care')}
                   </button>
                 </li>
-                <li><Link to="/login">Client Sign In</Link></li>
-                <li><Link to="/register">Create Account</Link></li>
-                <li><a href="/#about">Our Atelier Story</a></li>
+                <li><Link to="/login">{t('footer.loginLink', 'Client Login')}</Link></li>
+                <li><Link to="/register">{t('footer.registerLink', 'Member Registration')}</Link></li>
+                <li><a href="/#about">{t('footer.aboutLink', 'About LUNE Atelier')}</a></li>
               </ul>
             </div>
 
             {/* Column 4: Newsletter */}
             <div className="footer-col newsletter-col">
-              <h4 className="footer-heading">The LUNE Journal</h4>
+              <h4 className="footer-heading">{t('footer.newsletterTitle')}</h4>
               <p className="newsletter-desc">
-                Subscribe for seasonal lookbooks, new silhouettes, and an exclusive 10% welcome invitation.
+                {t('footer.newsletterDesc')}
               </p>
 
               {subscribed ? (
                 <div className="subscribe-success-box">
                   <CheckCircle2 size={20} className="subscribe-success-icon" />
                   <div>
-                    <div className="subscribe-success-title">Welcome to The Journal</div>
+                    <div className="subscribe-success-title">{t('footer.welcomeTitle', 'Welcome to Atelier Lune')}</div>
                     <div className="subscribe-success-desc">
-                      Your invitation and complimentary 10% welcome code have been activated.
+                      {t('footer.subscribedSuccess')}
                     </div>
-                    <span className="subscribe-promo-code">PROMO: LUNE10</span>
+                    <span className="subscribe-promo-code">{t('footer.promoCodeLabel', 'PROMO: LUNE10')}</span>
                   </div>
                 </div>
               ) : (
@@ -252,14 +264,14 @@ export default function Footer() {
                       <Mail size={16} className="mail-icon" />
                       <input 
                         type="email" 
-                        placeholder="Enter your email address"
+                        placeholder={t('footer.newsletterPlaceholder', 'Enter your email address')}
                         value={email}
                         onChange={handleEmailChange}
                         aria-label="Email for newsletter subscription"
                       />
                     </div>
                     <button type="submit" className="newsletter-btn" aria-label="Subscribe to newsletter">
-                      <span>JOIN</span>
+                      <span>{t('footer.newsletterBtn', 'JOIN')}</span>
                       <ArrowRight size={14} />
                     </button>
                   </form>
@@ -281,7 +293,7 @@ export default function Footer() {
       <div className="footer-bottom">
         <div className="container footer-bottom-inner">
           <p className="copyright">
-            © 2026 LUNE Fashion Store. All rights reserved.
+            {t('footer.copyright')}
           </p>
           <div className="footer-legal">
             <button 
@@ -289,7 +301,7 @@ export default function Footer() {
               onClick={() => openPolicyModal('exchange')}
               style={{ background: 'none', border: 'none', color: 'inherit', font: 'inherit', padding: 0, cursor: 'pointer' }}
             >
-              30-Day Guarantee
+              {t('footer.guaranteeLegal', '30-Day Guarantee')}
             </button>
             <span className="dot">·</span>
             <button 
@@ -297,12 +309,12 @@ export default function Footer() {
               onClick={() => openPolicyModal('warranty')}
               style={{ background: 'none', border: 'none', color: 'inherit', font: 'inherit', padding: 0, cursor: 'pointer' }}
             >
-              Lifetime Warranty
+              {t('footer.warrantyLegal', 'Lifetime Warranty')}
             </button>
             <span className="dot">·</span>
-            <Link to="/register">Membership</Link>
+            <Link to="/register">{t('footer.membershipLegal', 'Membership')}</Link>
             <span className="dot">·</span>
-            <a href="/#about">About Us</a>
+            <a href="/#about">{t('footer.aboutLegal', 'About Us')}</a>
           </div>
         </div>
       </div>
@@ -314,9 +326,9 @@ export default function Footer() {
             <Check size={18} />
           </div>
           <div className="toast-content">
-            <div className="toast-title">Subscription Successful</div>
+            <div className="toast-title">{t('footer.toastTitle', 'Subscription Successful')}</div>
             <div className="toast-message">
-              Welcome to <strong>The LUNE Journal</strong>. Your 10% welcome coupon <code>LUNE10</code> has been sent to <strong>{toastEmail}</strong>.
+              {t('footer.toastMsgWelcome', 'Welcome to')} <strong>{t('footer.toastMsgJournal', 'The LUNE Journal')}</strong>{t('footer.toastMsgCoupon', '. Your 10% welcome coupon')} <code>LUNE10</code> {t('footer.toastMsgSent', 'has been sent to')} <strong>{toastEmail}</strong>.
             </div>
           </div>
           <button 
@@ -344,9 +356,12 @@ export default function Footer() {
           >
             <div className="policy-modal-header">
               <div>
-                <span className="policy-modal-eyebrow">LUNE ATELIER STANDARDS</span>
+                <span className="policy-modal-eyebrow">{t('footer.standardsEyebrow', 'LUNE ATELIER STANDARDS')}</span>
                 <h2 className="policy-modal-title">
-                  {activePolicyTab === 'exchange' ? '30-Day Exchange & Return Policy' : 'Garment Warranty & Care Commitment'}
+                  {activePolicyTab === 'delivery' && t('footer.deliveryModalTitle', 'Complimentary Delivery & White-Glove Standards')}
+                  {activePolicyTab === 'sustainable' && t('footer.sustainableModalTitle', 'Sustainable Sourcing & Ecological Ethics')}
+                  {activePolicyTab === 'exchange' && t('footer.exchangeModalTitle', '30-Day Exchange & Return Policy')}
+                  {activePolicyTab === 'warranty' && t('footer.warrantyModalTitle', 'Garment Warranty & Care Commitment')}
                 </h2>
               </div>
               <button 
@@ -359,87 +374,213 @@ export default function Footer() {
               </button>
             </div>
 
-            {activePolicyTab === 'exchange' ? (
+            {/* Modal Quick Tabs Navigation */}
+            <div className="policy-tabs-nav">
+              <button
+                type="button"
+                className={`policy-tab-btn ${activePolicyTab === 'delivery' ? 'active' : ''}`}
+                onClick={() => setActivePolicyTab('delivery')}
+              >
+                <Truck size={14} />
+                <span>{t('footer.tabDelivery', 'Delivery')}</span>
+              </button>
+              <button
+                type="button"
+                className={`policy-tab-btn ${activePolicyTab === 'sustainable' ? 'active' : ''}`}
+                onClick={() => setActivePolicyTab('sustainable')}
+              >
+                <Sparkles size={14} />
+                <span>{t('footer.tabSustainable', 'Sustainability')}</span>
+              </button>
+              <button
+                type="button"
+                className={`policy-tab-btn ${activePolicyTab === 'exchange' ? 'active' : ''}`}
+                onClick={() => setActivePolicyTab('exchange')}
+              >
+                <RotateCcw size={14} />
+                <span>{t('footer.tabExchange', 'Exchanges')}</span>
+              </button>
+              <button
+                type="button"
+                className={`policy-tab-btn ${activePolicyTab === 'warranty' ? 'active' : ''}`}
+                onClick={() => setActivePolicyTab('warranty')}
+              >
+                <ShieldCheck size={14} />
+                <span>{t('footer.tabWarranty', 'Warranty')}</span>
+              </button>
+            </div>
+
+            {activePolicyTab === 'delivery' && (
+              <div className="policy-body">
+                <div className="policy-section-block">
+                  <h3>
+                    <Truck size={18} />
+                    {t('footer.deliveryHeading', 'White-Glove Express Fulfillment & Presentation')}
+                  </h3>
+                  <p>
+                    {t('footer.deliveryDesc', 'Every LUNE creation is prepared under our private client protocol: meticulously hand-steamed, wrapped in archival tissue paper, boxed in our signature linen gift case, and wax sealed.')}
+                  </p>
+                </div>
+
+                <div className="policy-steps-grid">
+                  <div className="policy-step-card">
+                    <div className="policy-step-num">{t('footer.dStep1Title', '01. Atelier Curation')}</div>
+                    <div className="policy-step-text">
+                      {t('footer.dStep1Desc', 'Each garment undergoes inspection, gentle vertical steam treatment, and professional boutique folding.')}
+                    </div>
+                  </div>
+                  <div className="policy-step-card">
+                    <div className="policy-step-num">{t('footer.dStep2Title', '02. Signature Packaging')}</div>
+                    <div className="policy-step-text">
+                      {t('footer.dStep2Desc', 'Housed in our bespoke linen presentation box with ribbon closure and hand-stamped gold wax seal.')}
+                    </div>
+                  </div>
+                  <div className="policy-step-card">
+                    <div className="policy-step-num">{t('footer.dStep3Title', '03. Express Transit')}</div>
+                    <div className="policy-step-text">
+                      {t('footer.dStep3Desc', 'Dispatched via premium couriers: 2-4 hours urban express and 24-48 hours nationwide with live tracking.')}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="policy-section-block">
+                  <h4 style={{ fontSize: '0.92rem', color: '#775B3F', marginBottom: '0.35rem' }}>{t('footer.deliveryGuidelinesTitle', 'Delivery Privileges:')}</h4>
+                  <p style={{ fontSize: '0.82rem', color: '#5C4A3A' }}>
+                    {t('footer.dGuide1', '• Complimentary nationwide delivery on all purchases exceeding $150.')}<br />
+                    {t('footer.dGuide2', '• White-glove doorstep inspection and fitting verification available upon delivery.')}<br />
+                    {t('footer.dGuide3', '• Specialized protective garment bags ensure impeccable silhouette retention in transit.')}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activePolicyTab === 'sustainable' && (
+              <div className="policy-body">
+                <div className="policy-section-block">
+                  <h3>
+                    <Sparkles size={18} />
+                    {t('footer.sustainableHeading', 'Conscious Luxury & Ethical Natural Fibers')}
+                  </h3>
+                  <p>
+                    {t('footer.sustainableDesc', 'Lune rejects synthetic petroleum-based textiles. All collections utilize certified single-origin natural fibers harvested under strict fair-trade and regenerative agriculture protocols.')}
+                  </p>
+                </div>
+
+                <div className="policy-steps-grid">
+                  <div className="policy-step-card">
+                    <div className="policy-step-num">{t('footer.sStep1Title', 'Pure Mulberry Silk')}</div>
+                    <div className="policy-step-text">
+                      {t('footer.sStep1Desc', 'Long-filament mulberry silk woven at slow loom speeds for unrivaled drape, breathability, and skin comfort.')}
+                    </div>
+                  </div>
+                  <div className="policy-step-card">
+                    <div className="policy-step-num">{t('footer.sStep2Title', 'Organic French Flax Linen')}</div>
+                    <div className="policy-step-text">
+                      {t('footer.sStep2Desc', 'Rain-fed Normandy flax grown without chemical pesticides, reducing fresh water consumption by 80%.')}
+                    </div>
+                  </div>
+                  <div className="policy-step-card">
+                    <div className="policy-step-num">{t('footer.sStep3Title', 'Ethical Mongolian Cashmere')}</div>
+                    <div className="policy-step-text">
+                      {t('footer.sStep3Desc', 'Cruelty-free hand-combed underfleece gathered during spring molting, preserving grasslands and pastoral communities.')}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="policy-section-block">
+                  <h4 style={{ fontSize: '0.92rem', color: '#775B3F', marginBottom: '0.35rem' }}>{t('footer.sustainableGuidelinesTitle', 'Atelier Ecological Commitments:')}</h4>
+                  <p style={{ fontSize: '0.82rem', color: '#5C4A3A' }}>
+                    {t('footer.sGuide1', '• 100% recyclable FSC-certified presentation boxes, compostable garment mailers, and plastic-free trims.')}<br />
+                    {t('footer.sGuide2', '• Low-impact certified vegetable and botanical dye processes meeting European Oeko-Tex standards.')}<br />
+                    {t('footer.sGuide3', '• Timeless architecture silhouettes tailored to endure across generations rather than fast-fashion cycles.')}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {activePolicyTab === 'exchange' && (
               <div className="policy-body">
                 <div className="policy-section-block">
                   <h3>
                     <RotateCcw size={18} />
-                    Seamless 30-Day Exchanges
+                    {t('footer.exchangeHeading', 'Seamless 30-Day Exchanges')}
                   </h3>
                   <p>
-                    At LUNE Fashion Store, your satisfaction with fit and silhouette is paramount. We provide a 30-day window from receipt of delivery to request a complimentary size exchange or return.
+                    {t('footer.exchangeDesc', 'At LUNE Fashion Store, your satisfaction with fit and silhouette is paramount. We provide a 30-day window from receipt of delivery to request a complimentary size exchange or return.')}
                   </p>
                 </div>
 
                 <div className="policy-steps-grid">
                   <div className="policy-step-card">
-                    <div className="policy-step-num">01. Request</div>
+                    <div className="policy-step-num">{t('footer.step1Title', '01. Request')}</div>
                     <div className="policy-step-text">
-                      Contact our customer concierge with your order code (e.g., LUNE-1049) to indicate your desired replacement size or return.
+                      {t('footer.step1Desc', 'Contact our customer concierge with your order code (e.g., LUNE-1049) to indicate your desired replacement size or return.')}
                     </div>
                   </div>
                   <div className="policy-step-card">
-                    <div className="policy-step-num">02. Doorstep Pickup</div>
+                    <div className="policy-step-num">{t('footer.step2Title', '02. Doorstep Pickup')}</div>
                     <div className="policy-step-text">
-                      Our premium courier coordinates a complimentary doorstep collection at your convenience.
+                      {t('footer.step2Desc', 'Our premium courier coordinates a complimentary doorstep collection at your convenience.')}
                     </div>
                   </div>
                   <div className="policy-step-card">
-                    <div className="policy-step-num">03. Swift Fulfillment</div>
+                    <div className="policy-step-num">{t('footer.step3Title', '03. Swift Fulfillment')}</div>
                     <div className="policy-step-text">
-                      Your replacement garment is dispatched immediately upon pickup verification.
+                      {t('footer.step3Desc', 'Your replacement garment is dispatched immediately upon pickup verification.')}
                     </div>
                   </div>
                 </div>
 
                 <div className="policy-section-block">
-                  <h4 style={{ fontSize: '0.92rem', color: '#775B3F', marginBottom: '0.35rem' }}>Eligibility Guidelines:</h4>
+                  <h4 style={{ fontSize: '0.92rem', color: '#775B3F', marginBottom: '0.35rem' }}>{t('footer.guidelinesTitle', 'Eligibility Guidelines:')}</h4>
                   <p style={{ fontSize: '0.82rem', color: '#5C4A3A' }}>
-                    • Garments must remain unwashed, unworn, and unaltered.<br />
-                    • All serialized atelier tags and protective dust bags must be intact.<br />
-                    • Complimentary for all domestic orders within 30 days.
+                    {t('footer.guide1', '• Garments must remain unwashed, unworn, and unaltered.')}<br />
+                    {t('footer.guide2', '• All serialized atelier tags and protective dust bags must be intact.')}<br />
+                    {t('footer.guide3', '• Complimentary for all domestic orders within 30 days.')}
                   </p>
                 </div>
               </div>
-            ) : (
+            )}
+
+            {activePolicyTab === 'warranty' && (
               <div className="policy-body">
                 <div className="policy-section-block">
                   <h3>
                     <ShieldCheck size={18} />
-                    Lifetime Craftsmanship Warranty
+                    {t('footer.warrantyHeading', 'Lifetime Craftsmanship Warranty')}
                   </h3>
                   <p>
-                    Every LUNE creation is constructed with single-origin textiles and French reinforced seams designed to transcend seasonal trends.
+                    {t('footer.warrantyDesc', 'Every LUNE creation is constructed with single-origin textiles and French reinforced seams designed to transcend seasonal trends.')}
                   </p>
                 </div>
 
                 <div className="policy-steps-grid">
                   <div className="policy-step-card">
-                    <div className="policy-step-num">Seam Integrity</div>
+                    <div className="policy-step-num">{t('footer.wStep1Title', 'Seam Integrity')}</div>
                     <div className="policy-step-text">
-                      Complimentary atelier re-stitching and button replacement for the entire lifetime of your garment.
+                      {t('footer.wStep1Desc', 'Complimentary atelier re-stitching and button replacement for the entire lifetime of your garment.')}
                     </div>
                   </div>
                   <div className="policy-step-card">
-                    <div className="policy-step-num">Natural Fibers</div>
+                    <div className="policy-step-num">{t('footer.wStep2Title', 'Natural Fibers')}</div>
                     <div className="policy-step-text">
-                      Certified pure mulberry silks, organic French linens, and ethically sourced Mongolian cashmere.
+                      {t('footer.wStep2Desc', 'Certified pure mulberry silks, organic French linens, and ethically sourced Mongolian cashmere.')}
                     </div>
                   </div>
                   <div className="policy-step-card">
-                    <div className="policy-step-num">Bespoke Adjustments</div>
+                    <div className="policy-step-num">{t('footer.wStep3Title', 'Bespoke Adjustments')}</div>
                     <div className="policy-step-text">
-                      Sleeve and hem tailoring adjustments available for VIP members and tailored suits.
+                      {t('footer.wStep3Desc', 'Sleeve and hem tailoring adjustments available for VIP members and tailored suits.')}
                     </div>
                   </div>
                 </div>
 
                 <div className="policy-section-block">
-                  <h4 style={{ fontSize: '0.92rem', color: '#775B3F', marginBottom: '0.35rem' }}>Textile Care Recommendations:</h4>
+                  <h4 style={{ fontSize: '0.92rem', color: '#775B3F', marginBottom: '0.35rem' }}>{t('footer.careTitle', 'Textile Care Recommendations:')}</h4>
                   <p style={{ fontSize: '0.82rem', color: '#5C4A3A' }}>
-                    • Mulberry Silk: Dry clean or cold hand wash with neutral silk detergent.<br />
-                    • Mongolian Cashmere: Flat air dry away from direct sunlight; gentle steam only.<br />
-                    • French Washed Linen: Machine wash delicate at 30°C; embrace natural organic texture.
+                    {t('footer.careSilk', '• Mulberry Silk: Dry clean or cold hand wash with neutral silk detergent.')}<br />
+                    {t('footer.careCashmere', '• Mongolian Cashmere: Flat air dry away from direct sunlight; gentle steam only.')}<br />
+                    {t('footer.careLinen', '• French Washed Linen: Machine wash delicate at 30°C; embrace natural organic texture.')}
                   </p>
                 </div>
               </div>
@@ -451,7 +592,7 @@ export default function Footer() {
                 className="btn-primary"
                 onClick={() => setPolicyModalOpen(false)}
               >
-                <span>UNDERSTOOD</span>
+                <span>{t('footer.understoodBtn', 'UNDERSTOOD')}</span>
               </button>
             </div>
           </div>
