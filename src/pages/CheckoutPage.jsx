@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
 import { ShieldCheck, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 /**
  * CheckoutPage Component
  * Phụ trách: Thành viên 4 (Giỏ hàng & Quy trình thanh toán)
+ * Nâng cấp: Thành viên 1 (Leader - Tích hợp Đa ngôn ngữ song ngữ EN/VI)
  * Harmonized with LUNE Warm Luxury Brand Guidelines
  */
 export default function CheckoutPage() {
   const { cart, cartTotal, addOrder, currentUser } = useShop();
+  const { t, tp } = useLanguage();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -29,9 +32,9 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div style={{ padding: '80px 20px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'Playfair Display, serif', color: '#2C2117' }}>Your shopping bag is empty</h2>
-        <p style={{ color: '#5C4A3A', marginBottom: '24px' }}>Add items to your bag before proceeding to checkout.</p>
-        <Link to="/shop" style={{ color: '#775B3F', fontWeight: 600, textDecoration: 'underline' }}>Return to Shop</Link>
+        <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--text-h2)', color: '#2C2117' }}>{t('checkout.emptyCartTitle', 'Your shopping bag is empty')}</h2>
+        <p style={{ color: '#5C4A3A', marginBottom: '24px' }}>{t('checkout.emptyCartDesc', 'Add items to your bag before proceeding to checkout.')}</p>
+        <Link to="/shop" style={{ color: '#775B3F', fontWeight: 600, textDecoration: 'underline' }}>{t('checkout.returnToShop', 'Return to Shop')}</Link>
       </div>
     );
   }
@@ -40,10 +43,10 @@ export default function CheckoutPage() {
     if (formData.promoCode.trim().toUpperCase() === 'LUNE10') {
       const discount = Math.round(cartTotal * 0.1);
       setAppliedDiscount(discount);
-      setPromoMessage('Promo code LUNE10 applied: 10% OFF!');
+      setPromoMessage(t('checkout.appliedPromoMsg', 'Promo code LUNE10 applied: 10% OFF!'));
     } else {
       setAppliedDiscount(0);
-      setPromoMessage('Invalid promo code. Try LUNE10');
+      setPromoMessage(t('checkout.invalidPromoMsg', 'Invalid promo code. Try LUNE10'));
     }
   };
 
@@ -55,9 +58,9 @@ export default function CheckoutPage() {
 
     // Basic validation
     const errs = {};
-    if (!formData.name.trim()) errs.name = "Full name is required";
-    if (!formData.phone.trim()) errs.phone = "Phone number is required";
-    if (!formData.address.trim()) errs.address = "Delivery address is required";
+    if (!formData.name.trim()) errs.name = t('checkout.errName', 'Full name is required');
+    if (!formData.phone.trim()) errs.phone = t('checkout.errPhone', 'Phone number is required');
+    if (!formData.address.trim()) errs.address = t('checkout.errAddress', 'Delivery address is required');
 
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
@@ -85,19 +88,19 @@ export default function CheckoutPage() {
     <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px' }}>
       <div style={{ marginBottom: '32px' }}>
         <Link to="/shop" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#5C4A3A', textDecoration: 'none', fontSize: '0.85rem' }}>
-          <ArrowLeft size={16} /> Continue Shopping
+          <ArrowLeft size={16} /> {t('orderSuccess.continueShoppingBtn', 'Continue Shopping')}
         </Link>
-        <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: '2.2rem', fontWeight: 500, margin: '12px 0 4px', color: '#2C2117' }}>CHECKOUT</h1>
-        <p style={{ color: '#5C4A3A', fontSize: '0.92rem' }}>Please enter your delivery details and choose your payment method.</p>
+        <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--text-h1)', fontWeight: 500, margin: '12px 0 4px', color: '#2C2117' }}>{t('checkout.title', 'ORDER CHECKOUT')}</h1>
+        <p style={{ color: '#5C4A3A', fontSize: 'var(--text-body)' }}>{t('checkout.deliveryInfoTitle', 'Please enter your delivery details and choose your payment method.')}</p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '48px' }}>
         {/* Left: Form */}
         <form onSubmit={handleSubmit} style={{ backgroundColor: '#FFFFFF', padding: '36px', border: '1px solid #E7DDCE', borderRadius: '4px', boxShadow: '0 2px 8px rgba(44, 33, 23, 0.03)' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>1. SHIPPING ADDRESS</h2>
+          <h2 style={{ fontSize: 'var(--text-h4)', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>1. {t('checkout.deliveryInfoTitle', 'SHIPPING ADDRESS')}</h2>
 
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Full Name *</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>{t('checkout.fullNameLabel', 'Full Name')} *</label>
             <input 
               type="text" 
               value={formData.name} 
@@ -110,7 +113,7 @@ export default function CheckoutPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Phone Number *</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>{t('checkout.phoneLabel', 'Phone Number')} *</label>
               <input 
                 type="text" 
                 value={formData.phone} 
@@ -122,7 +125,7 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Email</label>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>{t('checkout.emailLabel', 'Email')}</label>
               <input 
                 type="email" 
                 value={formData.email} 
@@ -134,7 +137,7 @@ export default function CheckoutPage() {
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>Street Address *</label>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>{t('checkout.addressLabel', 'Street Address')} *</label>
             <input 
               type="text" 
               value={formData.address} 
@@ -145,7 +148,7 @@ export default function CheckoutPage() {
             {errors.address && <span style={{ color: '#B91C1C', fontSize: '0.78rem' }}>{errors.address}</span>}
           </div>
 
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', margin: '32px 0 20px', color: '#2C2117' }}>2. PAYMENT METHOD</h2>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', margin: '32px 0 20px', color: '#2C2117' }}>2. {t('checkout.paymentMethodTitle', 'PAYMENT METHOD')}</h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', border: '1px solid #C8AE84', borderRadius: '3px', cursor: 'pointer', backgroundColor: formData.paymentMethod === 'COD' ? '#FAF7F2' : '#FFFFFF' }}>
@@ -156,8 +159,8 @@ export default function CheckoutPage() {
                 onChange={() => setFormData({ ...formData, paymentMethod: 'COD' })} 
               />
               <div>
-                <strong style={{ color: '#2C2117' }}>Cash On Delivery (COD)</strong>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: '#5C4A3A' }}>Pay cash when your order is delivered</p>
+                <strong style={{ color: '#2C2117' }}>{t('checkout.codOption', 'Cash On Delivery (COD)')}</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#5C4A3A' }}>{t('checkout.codDesc')}</p>
               </div>
             </label>
 
@@ -169,8 +172,8 @@ export default function CheckoutPage() {
                 onChange={() => setFormData({ ...formData, paymentMethod: 'CARD' })} 
               />
               <div>
-                <strong style={{ color: '#2C2117' }}>Credit / Debit Card (Simulated)</strong>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: '#5C4A3A' }}>Visa, MasterCard, JCB instant confirmation</p>
+                <strong style={{ color: '#2C2117' }}>{t('checkout.cardOption', 'Credit / Debit Card (Simulated)')}</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#5C4A3A' }}>{t('checkout.cardDesc')}</p>
               </div>
             </label>
           </div>
@@ -190,21 +193,21 @@ export default function CheckoutPage() {
               transition: 'background-color 0.2s ease'
             }}
           >
-            CONFIRM & PLACE ORDER (${finalTotal})
+            {t('checkout.placeOrderBtn', 'CONFIRM & PLACE ORDER')} (${finalTotal})
           </button>
         </form>
 
         {/* Right: Order Summary */}
         <aside style={{ backgroundColor: '#FAF7F2', padding: '36px', border: '1px solid #E7DDCE', borderRadius: '4px', height: 'fit-content' }}>
-          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>ORDER SUMMARY ({cart.length})</h2>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>{t('checkout.orderSummaryTitle', 'ORDER SUMMARY')} ({cart.length})</h2>
 
           <div style={{ maxHeight: '280px', overflowY: 'auto', marginBottom: '24px' }}>
             {cart.map(item => (
               <div key={item.cartItemId || item.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid #E7DDCE' }}>
-                <img src={item.image} alt={item.name} style={{ width: '50px', height: '65px', objectFit: 'cover', borderRadius: '2px' }} />
+                <img src={item.image} alt={tp(item, 'name')} style={{ width: '50px', height: '65px', objectFit: 'cover', borderRadius: '2px' }} />
                 <div style={{ flex: 1 }}>
-                  <h4 style={{ margin: '0 0 2px', fontSize: '0.85rem', color: '#2C2117' }}>{item.name}</h4>
-                  <p style={{ margin: 0, fontSize: '0.78rem', color: '#5C4A3A' }}>Qty: {item.quantity} | Size: {item.selectedSize}</p>
+                  <h4 style={{ margin: '0 0 2px', fontSize: '0.85rem', color: '#2C2117' }}>{tp(item, 'name')}</h4>
+                  <p style={{ margin: 0, fontSize: '0.78rem', color: '#5C4A3A' }}>{t('checkout.qty')} {item.quantity} | {t('checkout.size')} {item.selectedSize}</p>
                   <p style={{ margin: '2px 0 0', fontWeight: 600, fontSize: '0.85rem', color: '#775B3F' }}>${item.price * item.quantity}</p>
                 </div>
               </div>
@@ -216,7 +219,7 @@ export default function CheckoutPage() {
             <div style={{ display: 'flex', gap: '8px' }}>
               <input 
                 type="text" 
-                placeholder="Promo Code (e.g. LUNE10)" 
+                placeholder={t('checkout.promoPlaceholder', 'Promo Code (e.g. LUNE10)')} 
                 value={formData.promoCode}
                 onChange={e => setFormData({ ...formData, promoCode: e.target.value })}
                 style={{ flex: 1, padding: '8px 12px', border: '1px solid #C8AE84', borderRadius: '2px', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFFFFF', color: '#2C2117' }}
@@ -226,7 +229,7 @@ export default function CheckoutPage() {
                 onClick={handleApplyPromo}
                 style={{ padding: '8px 18px', backgroundColor: '#775B3F', color: '#FFFFFF', border: 'none', borderRadius: '2px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
               >
-                Apply
+                {t('checkout.applyBtn', 'Apply')}
               </button>
             </div>
             {promoMessage && (
@@ -239,21 +242,21 @@ export default function CheckoutPage() {
           {/* Calculations */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.9rem', borderTop: '1px solid #E7DDCE', paddingTop: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5C4A3A' }}>
-              <span>Subtotal</span>
+              <span>{t('cart.subtotalLabel', 'Subtotal')}</span>
               <span>${cartTotal}</span>
             </div>
             {appliedDiscount > 0 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16A34A' }}>
-                <span>Discount (10%)</span>
+                <span>{t('checkout.discount10')}</span>
                 <span>-${appliedDiscount}</span>
               </div>
             )}
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5C4A3A' }}>
-              <span>Shipping</span>
-              <span>{shippingFee === 0 ? 'FREE' : `$${shippingFee}`}</span>
+              <span>{t('checkout.shippingFeeLabel')}</span>
+              <span>{shippingFee === 0 ? t('common.free').toUpperCase() : `$${shippingFee}`}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.15rem', fontWeight: 700, borderTop: '1px solid #E7DDCE', paddingTop: '12px', marginTop: '4px', color: '#2C2117' }}>
-              <span>Total</span>
+              <span>{t('checkout.totalLabel')}</span>
               <span style={{ color: '#775B3F' }}>${finalTotal}</span>
             </div>
           </div>
@@ -262,3 +265,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

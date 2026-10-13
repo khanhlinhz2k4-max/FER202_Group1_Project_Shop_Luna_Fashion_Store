@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ArrowLeft, 
   Eye, 
@@ -15,10 +15,13 @@ import {
   X
 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { register: contextRegister, users: contextUsers } = useShop();
+  const { t } = useLanguage();
 
   // Form states
   const [fullName, setFullName] = useState('');
@@ -50,9 +53,9 @@ export default function RegisterPage() {
 
   const getStrengthMeta = () => {
     if (password.length === 0) return { label: '', color: '', percent: 0, tone: '' };
-    if (passedCriteriaCount <= 1) return { label: 'Weak', color: '#DC2626', percent: 25, tone: 'weak' };
-    if (passedCriteriaCount <= 3) return { label: 'Medium', color: '#D97706', percent: 65, tone: 'medium' };
-    return { label: 'Strong & Secure', color: '#057A55', percent: 100, tone: 'strong' };
+    if (passedCriteriaCount <= 1) return { label: t('register.strengthWeak', 'Weak'), color: '#DC2626', percent: 25, tone: 'weak' };
+    if (passedCriteriaCount <= 3) return { label: t('register.strengthMedium', 'Medium'), color: '#D97706', percent: 65, tone: 'medium' };
+    return { label: t('register.strengthStrong', 'Strong & Secure'), color: '#057A55', percent: 100, tone: 'strong' };
   };
 
   const strength = getStrengthMeta();
@@ -61,24 +64,24 @@ export default function RegisterPage() {
   const validateField = (fieldName, value) => {
     let err = '';
     if (fieldName === 'fullName') {
-      if (!value.trim()) err = 'Full name is required.';
-      else if (value.trim().length < 2) err = 'Full name must be at least 2 characters.';
+      if (!value.trim()) err = t('register.errNameRequired', 'Full name is required.');
+      else if (value.trim().length < 2) err = t('register.errNameMin', 'Full name must be at least 2 characters.');
     } else if (fieldName === 'email') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!value.trim()) err = 'Email address is required.';
-      else if (!emailRegex.test(value.trim())) err = 'Please enter a valid email format (e.g. name@domain.com).';
+      if (!value.trim()) err = t('register.errEmailRequired', 'Email address is required.');
+      else if (!emailRegex.test(value.trim())) err = t('register.errEmailValid', 'Please enter a valid email format (e.g. name@domain.com).');
     } else if (fieldName === 'username') {
-      if (!value.trim()) err = 'Username is required.';
-      else if (value.trim().length < 3) err = 'Username must be at least 3 characters.';
-      else if (/\s/.test(value)) err = 'Username cannot contain spaces.';
+      if (!value.trim()) err = t('register.errUserRequired', 'Username is required.');
+      else if (value.trim().length < 3) err = t('register.errUserMin', 'Username must be at least 3 characters.');
+      else if (/\s/.test(value)) err = t('register.errUserSpaces', 'Username cannot contain spaces.');
     } else if (fieldName === 'password') {
-      if (!value) err = 'Password is required.';
-      else if (value.length < 8) err = 'Password must be at least 8 characters.';
-      else if (!passwordCriteria.case) err = 'Password must include both uppercase and lowercase letters.';
-      else if (!passwordCriteria.number && !passwordCriteria.special) err = 'Password must include at least one number or special symbol.';
+      if (!value) err = t('register.errPassRequired', 'Password is required.');
+      else if (value.length < 8) err = t('register.errPassMin', 'Password must be at least 8 characters.');
+      else if (!passwordCriteria.case) err = t('register.errPassCase', 'Password must include both uppercase and lowercase letters.');
+      else if (!passwordCriteria.number && !passwordCriteria.special) err = t('register.errPassComplexity', 'Password must include at least one number or special symbol.');
     } else if (fieldName === 'confirmPassword') {
-      if (!value) err = 'Please confirm your password.';
-      else if (value !== password) err = 'Passwords do not match.';
+      if (!value) err = t('register.errConfirmRequired', 'Please confirm your password.');
+      else if (value !== password) err = t('register.errConfirmMismatch', 'Passwords do not match.');
     }
     return err;
   };
@@ -119,12 +122,12 @@ export default function RegisterPage() {
     setFieldErrors(allErrors);
 
     if (Object.values(allErrors).some(Boolean)) {
-      setGeneralError('Please review and resolve the errors highlighted below.');
+      setGeneralError(t('register.errReviewErrors', 'Please review and resolve the errors highlighted below.'));
       return;
     }
 
     if (!agreeTerms) {
-      setGeneralError('Please review and accept our Terms of Service & Privacy Policy.');
+      setGeneralError(t('register.errAcceptTerms', 'Please review and accept our Terms of Service & Privacy Policy.'));
       return;
     }
 
@@ -151,8 +154,8 @@ export default function RegisterPage() {
       u => (u.email || '').toLowerCase() === email.trim().toLowerCase()
     );
     if (emailExisted) {
-      setFieldErrors(prev => ({ ...prev, email: 'This email is already associated with an atelier account.' }));
-      setGeneralError('An account with this email already exists. Please sign in instead.');
+      setFieldErrors(prev => ({ ...prev, email: t('register.errEmailTaken', 'An account with this email already exists. Please sign in instead.') }));
+      setGeneralError(t('register.errEmailTaken', 'An account with this email already exists. Please sign in instead.'));
       return;
     }
 
@@ -160,8 +163,8 @@ export default function RegisterPage() {
       u => (u.username || '').toLowerCase() === username.trim().toLowerCase()
     );
     if (userExisted) {
-      setFieldErrors(prev => ({ ...prev, username: 'This username is already taken. Please choose another.' }));
-      setGeneralError('This username is already taken. Please choose another.');
+      setFieldErrors(prev => ({ ...prev, username: t('register.errUserTaken', 'This username is already taken. Please choose another.') }));
+      setGeneralError(t('register.errUserTaken', 'This username is already taken. Please choose another.'));
       return;
     }
 
@@ -197,13 +200,15 @@ export default function RegisterPage() {
       setIsLoading(false);
       setRegisterSuccess(true);
 
-      // Redirect to login with prefilled email
+      // Redirect to login with prefilled email and forwarded destination
       setTimeout(() => {
         navigate('/login', { 
           state: { 
             registeredEmail: email.trim(),
             justRegistered: true,
-            accountName: fullName.trim()
+            accountName: fullName.trim(),
+            redirect: location.state?.redirect,
+            pendingWishlistProduct: location.state?.pendingWishlistProduct
           } 
         });
       }, 1500);
@@ -223,9 +228,9 @@ export default function RegisterPage() {
           <div className="auth-visual-scrim"></div>
           
           <div className="auth-visual-quote">
-            <span className="auth-visual-tag">LUNE FASHION STORE</span>
-            <h3>"Fashion changes, but style endures."</h3>
-            <p>Join LUNE Fashion Store to receive seasonal lookbooks, new drops, and exclusive member promotions.</p>
+            <span className="auth-visual-tag">{t('register.editorialTag', 'LUNE FASHION STORE')}</span>
+            <h3>{t('register.editorialQuote', '"Fashion changes, but style endures."')}</h3>
+            <p>{t('register.editorialDesc', 'Join LUNE Fashion Store to receive seasonal lookbooks, new drops, and exclusive member promotions.')}</p>
           </div>
         </div>
 
@@ -235,7 +240,7 @@ export default function RegisterPage() {
             {/* Back to Home Link */}
             <Link to="/" className="auth-back-link">
               <ArrowLeft size={16} />
-              <span>Back to LUNE Home</span>
+              <span>{t('register.backToHome', 'Back to LUNE Home')}</span>
             </Link>
 
             {/* Brand Header */}
@@ -244,9 +249,9 @@ export default function RegisterPage() {
                 <span className="brand-name">LUNE</span>
                 <span className="brand-tagline">FASHION STORE</span>
               </Link>
-              <h1 className="auth-heading">Create Account</h1>
+              <h1 className="auth-heading">{t('register.createAccountHeading', 'Create Account')}</h1>
               <p className="auth-subheading">
-                Create your membership account to begin your curated journey.
+                {t('register.createAccountSubheading', 'Create your membership account to begin your curated journey.')}
               </p>
             </div>
 
@@ -262,7 +267,7 @@ export default function RegisterPage() {
             {registerSuccess && (
               <div className="auth-alert success">
                 <CheckCircle size={18} />
-                <span>Account registered successfully! Redirecting to Sign In...</span>
+                <span>{t('register.successRedirect', 'Account registered successfully! Redirecting to Sign In...')}</span>
               </div>
             )}
 
@@ -270,13 +275,13 @@ export default function RegisterPage() {
             <form onSubmit={handleRegister} className="auth-actual-form" noValidate>
               {/* Full Name */}
               <div className={`form-group ${touched.fullName && fieldErrors.fullName ? 'has-error' : ''}`}>
-                <label htmlFor="fullName">Full Name</label>
+                <label htmlFor="fullName">{t('register.fullNameLabel', 'Full Name')}</label>
                 <div className="input-with-icon">
                   <User size={16} className="input-field-icon" />
                   <input
                     id="fullName"
                     type="text"
-                    placeholder="e.g. Linh Nguyen"
+                    placeholder={t('register.fullNamePlaceholder', 'e.g. Linh Nguyen')}
                     value={fullName}
                     onChange={(e) => {
                       setFullName(e.target.value);
@@ -297,13 +302,13 @@ export default function RegisterPage() {
 
               {/* Email Address */}
               <div className={`form-group ${touched.email && fieldErrors.email ? 'has-error' : ''}`}>
-                <label htmlFor="email">Email Address</label>
+                <label htmlFor="email">{t('register.emailLabel', 'Email Address')}</label>
                 <div className="input-with-icon">
                   <Mail size={16} className="input-field-icon" />
                   <input
                     id="email"
                     type="email"
-                    placeholder="e.g. linh@lune-atelier.com"
+                    placeholder={t('register.emailPlaceholder', 'e.g. linh@lune-atelier.com')}
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
@@ -324,13 +329,13 @@ export default function RegisterPage() {
 
               {/* Username */}
               <div className={`form-group ${touched.username && fieldErrors.username ? 'has-error' : ''}`}>
-                <label htmlFor="username">Username</label>
+                <label htmlFor="username">{t('register.usernameLabel', 'Username')}</label>
                 <div className="input-with-icon">
                   <User size={16} className="input-field-icon" />
                   <input
                     id="username"
                     type="text"
-                    placeholder="e.g. linhnguyen"
+                    placeholder={t('register.usernamePlaceholder', 'e.g. linhnguyen')}
                     value={username}
                     onChange={(e) => {
                       setUsername(e.target.value);
@@ -351,13 +356,13 @@ export default function RegisterPage() {
 
               {/* Password */}
               <div className={`form-group ${touched.password && fieldErrors.password ? 'has-error' : ''}`}>
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">{t('register.passwordLabel', 'Password')}</label>
                 <div className="input-with-icon">
                   <Lock size={16} className="input-field-icon" />
                   <input
                     id="password"
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Create a strong password"
+                    placeholder={t('register.passwordPlaceholder', 'Create a strong password')}
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -367,7 +372,7 @@ export default function RegisterPage() {
                       if (confirmPassword) {
                         setFieldErrors(prev => ({ 
                           ...prev, 
-                          confirmPassword: e.target.value === confirmPassword ? '' : 'Passwords do not match.' 
+                          confirmPassword: e.target.value === confirmPassword ? '' : t('register.errConfirmMismatch', 'Passwords do not match.') 
                         }));
                       }
                     }}
@@ -388,7 +393,7 @@ export default function RegisterPage() {
                 {password.length > 0 && (
                   <div className="password-strength-widget">
                     <div className="strength-header">
-                      <span className="strength-caption">Password strength:</span>
+                      <span className="strength-caption">{t('register.strengthLabel', 'Password strength:')}</span>
                       <span className={`strength-value ${strength.tone}`}>{strength.label}</span>
                     </div>
                     <div className="strength-bar-track">
@@ -402,19 +407,19 @@ export default function RegisterPage() {
                     <div className="password-criteria-list">
                       <div className={`criteria-item ${passwordCriteria.length ? 'valid' : ''}`}>
                         {passwordCriteria.length ? <Check size={13} /> : <span className="criteria-bullet"></span>}
-                        <span>At least 8 characters</span>
+                        <span>{t('register.critLength', 'At least 8 characters')}</span>
                       </div>
                       <div className={`criteria-item ${passwordCriteria.case ? 'valid' : ''}`}>
                         {passwordCriteria.case ? <Check size={13} /> : <span className="criteria-bullet"></span>}
-                        <span>Uppercase & lowercase</span>
+                        <span>{t('register.critCase', 'Uppercase & lowercase')}</span>
                       </div>
                       <div className={`criteria-item ${passwordCriteria.number ? 'valid' : ''}`}>
                         {passwordCriteria.number ? <Check size={13} /> : <span className="criteria-bullet"></span>}
-                        <span>At least 1 number (0-9)</span>
+                        <span>{t('register.critNumber', 'At least 1 number (0-9)')}</span>
                       </div>
                       <div className={`criteria-item ${passwordCriteria.special ? 'valid' : ''}`}>
                         {passwordCriteria.special ? <Check size={13} /> : <span className="criteria-bullet"></span>}
-                        <span>Special symbol (!@#$...)</span>
+                        <span>{t('register.critSpecial', 'Special symbol (!@#$...)')}</span>
                       </div>
                     </div>
                   </div>
@@ -429,20 +434,20 @@ export default function RegisterPage() {
 
               {/* Confirm Password */}
               <div className={`form-group ${touched.confirmPassword && fieldErrors.confirmPassword ? 'has-error' : ''}`}>
-                <label htmlFor="confirmPassword">Confirm Password</label>
+                <label htmlFor="confirmPassword">{t('register.confirmPasswordLabel', 'Confirm Password')}</label>
                 <div className="input-with-icon">
                   <Lock size={16} className="input-field-icon" />
                   <input
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
-                    placeholder="Repeat your password"
+                    placeholder={t('register.confirmPasswordPlaceholder', 'Repeat your password')}
                     value={confirmPassword}
                     onChange={(e) => {
                       setConfirmPassword(e.target.value);
                       if (touched.confirmPassword || e.target.value.length > 0) {
                         setFieldErrors(prev => ({ 
                           ...prev, 
-                          confirmPassword: e.target.value === password ? '' : 'Passwords do not match.' 
+                          confirmPassword: e.target.value === password ? '' : t('register.errConfirmMismatch', 'Passwords do not match.') 
                         }));
                       }
                     }}
@@ -464,12 +469,12 @@ export default function RegisterPage() {
                     {confirmPassword === password ? (
                       <>
                         <Check size={13} />
-                        <span>Passwords match</span>
+                        <span>{t('register.passwordsMatch', 'Passwords match')}</span>
                       </>
                     ) : (
                       <>
                         <AlertCircle size={13} />
-                        <span>Passwords do not match</span>
+                        <span>{t('register.passwordsMismatch', 'Passwords do not match')}</span>
                       </>
                     )}
                   </div>
@@ -491,7 +496,7 @@ export default function RegisterPage() {
                   />
                   <span className="checkbox-custom"></span>
                   <span className="checkbox-label">
-                    I agree to the LUNE{' '}
+                    {t('register.agreePrefix', 'I agree to the LUNE')}{' '}
                     <button 
                       type="button" 
                       className="terms-link-inline"
@@ -500,8 +505,9 @@ export default function RegisterPage() {
                         setShowTermsModal(true);
                       }}
                     >
-                      Privacy Policy & Terms of Service
+                      {t('register.termsInlineLink', 'Privacy Policy & Terms of Service')}
                     </button>
+                    {t('register.agreeSuffix') ? ` ${t('register.agreeSuffix')}` : ''}
                   </span>
                 </label>
               </div>
@@ -513,10 +519,10 @@ export default function RegisterPage() {
                 disabled={isLoading || registerSuccess}
               >
                 {isLoading ? (
-                  <span>CREATING ACCOUNT...</span>
+                  <span>{t('register.creatingAccount', 'CREATING ACCOUNT...')}</span>
                 ) : (
                   <>
-                    <span>REGISTER ACCOUNT</span>
+                    <span>{t('register.createAccountBtn', 'REGISTER ACCOUNT')}</span>
                     <ArrowRight size={15} />
                   </>
                 )}
@@ -524,7 +530,7 @@ export default function RegisterPage() {
 
               {/* Divider */}
               <div className="auth-divider">
-                <span>or register with</span>
+                <span>{t('register.orRegisterWith', 'or register with')}</span>
               </div>
 
               {/* Social Buttons */}
@@ -576,9 +582,9 @@ export default function RegisterPage() {
 
             {/* Switch to Login */}
             <div className="auth-footer-prompt">
-              <span>Already have an atelier account?</span>{' '}
+              <span>{t('register.alreadyHaveAccountPrompt', 'Already have an atelier account?')}</span>{' '}
               <Link to="/login" className="auth-accent-link">
-                Sign in here
+                {t('register.signInHereLink', 'Sign in here')}
               </Link>
             </div>
           </div>
@@ -592,7 +598,7 @@ export default function RegisterPage() {
             <div className="auth-modal-header">
               <div className="modal-title-with-icon">
                 <ShieldCheck size={20} className="modal-title-icon" />
-                <h3>LUNE Privacy & Membership Terms</h3>
+                <h3>{t('register.termsModalTitle', 'LUNE Privacy & Membership Terms')}</h3>
               </div>
               <button 
                 type="button" 
@@ -605,13 +611,13 @@ export default function RegisterPage() {
             </div>
             <div className="auth-modal-body">
               <p>
-                <strong>1. Client Confidentiality:</strong> Your profile details, wishlist selections, and styling preferences remain strictly confidential under our private client protocol.
+                <strong>{t('register.terms1Title', '1. Client Confidentiality:')}</strong> {t('register.terms1Desc', 'Your profile details, wishlist selections, and styling preferences remain strictly confidential under our private client protocol.')}
               </p>
               <p>
-                <strong>2. Exclusive Access:</strong> Atelier membership provides privileged previews of seasonal collections, invitations to private studio drops, and tailored fitting consultations.
+                <strong>{t('register.terms2Title', '2. Exclusive Access:')}</strong> {t('register.terms2Desc', 'Atelier membership provides privileged previews of seasonal collections, invitations to private studio drops, and tailored fitting consultations.')}
               </p>
               <p>
-                <strong>3. Data Protection:</strong> We do not sell or monetize personal client data. All credentials are encrypted and stored in compliance with European privacy standards.
+                <strong>{t('register.terms3Title', '3. Data Protection:')}</strong> {t('register.terms3Desc', 'We do not sell or monetize personal client data. All credentials are encrypted and stored in compliance with European privacy standards.')}
               </p>
             </div>
             <div className="auth-modal-footer">
@@ -620,7 +626,7 @@ export default function RegisterPage() {
                 className="btn-primary modal-action-btn"
                 onClick={() => setShowTermsModal(false)}
               >
-                I UNDERSTAND & AGREE
+                {t('register.termsModalBtn', 'I UNDERSTAND & AGREE')}
               </button>
             </div>
           </div>

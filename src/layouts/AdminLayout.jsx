@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
-import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu, Globe } from 'lucide-react';
 import '../pages/admin/Admin.css';
-
-const navItems = [
-  { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
-  { to: '/admin/products', label: 'Products (CRUD)', icon: ShoppingBag },
-  { to: '/admin/orders', label: 'Orders', icon: ClipboardList },
-  { to: '/admin/users', label: 'Users', icon: Users },
-];
 
 export default function AdminLayout() {
   const { currentUser, logout } = useShop();
+  const { t, language, setLanguage } = useLanguage();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const navItems = [
+    { to: '/admin', label: t('admin.sidebar.dashboard', 'Dashboard'), icon: LayoutDashboard, end: true },
+    { to: '/admin/products', label: t('admin.sidebar.products', 'Products'), icon: ShoppingBag },
+    { to: '/admin/orders', label: t('admin.sidebar.orders', 'Orders'), icon: ClipboardList },
+    { to: '/admin/users', label: t('admin.sidebar.users', 'Users'), icon: Users },
+  ];
 
   const displayName = currentUser?.name || 'Administrator';
   const initials = displayName
@@ -40,12 +42,12 @@ export default function AdminLayout() {
         <div className="admin-sidebar-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Shield size={22} color="#CAA072" />
-            <span style={{ fontFamily: 'Playfair Display, Cormorant Garamond, serif', fontSize: '1.25rem', fontWeight: 600, letterSpacing: '0.08em', color: '#FAF7F2' }}>
-              LUNE ADMIN
+            <span style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', fontWeight: 600, letterSpacing: '0.08em', color: '#FAF7F2' }}>
+              {t('admin.sidebar.title', 'LUNE ADMIN')}
             </span>
           </div>
           <span style={{ fontSize: '0.75rem', color: '#C8AE84', display: 'block', marginTop: '4px' }}>
-            Store Management v1.0
+            {t('admin.sidebar.version', 'Store Management v1.0')}
           </span>
         </div>
 
@@ -72,7 +74,7 @@ export default function AdminLayout() {
             to="/"
             style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#C8AE84', textDecoration: 'none', fontSize: '0.85rem', marginBottom: '12px' }}
           >
-            <ExternalLink size={16} /> View Storefront
+            <ExternalLink size={16} /> {t('admin.sidebar.viewStorefront', 'View Storefront')}
           </Link>
           <button
             type="button"
@@ -92,7 +94,7 @@ export default function AdminLayout() {
               fontWeight: 500,
             }}
           >
-            <LogOut size={16} /> Sign Out
+            <LogOut size={16} /> {t('admin.sidebar.signOut', 'Sign Out')}
           </button>
         </div>
       </aside>
@@ -112,7 +114,52 @@ export default function AdminLayout() {
               Admin Portal / <strong>FER202 Final Project</strong>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {/* Bilingual Switcher in Admin Topbar */}
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '4px',
+              backgroundColor: '#FAF7F2', 
+              padding: '3px 6px', 
+              borderRadius: '4px',
+              border: '1px solid #E7DDCE'
+            }}>
+              <Globe size={13} color="#775B3F" />
+              <button
+                type="button"
+                onClick={() => setLanguage('vi')}
+                style={{
+                  border: 'none',
+                  background: language === 'vi' ? '#775B3F' : 'none',
+                  color: language === 'vi' ? '#fff' : '#5C4A3A',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  padding: '2px 6px',
+                  borderRadius: '3px',
+                  cursor: 'pointer'
+                }}
+              >
+                VI
+              </button>
+              <button
+                type="button"
+                onClick={() => setLanguage('en')}
+                style={{
+                  border: 'none',
+                  background: language === 'en' ? '#775B3F' : 'none',
+                  color: language === 'en' ? '#fff' : '#5C4A3A',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  padding: '2px 6px',
+                  borderRadius: '3px',
+                  cursor: 'pointer'
+                }}
+              >
+                EN
+              </button>
+            </div>
+
             <div className="admin-avatar">{initials}</div>
             <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#2C2117' }}>{displayName}</span>
             <span style={{ padding: '3px 8px', backgroundColor: '#F9F2E7', color: '#775B3F', border: '1px solid #C8AE84', fontSize: '0.75rem', borderRadius: '4px', fontWeight: 600 }}>

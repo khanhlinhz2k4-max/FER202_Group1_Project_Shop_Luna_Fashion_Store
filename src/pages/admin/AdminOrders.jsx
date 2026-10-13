@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useShop } from '../../context/ShopContext';
+import { useLanguage } from '../../context/LanguageContext';
 import { 
   Search, 
   Plus, 
@@ -18,10 +19,7 @@ import {
 /**
  * AdminOrders Component
  * Phụ trách: Thành viên 5 (Quản lý Đơn hàng cho Admin với ĐẦY ĐỦ CRUD)
- *  - Create: Nút "+ New Order" tạo đơn thủ công với chọn sản phẩm, tính tiền, trừ kho.
- *  - Read: Tìm kiếm, lọc theo trạng thái, thẻ thống kê KPI, modal xem chi tiết đơn hàng (Invoice).
- *  - Update: Chuyển đổi trạng thái (Pending -> Shipping -> Delivered -> Cancelled), chỉnh sửa thông tin giao nhận.
- *  - Delete: Xóa đơn hàng kèm modal xác nhận.
+ * Đồng bộ đa ngôn ngữ: Thành viên 1 & Thành viên 5
  */
 export default function AdminOrders() {
   const { 
@@ -32,6 +30,7 @@ export default function AdminOrders() {
     updateOrder, 
     deleteOrder 
   } = useShop();
+  const { t } = useLanguage();
 
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -193,9 +192,9 @@ export default function AdminOrders() {
       {/* Page Header */}
       <div className="admin-page-header">
         <div>
-          <h1 className="admin-title">ORDER MANAGEMENT</h1>
+          <h1 className="admin-title">{t('admin.orders.title', 'ORDER MANAGEMENT')}</h1>
           <p className="admin-subtitle">
-            Inspect, process fulfillment status, edit recipient details, and create manual customer orders.
+            {t('admin.orders.subtitle', 'Inspect, process fulfillment status, edit recipient details, and create manual customer orders.')}
           </p>
         </div>
         <button
@@ -203,7 +202,7 @@ export default function AdminOrders() {
           className="admin-primary-btn"
           onClick={() => setShowCreateModal(true)}
         >
-          <Plus size={16} /> New Order
+          <Plus size={16} /> {t('admin.orders.addNew', 'New Order')}
         </button>
       </div>
 
@@ -214,8 +213,8 @@ export default function AdminOrders() {
             <ClipboardList size={20} color="#775B3F" />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>Total Orders</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{totalOrdersCount}</h3>
+            <span style={{ fontSize: 'var(--text-badge)', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.dashboard.totalOrders', 'Total Orders')}</span>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{totalOrdersCount}</h3>
           </div>
         </div>
 
@@ -224,8 +223,8 @@ export default function AdminOrders() {
             <Clock size={20} color="#92400E" />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#92400E', fontWeight: 600, textTransform: 'uppercase' }}>Pending</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#92400E' }}>{pendingCount}</h3>
+            <span style={{ fontSize: 'var(--text-badge)', color: '#92400E', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.orders.filterPending', 'Pending')}</span>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#92400E' }}>{pendingCount}</h3>
           </div>
         </div>
 
@@ -234,8 +233,8 @@ export default function AdminOrders() {
             <Truck size={20} color="#0369A1" />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#0369A1', fontWeight: 600, textTransform: 'uppercase' }}>Shipping</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#0369A1' }}>{shippingCount}</h3>
+            <span style={{ fontSize: 'var(--text-badge)', color: '#0369A1', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.orders.filterShipping', 'Shipping')}</span>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#0369A1' }}>{shippingCount}</h3>
           </div>
         </div>
 
@@ -244,8 +243,8 @@ export default function AdminOrders() {
             <CheckCircle size={20} color="#166534" />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#166534', fontWeight: 600, textTransform: 'uppercase' }}>Delivered</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#166534' }}>{deliveredCount}</h3>
+            <span style={{ fontSize: 'var(--text-badge)', color: '#166534', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.orders.filterDelivered', 'Delivered')}</span>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#166534' }}>{deliveredCount}</h3>
           </div>
         </div>
 
@@ -254,8 +253,8 @@ export default function AdminOrders() {
             <DollarSign size={20} color="#775B3F" />
           </div>
           <div>
-            <span style={{ fontSize: '0.75rem', color: '#775B3F', fontWeight: 600, textTransform: 'uppercase' }}>Revenue</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.4rem', fontFamily: 'Montserrat, sans-serif', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#775B3F' }}>${totalRevenue.toLocaleString()}</h3>
+            <span style={{ fontSize: 'var(--text-badge)', color: '#775B3F', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.dashboard.totalRevenue', 'Revenue')}</span>
+            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#775B3F' }}>${totalRevenue.toLocaleString()}</h3>
           </div>
         </div>
       </div>
@@ -266,7 +265,7 @@ export default function AdminOrders() {
           <Search size={18} color="#8F7965" />
           <input
             type="text"
-            placeholder="Search by Order ID, customer name, email or phone..."
+            placeholder={t('admin.orders.searchPlaceholder', 'Search by Order ID, customer name, email or phone...')}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             style={{ border: 'none', background: 'none', outline: 'none', width: '100%', fontSize: '0.88rem', color: '#2C2117' }}
@@ -278,11 +277,11 @@ export default function AdminOrders() {
           onChange={e => setStatusFilter(e.target.value)}
           style={{ padding: '9px 14px', borderRadius: '4px', border: '1px solid #E7DDCE', outline: 'none', backgroundColor: '#fff', fontSize: '0.88rem', color: '#2C2117', cursor: 'pointer' }}
         >
-          <option value="all">All Statuses ({totalOrdersCount})</option>
-          <option value="pending">Pending ({pendingCount})</option>
-          <option value="shipping">Shipping ({shippingCount})</option>
-          <option value="delivered">Delivered ({deliveredCount})</option>
-          <option value="cancelled">Cancelled ({orders.filter(o => o.status === 'Cancelled').length})</option>
+          <option value="all">{t('admin.orders.filterAll', 'All Statuses')} ({totalOrdersCount})</option>
+          <option value="pending">{t('admin.orders.filterPending', 'Pending')} ({pendingCount})</option>
+          <option value="shipping">{t('admin.orders.filterShipping', 'Shipping')} ({shippingCount})</option>
+          <option value="delivered">{t('admin.orders.filterDelivered', 'Delivered')} ({deliveredCount})</option>
+          <option value="cancelled">{t('admin.orders.filterCancelled', 'Cancelled')} ({orders.filter(o => o.status === 'Cancelled').length})</option>
         </select>
       </div>
 
@@ -292,20 +291,20 @@ export default function AdminOrders() {
           <table className="admin-table">
             <thead>
               <tr>
-                <th>Order Ref</th>
-                <th>Recipient & Contact</th>
-                <th>Items Ordered</th>
-                <th>Total ($)</th>
-                <th>Payment</th>
-                <th>Current Status</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th>{t('admin.orders.colOrderId', 'Order Ref')}</th>
+                <th>{t('admin.orders.colCustomer', 'Recipient & Contact')}</th>
+                <th>{t('admin.orders.colItems', 'Items Ordered')}</th>
+                <th>{t('admin.orders.colTotal', 'Total ($)')}</th>
+                <th>{t('admin.orders.colPayment', 'Payment')}</th>
+                <th>{t('admin.orders.colStatus', 'Current Status')}</th>
+                <th style={{ textAlign: 'right' }}>{t('admin.orders.colActions', 'Actions')}</th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.length === 0 ? (
                 <tr>
                   <td colSpan="7" style={{ textAlign: 'center', padding: '48px', color: '#64748B' }}>
-                    No orders match your search and filter criteria.
+                    {t('common.noResults', 'No orders match your search and filter criteria.')}
                   </td>
                 </tr>
               ) : (

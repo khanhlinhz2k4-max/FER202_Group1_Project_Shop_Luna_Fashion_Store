@@ -14,9 +14,11 @@ import {
   TrendingUp 
 } from 'lucide-react';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 import './Navbar.css';
 
-const TRENDING_SEARCHES = [
+const TRENDING_SEARCHES_EN = [
   "Linen Blazer",
   "Silk Dress",
   "Cashmere Cardigan",
@@ -26,8 +28,20 @@ const TRENDING_SEARCHES = [
   "Overshirt"
 ];
 
+const TRENDING_SEARCHES_VI = [
+  "Áo Blazer Linen",
+  "Đầm Lụa Dạ Hội",
+  "Cardigan Cashmere",
+  "Quần Âu Ống Rộng",
+  "Túi Da Thủ Công",
+  "Áo Khoác Trench",
+  "Áo Sơ Mi Overshirt"
+];
+
 export default function Navbar() {
   const { cartCount, openCart, wishlist, currentUser, logout, products } = useShop();
+  const { t, language } = useLanguage();
+  const trendingList = language === 'vi' ? TRENDING_SEARCHES_VI : TRENDING_SEARCHES_EN;
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -94,11 +108,11 @@ export default function Navbar() {
 
   // Navigation links
   const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Shop All', path: '/shop' },
-    { name: 'Categories', path: '/#categories' },
-    { name: 'New Collection', path: '/#new-arrivals' },
-    { name: 'About LUNE', path: '/#about' },
+    { name: t('nav.home'), path: '/' },
+    { name: t('nav.shopAll'), path: '/shop' },
+    { name: t('nav.categories'), path: '/#categories' },
+    { name: t('nav.newCollection'), path: '/#new-arrivals' },
+    { name: t('nav.about'), path: '/#about' },
   ];
 
   return (
@@ -107,11 +121,11 @@ export default function Navbar() {
         {/* Editorial Announcement Bar */}
         <div className="announcement-bar">
           <p>
-            <span>SPRING / SUMMER 2026</span>
+            <span>{t('nav.springSummer')}</span>
             <span className="announcement-divider">/</span>
-            <span>COMPLIMENTARY SHIPPING ON ORDERS OVER $250</span>
+            <span>{t('nav.freeShippingPromo')}</span>
             <span className="announcement-divider">/</span>
-            <Link to="/shop" className="announcement-link">DISCOVER THE RUNWAY</Link>
+            <Link to="/shop" className="announcement-link">{t('nav.discoverRunway')}</Link>
           </p>
         </div>
 
@@ -159,6 +173,9 @@ export default function Navbar() {
 
           {/* Header Actions */}
           <div className="header-actions">
+            {/* Language Switcher (VI | EN) */}
+            <LanguageSwitcher showIcon={true} />
+
             {/* Search Trigger */}
             <button 
               className={`action-btn ${searchOpen ? 'active' : ''}`} 
@@ -215,7 +232,7 @@ export default function Navbar() {
                 }}
               >
                 <Shield size={14} color="#775B3F" />
-                <span>DASHBOARD</span>
+                <span>{t('nav.dashboard')}</span>
               </Link>
             )}
 
@@ -244,7 +261,7 @@ export default function Navbar() {
                     <div className="user-account-dropdown">
                       <div className="dropdown-user-info">
                         <span className="dropdown-tag">
-                          {currentUser.role === 'admin' ? '🛡️ STORE ADMINISTRATOR' : 'LUNE MEMBER'}
+                          {currentUser.role === 'admin' ? t('nav.storeAdmin') : t('nav.luneMember')}
                         </span>
                         <span className="dropdown-name">{currentUser.name}</span>
                       </div>
@@ -259,7 +276,7 @@ export default function Navbar() {
                           style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#B45309', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          <Shield size={16} /> Admin Portal
+                          <Shield size={16} /> {t('nav.adminPortal')}
                         </Link>
                       ) : (
                         <Link 
@@ -268,7 +285,7 @@ export default function Navbar() {
                           style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', color: '#1C1917', textDecoration: 'none', fontSize: '0.85rem' }}
                           onClick={() => setUserMenuOpen(false)}
                         >
-                          <Package size={16} /> My Account & Orders
+                          <Package size={16} /> {t('nav.myAccount')}
                         </Link>
                       )}
 
@@ -280,7 +297,7 @@ export default function Navbar() {
                         onClick={handleLogout}
                       >
                         <LogOut size={14} />
-                        <span>Sign Out</span>
+                        <span>{t('nav.signOut')}</span>
                       </button>
                     </div>
                   </>
@@ -289,7 +306,7 @@ export default function Navbar() {
             ) : (
               <Link to="/login" className="action-btn login-action" aria-label="User Account">
                 <User size={19} strokeWidth={1.75} />
-                <span className="login-text">LOGIN</span>
+                <span className="login-text">{t('nav.login')}</span>
               </Link>
             )}
           </div>
@@ -304,7 +321,7 @@ export default function Navbar() {
                   <Search size={18} className="search-input-icon" />
                   <input 
                     type="text" 
-                    placeholder="Search silhouettes, materials or styles (Press Enter to view all)..."
+                    placeholder={t('nav.searchPlaceholder')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleSearchKeyDown}
@@ -335,10 +352,10 @@ export default function Navbar() {
                   <div className="search-trending-section">
                     <div className="search-trending-label">
                       <TrendingUp size={13} />
-                      <span>TRENDING SEARCHES</span>
+                      <span>{t('nav.trendingSearches')}</span>
                     </div>
                     <div className="trending-chips-wrap">
-                      {TRENDING_SEARCHES.map(tag => (
+                      {trendingList.map(tag => (
                         <button
                           key={tag}
                           type="button"
@@ -356,8 +373,8 @@ export default function Navbar() {
                 {searchQuery.trim() && searchResults.length > 0 && (
                   <div className="search-results-panel">
                     <div className="search-results-header">
-                      <span>QUICK SUGGESTIONS ({searchResults.length})</span>
-                      <span>PRESS ENTER TO VIEW ALL</span>
+                      <span>{t('nav.quickSuggestions')} ({searchResults.length})</span>
+                      <span>{t('nav.pressEnterToView')}</span>
                     </div>
                     <div className="search-results-list">
                       {searchResults.map(p => (
@@ -394,7 +411,7 @@ export default function Navbar() {
                         className="search-view-all-btn"
                         onClick={() => executeSearch()}
                       >
-                        <span>VIEW ALL RESULTS FOR "{searchQuery.trim()}"</span>
+                        <span>{t('nav.viewAllResults')} "{searchQuery.trim()}"</span>
                         <ArrowRight size={14} />
                       </button>
                     </div>
@@ -405,12 +422,12 @@ export default function Navbar() {
                 {searchQuery.trim() && searchResults.length === 0 && (
                   <div className="search-results-panel">
                     <div className="search-empty-state">
-                      <h4 className="search-empty-title">No matching silhouettes found</h4>
+                      <h4 className="search-empty-title">{t('nav.noResultsFound')}</h4>
                       <p className="search-empty-desc">
-                        We couldn't find any pieces matching "{searchQuery.trim()}". Try searching with another keyword or explore popular trending styles:
+                        {t('nav.noResultsDescPrefix')} "{searchQuery.trim()}"{t('nav.noResultsDescSuffix')}
                       </p>
                       <div className="trending-chips-wrap" style={{ justifyContent: 'center' }}>
-                        {TRENDING_SEARCHES.map(tag => (
+                        {trendingList.map(tag => (
                           <button
                             key={tag}
                             type="button"
@@ -447,51 +464,54 @@ export default function Navbar() {
             <span className="brand-name">LUNE</span>
             <span className="brand-tagline">FASHION STORE</span>
           </Link>
-          <button 
-            onClick={() => setMobileMenuOpen(false)} 
-            className="close-drawer-btn"
-            aria-label="Close menu"
-          >
-            <X size={22} />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <LanguageSwitcher />
+            <button 
+              onClick={() => setMobileMenuOpen(false)} 
+              className="close-drawer-btn"
+              aria-label="Close menu"
+            >
+              <X size={22} />
+            </button>
+          </div>
         </div>
 
         {/* Section 1: Main Navigation & Collections */}
-        <div className="mobile-group-label">EXPLORE COLLECTIONS</div>
+        <div className="mobile-group-label">{t('nav.menuCollections')}</div>
         <ul className="mobile-nav-list">
           <li>
             <Link to="/" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-              <span>Home</span>
+              <span>{t('nav.home')}</span>
               <ArrowRight size={16} className="nav-arrow-icon" />
             </Link>
           </li>
           <li>
             <Link to="/shop" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-              <span>Shop All</span>
+              <span>{t('nav.shopAll')}</span>
               <ArrowRight size={16} className="nav-arrow-icon" />
             </Link>
           </li>
           <li>
             <Link to="/shop?category=women" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-              <span>Women's Collection</span>
+              <span>{t('nav.women')}</span>
               <ArrowRight size={16} className="nav-arrow-icon" />
             </Link>
           </li>
           <li>
             <Link to="/shop?category=men" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-              <span>Men's Collection</span>
+              <span>{t('nav.men')}</span>
               <ArrowRight size={16} className="nav-arrow-icon" />
             </Link>
           </li>
           <li>
             <a href="/#new-arrivals" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-              <span>New Collection</span>
+              <span>{t('nav.newCollection')}</span>
               <ArrowRight size={16} className="nav-arrow-icon" />
             </a>
           </li>
           <li>
             <a href="/#about" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
-              <span>About LUNE</span>
+              <span>{t('nav.about')}</span>
               <ArrowRight size={16} className="nav-arrow-icon" />
             </a>
           </li>
@@ -500,13 +520,13 @@ export default function Navbar() {
         {/* Section 2: Personal Wardrobe (Customer) vs Administration (Admin) */}
         {currentUser?.role === 'admin' ? (
           <>
-            <div className="mobile-group-label">STORE ADMINISTRATION</div>
+            <div className="mobile-group-label">{t('nav.adminPortal')}</div>
             <ul className="mobile-nav-list">
               <li>
                 <Link to="/admin" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
                   <span className="link-text-wrap">
                     <Shield size={16} className="inline-icon-gold" />
-                    Admin Management Portal
+                    {t('nav.adminPortal')}
                   </span>
                   <ArrowRight size={16} className="nav-arrow-icon" />
                 </Link>
@@ -515,17 +535,17 @@ export default function Navbar() {
           </>
         ) : (
           <>
-            <div className="mobile-group-label">WARDROBE & ACCOUNT</div>
+            <div className="mobile-group-label">{t('nav.menuAccount')}</div>
             <ul className="mobile-nav-list">
               <li>
                 <button 
+                  type="button"
                   onClick={() => { setMobileMenuOpen(false); openCart(); }} 
                   className="mobile-nav-link"
-                  style={{ width: '100%', background: 'none', border: 'none', textAlign: 'left', fontFamily: 'inherit', padding: '16px 20px', cursor: 'pointer' }}
                 >
                   <span className="link-text-wrap">
                     <ShoppingBag size={16} className="inline-icon-gold" />
-                    Shopping Bag
+                    {t('nav.bag')}
                     {cartCount > 0 && (
                       <span className="mobile-badge-count">{cartCount}</span>
                     )}
@@ -537,7 +557,7 @@ export default function Navbar() {
                 <Link to="/wishlist" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
                   <span className="link-text-wrap">
                     <Heart size={16} className="inline-icon-gold" />
-                    Saved Wishlist
+                    {t('nav.wishlist')}
                     {wishlist.length > 0 && (
                       <span className="mobile-badge-count">{wishlist.length}</span>
                     )}
@@ -550,7 +570,7 @@ export default function Navbar() {
                   <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="mobile-nav-link">
                     <span className="link-text-wrap">
                       <User size={16} className="inline-icon-gold" />
-                      My Account & Orders ({currentUser.name.split(' ')[0]})
+                      {t('nav.myAccount')}
                     </span>
                     <ArrowRight size={16} className="nav-arrow-icon" />
                   </Link>
@@ -569,7 +589,7 @@ export default function Navbar() {
               onClick={handleLogout}
             >
               <LogOut size={16} />
-              <span>SIGN OUT ({currentUser.role.toUpperCase()})</span>
+              <span>{t('nav.signOut')}</span>
             </button>
           ) : (
             <div className="mobile-cta-group">
@@ -578,7 +598,7 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="mobile-cta-primary"
               >
-                <span>Sign In</span>
+                <span>{t('nav.login')}</span>
                 <ArrowRight size={15} />
               </Link>
               <Link 
@@ -586,7 +606,7 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="mobile-cta-secondary"
               >
-                <span>Register</span>
+                <span>{t('nav.register')}</span>
               </Link>
             </div>
           )}

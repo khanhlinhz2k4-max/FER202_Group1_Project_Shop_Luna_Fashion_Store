@@ -21,8 +21,8 @@
 }
 
 .profile-title {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 2.25rem;
+  font-family: var(--font-serif);
+  font-size: var(--text-h1);
   font-weight: 500;
   margin: 0 0 8px;
   color: #2C2117;
@@ -32,7 +32,7 @@
 .profile-subtitle {
   color: #6B5645;
   margin: 0;
-  font-size: 0.95rem;
+  font-size: var(--text-body);
 }
 
 .profile-logout-btn {
@@ -219,8 +219,8 @@
 }
 
 .profile-section-heading {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.45rem;
+  font-family: var(--font-serif);
+  font-size: var(--text-h3);
   font-weight: 500;
   color: #2C2117;
   margin: 0 0 6px;
@@ -228,7 +228,7 @@
 }
 
 .profile-section-desc {
-  font-size: 0.88rem;
+  font-size: var(--text-ui);
   color: #6B5645;
   margin: 0 0 28px;
 }
@@ -853,7 +853,7 @@
 }
 
 .profile-modal-header h3 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 1.25rem;
   color: #2C2117;
   margin: 0;

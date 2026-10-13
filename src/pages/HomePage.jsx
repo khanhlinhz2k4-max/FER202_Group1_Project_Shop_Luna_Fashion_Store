@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 import CategoryCard from '../components/CategoryCard';
 import { products as fallbackProducts, categories } from '../data/products';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
 import './HomePage.css';
 
 // 4 Curated High-Fashion Editorial Slides (50% Female / 50% Male Visual Balance)
@@ -16,7 +17,7 @@ const HERO_SLIDES = [
     titleItalic: "With A Twist",
     description: "Discover our latest collection curated for the modern wardrobe. Timeless silhouettes, unhurried craftsmanship, and tactile natural textiles tailored for men and women.",
     image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=85&w=2200",
-    archiveText: "PARIS ATELIER · ARCHIVE NO. 04",
+    archiveText: "PARIS ATELIER · ARCHIVE NO. 01",
     seasonText: "SPRING / SUMMER RUNWAY",
     primaryCtaText: "EXPLORE COLLECTION",
     primaryCtaLink: "#new-arrivals",
@@ -30,7 +31,7 @@ const HERO_SLIDES = [
     titleItalic: "Everyday Grace",
     description: "Mulberry silks and pure Mongolian cashmere woven for effortless drape. Minimalist tailoring meeting the warmth of organic natural textiles.",
     image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=85&w=2200",
-    archiveText: "ORGANIC TEXTILES · ARCHIVE NO. 05",
+    archiveText: "ORGANIC TEXTILES · ARCHIVE NO. 02",
     seasonText: "CAPSULE NO. 02 · READY TO WEAR",
     primaryCtaText: "EXPLORE COLLECTION",
     primaryCtaLink: "#new-arrivals",
@@ -44,7 +45,7 @@ const HERO_SLIDES = [
     titleItalic: "Modern Structure",
     description: "Crisp linen overshirts, structured double-breasted blazers, and fluid trousers crafted with architectural precision for everyday distinction.",
     image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=85&w=2200",
-    archiveText: "MENSWEAR TAILORING · ARCHIVE NO. 06",
+    archiveText: "MENSWEAR TAILORING · ARCHIVE NO. 03",
     seasonText: "BALANCED SILHOUETTES EDITION",
     primaryCtaText: "EXPLORE COLLECTION",
     primaryCtaLink: "#new-arrivals",
@@ -58,7 +59,7 @@ const HERO_SLIDES = [
     titleItalic: "Enduring Patina",
     description: "Full-grain caramel Italian leathers, brushed gold accents, and handcrafted accessories engineered to accompany your journey for decades.",
     image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&q=85&w=2200",
-    archiveText: "LEATHER GOODS · ARCHIVE NO. 07",
+    archiveText: "LEATHER GOODS · ARCHIVE NO. 04",
     seasonText: "LIMITED ARTISAN RELEASE",
     primaryCtaText: "EXPLORE COLLECTION",
     primaryCtaLink: "#new-arrivals",
@@ -69,6 +70,7 @@ const HERO_SLIDES = [
 
 export default function HomePage() {
   const { products: contextProducts } = useShop();
+  const { t, language } = useLanguage();
   const allProducts = contextProducts && contextProducts.length > 0 ? contextProducts : fallbackProducts;
 
   // 1. Hero Carousel State
@@ -151,6 +153,49 @@ export default function HomePage() {
 
   const activeSlideData = HERO_SLIDES[currentSlide];
 
+  const currentSlideTrans = [
+    {
+      tag: t('home.heroTag1'),
+      title: t('home.heroTitle1'),
+      titleItalic: t('home.heroItalic1'),
+      desc: t('home.heroDesc1'),
+      primaryCta: t('home.heroCtaPrimary1'),
+      secondaryCta: t('home.heroCtaSecondary1'),
+      archive: t('home.heroArchive1'),
+      season: t('home.heroSeason1'),
+    },
+    {
+      tag: t('home.heroTag2'),
+      title: t('home.heroTitle2'),
+      titleItalic: t('home.heroItalic2'),
+      desc: t('home.heroDesc2'),
+      primaryCta: t('home.heroCtaPrimary1'),
+      secondaryCta: t('home.heroCtaSecondary1'),
+      archive: t('home.heroArchive2'),
+      season: t('home.heroSeason2'),
+    },
+    {
+      tag: t('home.heroTag3'),
+      title: t('home.heroTitle3'),
+      titleItalic: t('home.heroItalic3'),
+      desc: t('home.heroDesc3'),
+      primaryCta: t('home.heroCtaPrimary1'),
+      secondaryCta: t('home.heroCtaSecondary1'),
+      archive: t('home.heroArchive3'),
+      season: t('home.heroSeason3'),
+    },
+    {
+      tag: t('home.heroTag4'),
+      title: t('home.heroTitle4'),
+      titleItalic: t('home.heroItalic4'),
+      desc: t('home.heroDesc4'),
+      primaryCta: t('home.heroCtaPrimary1'),
+      secondaryCta: t('home.heroCtaSecondary1'),
+      archive: t('home.heroArchive4'),
+      season: t('home.heroSeason4'),
+    }
+  ][currentSlide] || {};
+
   return (
     <div className="home-page">
       {/* 1. HERO SECTION WITH CAROUSEL */}
@@ -202,25 +247,25 @@ export default function HomePage() {
           <div className="hero-content hero-slide-content" key={activeSlideData.id}>
             <span className="hero-tag">
               <Sparkles size={13} className="hero-sparkle" />
-              {activeSlideData.tag}
+              {currentSlideTrans.tag || activeSlideData.tag}
             </span>
 
             <h1 className="hero-heading">
-              {activeSlideData.title} <br />
-              <span className="hero-heading-italic">{activeSlideData.titleItalic}</span>
+              {currentSlideTrans.title || activeSlideData.title} <br />
+              <span className="hero-heading-italic">{currentSlideTrans.titleItalic || activeSlideData.titleItalic}</span>
             </h1>
 
             <p className="hero-description">
-              {activeSlideData.description}
+              {currentSlideTrans.desc || activeSlideData.description}
             </p>
 
             <div className="hero-actions">
               <a href={activeSlideData.primaryCtaLink} className="btn-primary hero-btn">
-                <span>{activeSlideData.primaryCtaText}</span>
+                <span>{currentSlideTrans.primaryCta || activeSlideData.primaryCtaText}</span>
                 <ArrowRight size={15} />
               </a>
               <a href={activeSlideData.secondaryCtaLink} className="btn-secondary hero-btn-secondary">
-                <span>{activeSlideData.secondaryCtaText}</span>
+                <span>{currentSlideTrans.secondaryCta || activeSlideData.secondaryCtaText}</span>
               </a>
             </div>
 
@@ -247,11 +292,11 @@ export default function HomePage() {
         {/* Hero Bottom Bar */}
         <div className="hero-bottom-bar">
           <div className="container hero-bar-flex">
-            <span className="hero-bar-text">{activeSlideData.archiveText}</span>
+            <span className="hero-bar-text">{currentSlideTrans.archive || activeSlideData.archiveText}</span>
             <a href="#new-arrivals" className="hero-bar-scroll" style={{ textDecoration: 'none' }}>
-              SCROLL TO DISCOVER ↓
+              {t('home.scrollDiscover', 'SCROLL TO DISCOVER ↓')}
             </a>
-            <span className="hero-bar-text">{activeSlideData.seasonText}</span>
+            <span className="hero-bar-text">{currentSlideTrans.season || activeSlideData.seasonText}</span>
           </div>
         </div>
       </section>
@@ -260,10 +305,10 @@ export default function HomePage() {
       <section id="categories" className="categories-section">
         <div className="container">
           <div className="section-header">
-            <span className="eyebrow">CURATED SILHOUETTES</span>
-            <h2 className="section-title">Product Categories</h2>
+            <span className="eyebrow">{t('home.categoriesTitle')}</span>
+            <h2 className="section-title">{t('nav.categories')}</h2>
             <p className="section-desc">
-              Explore our core wardrobe foundations meticulously developed to transcend seasonal cycles.
+              {t('home.categoriesSubtitle')}
             </p>
           </div>
 
@@ -284,33 +329,41 @@ export default function HomePage() {
         <div className="container">
           <div className="section-header-row">
             <div>
-              <span className="eyebrow">SPRING RUNWAY 2026</span>
-              <h2 className="section-title">New Arrivals</h2>
+              <span className="eyebrow">{t('nav.springSummer')}</span>
+              <h2 className="section-title">{t('home.newArrivalsTitle')}</h2>
               <p className="section-desc">
-                Four signature pieces embodying the warm, effortless essence of LUNE.
+                {t('home.newArrivalsSubtitle')}
               </p>
             </div>
-            <a href="#categories" className="btn-underline view-all-link">
-              <span>View All Categories</span>
+            <Link 
+              to={activeTab === 'ALL' ? '/shop' : `/shop?category=${activeTab.toLowerCase()}`} 
+              className="btn-underline view-all-link"
+            >
+              <span>{t('common.viewDetails')}</span>
               <ArrowUpRight size={14} />
-            </a>
+            </Link>
           </div>
 
           {/* Category Filter Tabs: [ ALL | WOMEN | MEN | ACCESSORIES ] */}
           <div className="category-filter-bar">
             <div className="category-filter-tabs" role="tablist" aria-label="Filter New Arrivals by Category">
-              {['ALL', 'WOMEN', 'MEN', 'ACCESSORIES'].map((tab) => (
+              {[
+                { id: 'ALL', label: t('home.tabAll') },
+                { id: 'WOMEN', label: t('home.tabWomen') },
+                { id: 'MEN', label: t('home.tabMen') },
+                { id: 'ACCESSORIES', label: t('home.tabAccessories') }
+              ].map(({ id, label }) => (
                 <button
-                  key={tab}
+                  key={id}
                   type="button"
                   role="tab"
-                  aria-selected={activeTab === tab}
-                  className={`category-tab-btn ${activeTab === tab ? 'active' : ''}`}
-                  onClick={() => setActiveTab(tab)}
+                  aria-selected={activeTab === id}
+                  className={`category-tab-btn ${activeTab === id ? 'active' : ''}`}
+                  onClick={() => setActiveTab(id)}
                 >
-                  <span>{tab}</span>
+                  <span>{label}</span>
                   <span className="category-tab-count">
-                    {tabCounts[tab] !== undefined ? tabCounts[tab] : 0}
+                    {tabCounts[id] !== undefined ? tabCounts[id] : 0}
                   </span>
                 </button>
               ))}
@@ -325,16 +378,16 @@ export default function HomePage() {
               ))
             ) : (
               <div className="tab-empty-state">
-                <h3 className="tab-empty-title">No Pieces Available In This Silhouette</h3>
+                <h3 className="tab-empty-title">{t('home.emptySilhouettes', 'No Pieces Available In This Silhouette')}</h3>
                 <p className="tab-empty-desc">
-                  Explore other curated categories or visit our full catalog to discover more.
+                  {t('home.emptySilhouettesDesc', 'Explore other curated categories or visit our full catalog to discover more.')}
                 </p>
                 <button 
                   type="button"
                   className="btn-primary"
                   onClick={() => setActiveTab('ALL')}
                 >
-                  <span>VIEW ALL NEW ARRIVALS</span>
+                  <span>{t('home.tabAll')}</span>
                 </button>
               </div>
             )}
@@ -360,35 +413,35 @@ export default function HomePage() {
             </div>
 
             <div className="brand-story-content">
-              <span className="eyebrow">ABOUT LUNE FASHION STORE</span>
+              <span className="eyebrow">{t('home.brandValuesTitle')}</span>
               <h2 className="story-title">
-                Everyday Elegance, Modern Style
+                {t('home.brandValuesSubtitle')}
               </h2>
               <p className="story-paragraph">
-                LUNE Fashion Store curates modern ready-to-wear collections for both men and women. We focus on clean silhouettes, breathable fabrics, and versatile styling that transitions effortlessly from the workplace to weekend gatherings.
+                {t('home.val1Desc')}
               </p>
               <p className="story-paragraph">
-                From tailored blazers and fluid slip dresses to relaxed knitwear and wide-leg trousers, every garment is thoughtfully selected to elevate your everyday wardrobe with ease and confidence.
+                {t('home.val2Desc')}
               </p>
 
               <div className="story-stats">
                 <div className="stat-item">
                   <span className="stat-number">100%</span>
-                  <span className="stat-label">Selected Fabrics</span>
+                  <span className="stat-label">{t('home.val1Title')}</span>
                 </div>
                 <div className="stat-item">
-                  <span className="stat-number">Versatile</span>
-                  <span className="stat-label">Effortless Styling</span>
+                  <span className="stat-number">Atelier</span>
+                  <span className="stat-label">{t('home.val2Title')}</span>
                 </div>
                 <div className="stat-item">
                   <span className="stat-number">30 Days</span>
-                  <span className="stat-label">Easy Exchanges</span>
+                  <span className="stat-label">{t('home.val3Title')}</span>
                 </div>
               </div>
 
               <div className="story-action">
                 <Link to="/register" className="btn-secondary">
-                  <span>CREATE AN ACCOUNT</span>
+                  <span>{t('nav.login')} / {t('nav.register', 'Register')}</span>
                   <ArrowRight size={15} />
                 </Link>
               </div>

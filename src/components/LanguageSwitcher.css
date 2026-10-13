@@ -1,0 +1,83 @@
+/* LanguageSwitcher.css - Lune Atelier Styling */
+
+.lune-lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background-color: rgba(250, 247, 242, 0.6);
+  border: 1px solid rgba(200, 174, 132, 0.35);
+  border-radius: 4px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.lune-lang-switcher:hover {
+  background-color: rgba(250, 247, 242, 0.95);
+  border-color: #C8AE84;
+}
+
+.lune-lang-globe-icon {
+  color: #775B3F;
+  margin-right: 2px;
+}
+
+.lune-lang-switcher .lang-btn {
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: #8C7B6E;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.lune-lang-switcher .lang-btn:hover {
+  color: #2C2117;
+}
+
+.lune-lang-switcher .lang-btn.active {
+  color: #775B3F;
+  font-weight: 700;
+}
+
+.lune-lang-switcher .lang-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 4px;
+  right: 4px;
+  height: 1.5px;
+  background-color: #775B3F;
+  border-radius: 1px;
+}
+
+.lune-lang-switcher .lang-divider {
+  font-size: 0.68rem;
+  color: #C8AE84;
+  opacity: 0.6;
+  user-select: none;
+}
+
+/* Announcement Bar Variant */
+.announcement-bar .lune-lang-switcher {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 2px 6px;
+}
+
+.announcement-bar .lune-lang-switcher .lang-btn {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.announcement-bar .lune-lang-switcher .lang-btn.active {
+  color: #FFFFFF;
+}
+
+.announcement-bar .lune-lang-switcher .lang-btn.active::after {
+  background-color: #FFFFFF;
+}
