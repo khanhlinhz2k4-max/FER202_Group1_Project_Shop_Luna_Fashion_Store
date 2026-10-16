@@ -86,6 +86,18 @@ const sampleUsers = [
   }
 ];
 
+const sampleVouchers = [
+  {
+    id: 'voucher-lune10',
+    code: 'LUNE10',
+    discountType: 'percent',
+    discountValue: 10,
+    minSubtotal: 0,
+    expiresAt: '',
+    isActive: true
+  }
+];
+
 export function ShopProvider({ children }) {
   // 1. PRODUCTS STATE
   const [products, setProducts] = useState(() => {
@@ -141,6 +153,15 @@ export function ShopProvider({ children }) {
     return sampleOrders;
   });
 
+  const [vouchers, setVouchers] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lune_vouchers');
+      return saved ? JSON.parse(saved) : sampleVouchers;
+    } catch {
+      return sampleVouchers;
+    }
+  });
+
   // 5. USERS & CURRENT USER STATE
   const [users, setUsers] = useState(() => {
     try {
@@ -183,6 +204,10 @@ export function ShopProvider({ children }) {
   useEffect(() => {
     localStorage.setItem('lune_orders', JSON.stringify(orders));
   }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem('lune_vouchers', JSON.stringify(vouchers));
+  }, [vouchers]);
 
   useEffect(() => {
     localStorage.setItem('lune_users', JSON.stringify(users));
@@ -326,6 +351,30 @@ export function ShopProvider({ children }) {
     setProducts(prev => prev.filter(prod => prod.id !== id));
   };
 
+  // ================= VOUCHER ACTIONS (ADMIN) =================
+  const addVoucher = (voucherData) => {
+    const created = {
+      ...voucherData,
+      id: `voucher-${Date.now()}`,
+      code: voucherData.code.trim().toUpperCase(),
+      discountValue: Number(voucherData.discountValue),
+      minSubtotal: Number(voucherData.minSubtotal) || 0,
+      isActive: true
+    };
+    setVouchers(prev => [created, ...prev]);
+    return created;
+  };
+
+  const toggleVoucher = (id) => {
+    setVouchers(prev => prev.map(voucher =>
+      voucher.id === id ? { ...voucher, isActive: !voucher.isActive } : voucher
+    ));
+  };
+
+  const deleteVoucher = (id) => {
+    setVouchers(prev => prev.filter(voucher => voucher.id !== id));
+  };
+
   // ================= AUTH / USER ACTIONS =================
   const login = (email, password) => {
     const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
@@ -373,6 +422,7 @@ export function ShopProvider({ children }) {
       cart,
       wishlist,
       orders,
+      vouchers,
       users,
       currentUser,
       isCartOpen,
@@ -403,6 +453,11 @@ export function ShopProvider({ children }) {
       addProduct,
       updateProduct,
       deleteProduct,
+
+      // Voucher management
+      addVoucher,
+      toggleVoucher,
+      deleteVoucher,
 
       // Auth actions
       login,
