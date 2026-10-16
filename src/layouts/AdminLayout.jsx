@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
-import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu, Ticket } from 'lucide-react';
 import '../pages/admin/Admin.css';
 
 const navItems = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/products', label: 'Products (CRUD)', icon: ShoppingBag },
   { to: '/admin/orders', label: 'Orders', icon: ClipboardList },
+  { to: '/admin/vouchers', label: 'Vouchers', icon: Ticket },
   { to: '/admin/users', label: 'Users', icon: Users },
 ];
 
