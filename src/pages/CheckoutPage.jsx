@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+<<<<<<< HEAD
+import { ArrowLeft } from 'lucide-react';
+=======
 import { useLanguage } from '../context/LanguageContext';
 import { 
   ShieldCheck, 
@@ -13,6 +16,7 @@ import {
   Truck
 } from 'lucide-react';
 import './CheckoutPage.css';
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
 
 /**
  * CheckoutPage Component
@@ -20,8 +24,12 @@ import './CheckoutPage.css';
  * Tích hợp Đa ngôn ngữ (i18n): Song ngữ VI / EN
  */
 export default function CheckoutPage() {
+<<<<<<< HEAD
+  const { cart, cartTotal, addOrder, currentUser, vouchers } = useShop();
+=======
   const { cart, cartTotal, addOrder, currentUser } = useShop();
   const { t, tp } = useLanguage();
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
   const navigate = useNavigate();
 
   // Form State with pre-fill from logged-in user
@@ -30,6 +38,31 @@ export default function CheckoutPage() {
     phone: currentUser?.phone || '',
     email: currentUser?.email || '',
     address: currentUser?.address || '',
+<<<<<<< HEAD
+    city: 'TP. Ho Chi Minh',
+    paymentMethod: 'COD' // COD or Card
+  });
+
+  const [selectedVoucherId, setSelectedVoucherId] = useState('');
+  const [errors, setErrors] = useState({});
+
+  const today = new Date().toISOString().slice(0, 10);
+  const eligibleVouchers = vouchers.filter(voucher =>
+    voucher.isActive &&
+    (!voucher.expiresAt || voucher.expiresAt >= today) &&
+    cartTotal >= (Number(voucher.minSubtotal) || 0)
+  );
+  const selectedVoucher = eligibleVouchers.find(voucher => voucher.id === selectedVoucherId);
+  const appliedDiscount = selectedVoucher
+    ? Math.min(
+        cartTotal,
+        selectedVoucher.discountType === 'percent'
+          ? Math.round(cartTotal * Number(selectedVoucher.discountValue) / 100)
+          : Number(selectedVoucher.discountValue)
+      )
+    : 0;
+
+=======
     city: 'TP. Hồ Chí Minh',
     notes: '',
     paymentMethod: 'COD', // 'COD' or 'CARD'
@@ -50,6 +83,7 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
 
   // If shopping bag is empty, display boutique empty state
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
   if (cart.length === 0) {
     return (
       <div className="checkout-container">
@@ -67,6 +101,10 @@ export default function CheckoutPage() {
     );
   }
 
+<<<<<<< HEAD
+  const handleVoucherChange = (voucherId) => {
+    setSelectedVoucherId(voucherId);
+=======
   // Shipping Fee calculation (Free shipping threshold = $200, otherwise $15)
   const shippingFee = cartTotal >= 200 ? 0 : 15;
   const finalTotal = Math.max(0, cartTotal - appliedDiscount + shippingFee);
@@ -92,6 +130,7 @@ export default function CheckoutPage() {
         text: t('checkout.invalidPromoMsg', 'Mã khuyến mại không hợp lệ hoặc đã hết hạn. Hãy thử mã LUNE10')
       });
     }
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
   };
 
   // Remove Promo Code
@@ -159,6 +198,7 @@ export default function CheckoutPage() {
       items: cart,
       totalAmount: finalTotal,
       discount: appliedDiscount,
+      voucherCode: selectedVoucher?.code || '',
       shippingFee: shippingFee,
       paymentMethod: formData.paymentMethod === 'COD' 
         ? 'Cash on Delivery (COD)' 
@@ -456,6 +496,32 @@ export default function CheckoutPage() {
             ))}
           </div>
 
+<<<<<<< HEAD
+          {/* Voucher selection */}
+          <div style={{ marginBottom: '20px' }}>
+            <label htmlFor="checkout-voucher" style={{ display: 'block', marginBottom: '7px', fontSize: '0.85rem', fontWeight: 600 }}>Choose a voucher</label>
+            <select
+              id="checkout-voucher"
+              value={selectedVoucher?.id || ''}
+              onChange={e => handleVoucherChange(e.target.value)}
+              style={{ width: '100%', padding: '9px 12px', border: '1px solid #D6D3D1', backgroundColor: '#fff', fontSize: '0.85rem', outline: 'none' }}
+            >
+              <option value="">No voucher</option>
+              {eligibleVouchers.map(voucher => (
+                <option key={voucher.id} value={voucher.id}>
+                  {voucher.code} - {voucher.discountType === 'percent' ? `${voucher.discountValue}% off` : `$${voucher.discountValue} off`}
+                  {Number(voucher.minSubtotal) > 0 ? ` (min. $${voucher.minSubtotal})` : ''}
+                </option>
+              ))}
+            </select>
+            {eligibleVouchers.length === 0 && (
+              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: '#78716C' }}>No vouchers are available for this order.</p>
+            )}
+            {selectedVoucher && (
+              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: '#16A34A' }}>
+                Voucher {selectedVoucher.code} applied.
+              </p>
+=======
           {/* Promo Code Input */}
           <div className="checkout-promo-box">
             <label className="checkout-promo-label">
@@ -500,6 +566,7 @@ export default function CheckoutPage() {
                   </button>
                 )}
               </div>
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
             )}
           </div>
 
@@ -511,8 +578,13 @@ export default function CheckoutPage() {
             </div>
 
             {appliedDiscount > 0 && (
+<<<<<<< HEAD
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16A34A' }}>
+                <span>Discount ({selectedVoucher?.code})</span>
+=======
               <div className="checkout-breakdown-row is-discount">
                 <span>{t('checkout.discount10', 'Ưu đãi LUNE10 (10%)')}</span>
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
                 <span>-${appliedDiscount}</span>
               </div>
             )}

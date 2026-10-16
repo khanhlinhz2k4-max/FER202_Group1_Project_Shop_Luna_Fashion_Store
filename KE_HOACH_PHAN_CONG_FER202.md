@@ -174,7 +174,7 @@
      * Nút bấm dẫn sang trang Thanh toán.
   2. **Trang Thanh Toán (`src/pages/CheckoutPage.jsx` & `CheckoutPage.css`):**
      * Form nhập thông tin giao hàng: Họ tên, Số điện thoại, Địa chỉ nhận hàng (Validate không để trống, kiểm tra định dạng SĐT).
-     * Ô nhập mã giảm giá (*Promo Code*: ví dụ nhập `LUNE10` được giảm 10% tổng hóa đơn).
+   * Danh sách voucher đủ điều kiện để khách chọn; tính giảm theo phần trăm hoặc số tiền cố định và lưu mã voucher vào đơn hàng. Voucher mẫu `LUNE10` giảm 10%.
      * Chọn phương thức thanh toán: COD (Thanh toán khi nhận hàng) hoặc Thẻ ngân hàng giả lập.
      * Cột tóm tắt đơn hàng: Tạm tính, phí vận chuyển, số tiền được giảm, tổng thanh toán cuối cùng.
   3. **Trang Đặt Hàng Thành Công (`src/pages/OrderSuccessPage.jsx` & `OrderSuccess.css`):**
@@ -207,10 +207,25 @@
 * **Vai trò:** Xây dựng cổng Quản trị viên cửa hàng, chức năng trọng tâm môn học CRUD Sản Phẩm & **Chuẩn Hóa Song Ngữ Toàn Diện Toàn Bộ Phân Hệ Quản Trị (Full Admin Bilingual i18n)**.
 * **Nhiệm vụ cụ thể:**
   1. **Bố cục khung Quản Trị (`src/layouts/AdminLayout.jsx` & `Admin.css`):**
+<<<<<<< HEAD
+   * Thanh điều hướng Sidebar bên trái (Dashboard, Sản phẩm, Đơn hàng, Voucher, Khách hàng) và Topbar quản trị viên (có nút Đăng xuất, avatar admin).
+=======
      * Thanh điều hướng Sidebar bên trái (Dashboard, Sản phẩm, Đơn hàng, Khách hàng) và Topbar quản trị viên (có avatar admin, nút Đăng xuất an toàn và **Bộ chuyển đổi ngôn ngữ độc lập `LanguageSwitcher` VI \| EN**).
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
      * Dùng `<Outlet />` để nhúng các trang con bên trong.
      * Tự động phản hồi thay đổi ngôn ngữ ngay tức thì, đồng bộ trạng thái với `localStorage`.
   2. **Bảng Thống Kê Tổng Quan (`src/pages/admin/AdminDashboard.jsx`):**
+<<<<<<< HEAD
+     * 4 thẻ KPI số liệu trực quan: **Tổng doanh thu**, **Tổng đơn hàng**, **Tổng sản phẩm trong kho**, **Tổng thành viên**.
+     * Bảng hiển thị 5 đơn hàng mới nhất cần duyệt gấp.
+  3. **Quản Lý Sản Phẩm - CRUD TOÀN DIỆN (`src/pages/admin/AdminProducts.jsx`) - [TRỌNG TÂM ĐIỂM SỐ]:**
+     * **Read:** Bảng danh sách toàn bộ sản phẩm (ảnh thu nhỏ, tên, giá, danh mục, trạng thái). Có thanh tìm kiếm và lọc sản phẩm nội bộ.
+     * **Create:** Modal/Form thêm sản phẩm mới (Nhập tên, giá, link ảnh, chọn danh mục, mô tả) $\rightarrow$ Validate form không được để trống $\rightarrow$ Bấm lưu là sản phẩm lập tức hiển thị ra ngoài Trang Chủ và Trang Shop.
+     * **Update:** Nút Sửa trên từng dòng sản phẩm $\rightarrow$ Mở form điền sẵn dữ liệu cũ $\rightarrow$ Cập nhật giá, đổi tên, đổi ảnh.
+     * **Delete:** Nút Xóa sản phẩm kèm hộp thoại xác nhận (*"Bạn có chắc muốn xóa sản phẩm này?"*) $\rightarrow$ Xóa xong sản phẩm biến mất khỏi kho.
+   4. **Quản Lý Voucher (`src/pages/admin/AdminVouchers.jsx`):** Tạo mã giảm giá duy nhất theo phần trăm hoặc số tiền cố định, đặt giá trị đơn tối thiểu/ngày hết hạn, bật tắt và xóa mã.
+* **Files phụ trách:** `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminVouchers.jsx`, `src/pages/admin/Admin.css`.
+=======
      * 4 thẻ KPI số liệu trực quan: **Tổng doanh thu**, **Tổng đơn hàng**, **Tổng sản phẩm trong kho**, **Tổng thành viên** (Bản địa hóa 100% nhãn tiêu đề, chú thích và định dạng đơn vị).
      * Bảng hiển thị 5 đơn hàng mới nhất cần duyệt gấp kèm các badge trạng thái song ngữ.
   3. **Quản Lý Sản Phẩm - CRUD TOÀN DIỆN & SONG NGỮ (`src/pages/admin/AdminProducts.jsx`) - [TRỌNG TÂM ĐIỂM SỐ]:**
@@ -221,6 +236,7 @@
   4. **Bản địa hóa Quản trị Đơn hàng & Quản trị Thành viên (`AdminOrders.jsx` & `AdminUsers.jsx`):**
      * Đồng bộ từ điển đa ngôn ngữ cho toàn bộ bảng biểu, bộ lọc trạng thái đơn, nhãn phân quyền và các hộp thoại cảnh báo của TV5.
 * **Files phụ trách:** `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminOrders.jsx`, `src/pages/admin/AdminUsers.jsx`, `src/pages/admin/Admin.css`.
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
 
 ---
 

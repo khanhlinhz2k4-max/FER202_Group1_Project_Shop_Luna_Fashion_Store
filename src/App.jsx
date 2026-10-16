@@ -27,6 +27,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminVouchers from './pages/admin/AdminVouchers';
 
 import './App.css';
 
@@ -92,6 +93,7 @@ function AppContent() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="vouchers" element={<AdminVouchers />} />
         </Route>
 
         {/* ================= CLIENT STOREFRONT ROUTES ================= */}

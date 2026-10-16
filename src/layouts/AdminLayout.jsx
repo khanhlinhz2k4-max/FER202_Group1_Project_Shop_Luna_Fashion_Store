@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+<<<<<<< HEAD
+import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu, Ticket } from 'lucide-react';
+import '../pages/admin/Admin.css';
+
+const navItems = [
+  { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
+  { to: '/admin/products', label: 'Products (CRUD)', icon: ShoppingBag },
+  { to: '/admin/orders', label: 'Orders', icon: ClipboardList },
+  { to: '/admin/vouchers', label: 'Vouchers', icon: Ticket },
+  { to: '/admin/users', label: 'Users', icon: Users },
+];
+
+=======
 import { useLanguage } from '../context/LanguageContext';
 import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu, Globe } from 'lucide-react';
 import '../pages/admin/Admin.css';
 
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
 export default function AdminLayout() {
   const { currentUser, logout } = useShop();
   const { t, language, setLanguage } = useLanguage();

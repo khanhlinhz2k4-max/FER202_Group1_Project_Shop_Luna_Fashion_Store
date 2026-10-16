@@ -86,6 +86,17 @@ const sampleUsers = [
   }
 ];
 
+<<<<<<< HEAD
+const sampleVouchers = [
+  {
+    id: 'voucher-lune10',
+    code: 'LUNE10',
+    discountType: 'percent',
+    discountValue: 10,
+    minSubtotal: 0,
+    expiresAt: '',
+    isActive: true
+=======
 // Sample initial reviews for testing luxury rating features
 const sampleReviews = [
   {
@@ -219,6 +230,7 @@ const sampleReviews = [
     comment: "Lightweight on the bridge of the nose with excellent UV shielding. Looks like high-end vintage eyewear.",
     date: "Oct 07, 2026",
     verifiedBuyer: true
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
   }
 ];
 
@@ -316,6 +328,15 @@ export function ShopProvider({ children }) {
     return sampleOrders;
   });
 
+  const [vouchers, setVouchers] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lune_vouchers');
+      return saved ? JSON.parse(saved) : sampleVouchers;
+    } catch {
+      return sampleVouchers;
+    }
+  });
+
   // 5. USERS & CURRENT USER STATE
   const [users, setUsers] = useState(() => {
     try {
@@ -375,6 +396,10 @@ export function ShopProvider({ children }) {
   useEffect(() => {
     localStorage.setItem('lune_orders', JSON.stringify(orders));
   }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem('lune_vouchers', JSON.stringify(vouchers));
+  }, [vouchers]);
 
   useEffect(() => {
     localStorage.setItem('lune_users', JSON.stringify(users));
@@ -588,6 +613,35 @@ export function ShopProvider({ children }) {
     setProducts(prev => prev.filter(prod => prod.id !== id));
   };
 
+<<<<<<< HEAD
+  // ================= VOUCHER ACTIONS (ADMIN) =================
+  const addVoucher = (voucherData) => {
+    const created = {
+      ...voucherData,
+      id: `voucher-${Date.now()}`,
+      code: voucherData.code.trim().toUpperCase(),
+      discountValue: Number(voucherData.discountValue),
+      minSubtotal: Number(voucherData.minSubtotal) || 0,
+      isActive: true
+    };
+    setVouchers(prev => [created, ...prev]);
+    return created;
+  };
+
+  const toggleVoucher = (id) => {
+    setVouchers(prev => prev.map(voucher =>
+      voucher.id === id ? { ...voucher, isActive: !voucher.isActive } : voucher
+    ));
+  };
+
+  const deleteVoucher = (id) => {
+    setVouchers(prev => prev.filter(voucher => voucher.id !== id));
+  };
+
+  // ================= AUTH / USER ACTIONS =================
+  const login = (email, password) => {
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+=======
   // ================= REVIEWS & RATINGS ACTIONS =================
   const addReview = (reviewData) => {
     const newReview = {
@@ -664,6 +718,7 @@ export function ShopProvider({ children }) {
       return false;
     });
 
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
     if (user) {
       setCurrentUser(user);
 
@@ -795,6 +850,7 @@ export function ShopProvider({ children }) {
       cart,
       wishlist,
       orders,
+      vouchers,
       users,
       currentUser,
       isCartOpen,
@@ -831,6 +887,14 @@ export function ShopProvider({ children }) {
       updateProduct,
       deleteProduct,
 
+<<<<<<< HEAD
+      // Voucher management
+      addVoucher,
+      toggleVoucher,
+      deleteVoucher,
+
+      // Auth actions
+=======
       // Reviews & Ratings
       reviews,
       addReview,
@@ -838,6 +902,7 @@ export function ShopProvider({ children }) {
       getProductRatingStats,
 
       // Auth & User CRUD actions
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
       login,
       logout,
       register,
