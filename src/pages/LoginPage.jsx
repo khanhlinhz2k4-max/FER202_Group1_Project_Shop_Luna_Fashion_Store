@@ -16,7 +16,7 @@ import {
 import { useShop } from '../context/ShopContext';
 
 export default function LoginPage() {
-  const { login: contextLogin } = useShop();
+  const { login: contextLogin, users: contextUsers } = useShop();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -98,9 +98,9 @@ export default function LoginPage() {
         users = [];
       }
 
-      // Check matching user by email OR username (case-insensitive)
+      // Check registered accounts first, then accounts managed by the shop context.
       const inputTrimmed = identifier.trim().toLowerCase();
-      const matchedUser = users.find(
+      const matchedUser = [...users, ...contextUsers].find(
         u => (u.email?.toLowerCase() === inputTrimmed || u.username?.toLowerCase() === inputTrimmed)
       );
 
