@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
-import { ShieldCheck, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 /**
  * CheckoutPage Component
  * Phụ trách: Thành viên 4 (Giỏ hàng & Quy trình thanh toán)
  */
 export default function CheckoutPage() {
-  const { cart, cartTotal, addOrder, currentUser } = useShop();
+  const { cart, cartTotal, addOrder, currentUser, vouchers } = useShop();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -17,13 +17,27 @@ export default function CheckoutPage() {
     email: currentUser?.email || '',
     address: currentUser?.address || '',
     city: 'TP. Ho Chi Minh',
-    paymentMethod: 'COD', // COD or Card
-    promoCode: ''
+    paymentMethod: 'COD' // COD or Card
   });
 
-  const [appliedDiscount, setAppliedDiscount] = useState(0);
-  const [promoMessage, setPromoMessage] = useState('');
+  const [selectedVoucherId, setSelectedVoucherId] = useState('');
   const [errors, setErrors] = useState({});
+
+  const today = new Date().toISOString().slice(0, 10);
+  const eligibleVouchers = vouchers.filter(voucher =>
+    voucher.isActive &&
+    (!voucher.expiresAt || voucher.expiresAt >= today) &&
+    cartTotal >= (Number(voucher.minSubtotal) || 0)
+  );
+  const selectedVoucher = eligibleVouchers.find(voucher => voucher.id === selectedVoucherId);
+  const appliedDiscount = selectedVoucher
+    ? Math.min(
+        cartTotal,
+        selectedVoucher.discountType === 'percent'
+          ? Math.round(cartTotal * Number(selectedVoucher.discountValue) / 100)
+          : Number(selectedVoucher.discountValue)
+      )
+    : 0;
 
   if (cart.length === 0) {
     return (
@@ -35,15 +49,8 @@ export default function CheckoutPage() {
     );
   }
 
-  const handleApplyPromo = () => {
-    if (formData.promoCode.trim().toUpperCase() === 'LUNE10') {
-      const discount = Math.round(cartTotal * 0.1);
-      setAppliedDiscount(discount);
-      setPromoMessage('Promo code LUNE10 applied: 10% OFF!');
-    } else {
-      setAppliedDiscount(0);
-      setPromoMessage('Invalid promo code. Try LUNE10');
-    }
+  const handleVoucherChange = (voucherId) => {
+    setSelectedVoucherId(voucherId);
   };
 
   const shippingFee = cartTotal >= 250 ? 0 : 15;
@@ -73,6 +80,7 @@ export default function CheckoutPage() {
       items: cart,
       subtotal: cartTotal,
       discount: appliedDiscount,
+      voucherCode: selectedVoucher?.code || '',
       shippingFee: shippingFee,
       totalAmount: finalTotal,
       paymentMethod: formData.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Credit / Debit Card'
@@ -209,27 +217,29 @@ export default function CheckoutPage() {
             ))}
           </div>
 
-          {/* Promo code */}
+          {/* Voucher selection */}
           <div style={{ marginBottom: '20px' }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <input 
-                type="text" 
-                placeholder="Promo Code (e.g. LUNE10)" 
-                value={formData.promoCode}
-                onChange={e => setFormData({ ...formData, promoCode: e.target.value })}
-                style={{ flex: 1, padding: '8px 12px', border: '1px solid #D6D3D1', fontSize: '0.85rem', outline: 'none' }}
-              />
-              <button 
-                type="button" 
-                onClick={handleApplyPromo}
-                style={{ padding: '8px 16px', backgroundColor: '#775B3F', color: '#fff', border: 'none', fontSize: '0.85rem', cursor: 'pointer' }}
-              >
-                Apply
-              </button>
-            </div>
-            {promoMessage && (
-              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: appliedDiscount > 0 ? '#16A34A' : '#E11D48' }}>
-                {promoMessage}
+            <label htmlFor="checkout-voucher" style={{ display: 'block', marginBottom: '7px', fontSize: '0.85rem', fontWeight: 600 }}>Choose a voucher</label>
+            <select
+              id="checkout-voucher"
+              value={selectedVoucher?.id || ''}
+              onChange={e => handleVoucherChange(e.target.value)}
+              style={{ width: '100%', padding: '9px 12px', border: '1px solid #D6D3D1', backgroundColor: '#fff', fontSize: '0.85rem', outline: 'none' }}
+            >
+              <option value="">No voucher</option>
+              {eligibleVouchers.map(voucher => (
+                <option key={voucher.id} value={voucher.id}>
+                  {voucher.code} - {voucher.discountType === 'percent' ? `${voucher.discountValue}% off` : `$${voucher.discountValue} off`}
+                  {Number(voucher.minSubtotal) > 0 ? ` (min. $${voucher.minSubtotal})` : ''}
+                </option>
+              ))}
+            </select>
+            {eligibleVouchers.length === 0 && (
+              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: '#78716C' }}>No vouchers are available for this order.</p>
+            )}
+            {selectedVoucher && (
+              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: '#16A34A' }}>
+                Voucher {selectedVoucher.code} applied.
               </p>
             )}
           </div>
@@ -242,7 +252,7 @@ export default function CheckoutPage() {
             </div>
             {appliedDiscount > 0 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16A34A' }}>
-                <span>Discount (10%)</span>
+                <span>Discount ({selectedVoucher?.code})</span>
                 <span>-${appliedDiscount}</span>
               </div>
             )}
