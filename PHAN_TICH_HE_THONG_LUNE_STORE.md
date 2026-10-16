@@ -84,6 +84,7 @@ graph TD
     AdminPortal --> AdminProd["/admin/products (Quản trị kho sản phẩm - CRUD)"]
     AdminPortal --> AdminOrd["/admin/orders (Quản trị luồng đơn hàng)"]
     AdminPortal --> AdminUsers["/admin/users (Quản lý danh sách thành viên)"]
+    AdminPortal --> AdminVouchers["/admin/vouchers (Tạo và quản lý voucher)"]
 ```
 
 ### 1. Kiến trúc phân hệ Khách hàng (Storefront)
@@ -107,6 +108,7 @@ graph TD
 | `/admin/products` | **Quản lý sản phẩm (Products)** | Bảng dữ liệu sản phẩm, tìm kiếm nội bộ, modal Thêm mới sản phẩm, form Sửa thông tin và thao tác Xóa sản phẩm khỏi kho. | Chỉ tài khoản `role: admin` |
 | `/admin/orders` | **Quản lý đơn hàng (Orders)** | Toàn bộ danh sách đơn đặt hàng từ khách, công cụ thay đổi trạng thái đơn hàng (`Pending` -> `Shipping` -> `Delivered` -> `Cancelled`). | Chỉ tài khoản `role: admin` |
 | `/admin/users` | **Quản lý thành viên (Users)** | Danh mục người dùng đã đăng ký tài khoản trong hệ sinh thái, phân loại cấp bậc tài khoản (`admin` / `user`). | Chỉ tài khoản `role: admin` |
+| `/admin/vouchers` | **Quản lý voucher (Vouchers)** | Tạo voucher theo phần trăm hoặc số tiền cố định, đặt giá trị đơn hàng tối thiểu/ngày hết hạn, bật tắt và xóa voucher. | Chỉ tài khoản `role: admin` |
 
 ---
 
@@ -172,8 +174,9 @@ sequenceDiagram
     
     Drawer->>Checkout: Chuyển hướng sang màn hình thanh toán
     Customer->>Checkout: Nhập thông tin người nhận (Họ tên, SĐT, Địa chỉ)
-    Customer->>Checkout: (Tùy chọn) Nhập mã giảm giá (VD: LUNE10)
-    Checkout-->>Customer: Tính toán lại mức giảm trừ và tổng số tiền thanh toán cuối cùng
+    Checkout-->>Customer: Hiển thị voucher đang hoạt động, còn hạn và đủ điều kiện đơn hàng
+    Customer->>Checkout: (Tùy chọn) Chọn voucher phù hợp (VD: LUNE10)
+    Checkout-->>Customer: Tính mức giảm và tổng tiền; lưu mã voucher vào đơn hàng
     Customer->>Checkout: Chọn phương thức trả tiền (COD hoặc Thẻ ngân hàng giả lập)
     Customer->>Checkout: Bấm nút "Place Order" (Hoàn tất đặt hàng)
     
@@ -187,7 +190,7 @@ sequenceDiagram
   * **Kiểm tra giỏ rỗng:** Không cho phép truy cập hoặc nhấn đặt hàng nếu giỏ hàng có 0 sản phẩm.
   * **Thanh tiến độ Free Shipping:** Hiển thị mức tiền còn thiếu để đạt hạn mức miễn phí vận chuyển (Ví dụ: Đạt từ $200 trở lên được miễn phí ship $15).
   * **Hợp nhất biến thể:** Nếu khách thêm cùng một sản phẩm với cùng Size và Màu, hệ thống tăng số lượng (`quantity`) chứ không tạo bản ghi mới trùng lặp.
-  * **Mã giảm giá:** Kiểm tra tính hợp lệ của mã khuyến mãi (Ví dụ mã giảm 10%), tự động tính toán lại số tiền chiết khấu trước khi chốt tổng hóa đơn.
+    * **Voucher:** Chỉ hiển thị voucher đang hoạt động, chưa hết hạn và đạt giá trị đơn hàng tối thiểu; hỗ trợ giảm theo phần trăm hoặc số tiền cố định. Khoản giảm không vượt quá tiền hàng và mã được lưu cùng đơn hàng.
 
 ---
 
@@ -327,6 +330,7 @@ sequenceDiagram
 | **A-06** | Quản lý danh sách Đơn hàng | Hiển thị bảng tổng hợp tất cả đơn hàng của mọi khách hàng trong hệ thống: Mã đơn, Tên người nhận, SĐT, Ngày tạo, Tổng tiền, Trạng thái. | Truy cập `/admin/orders`. | Bảng danh sách hỗ trợ lọc theo trạng thái và tìm kiếm mã đơn hàng. |
 | **A-07** | Cập nhật tiến độ Đơn hàng | Cho phép Admin chuyển đổi trạng thái vòng đời của đơn hàng: `Pending` (Chờ duyệt) $\rightarrow$ `Shipping` (Đang giao hàng) $\rightarrow$ `Delivered` (Đã giao thành công) hoặc `Cancelled` (Hủy đơn). | Chọn trạng thái mới từ danh sách dropdown hoặc nút bấm tại đơn hàng. | Trạng thái cập nhật tức thời; tài khoản khách đặt đơn hàng đó sẽ nhìn thấy trạng thái mới khi kiểm tra hồ sơ cá nhân. |
 | **A-08** | Quản lý danh sách Thành viên | Hiển thị danh sách toàn bộ người dùng đã đăng ký tài khoản trong hệ thống: Họ tên, Email, Vai trò (`admin` / `user`). | Truy cập `/admin/users`. | Cung cấp cái nhìn tổng quan về quy mô người dùng đăng ký của cửa hàng. |
+| **A-09** | Tạo và quản lý Voucher | Tạo mã duy nhất, chọn giảm theo phần trăm/số tiền, đặt đơn tối thiểu và ngày hết hạn; cho phép bật/tắt hoặc xóa voucher. | Truy cập `/admin/vouchers` với quyền `admin`. | Voucher được lưu và xuất hiện tại Checkout khi còn hoạt động, còn hạn và đơn hàng đạt điều kiện. |
 
 ---
 
@@ -345,6 +349,7 @@ Ký hiệu:
 | **Thêm hàng vào Giỏ, Tăng giảm số lượng** | OWN | OWN | OWN |
 | **Yêu thích sản phẩm (Wishlist)** | OWN | OWN | OWN |
 | **Thực hiện Đặt hàng (Checkout)** | OWN | OWN | OWN |
+| **Xem và chọn voucher đủ điều kiện tại Checkout** | READ | READ | READ |
 | **Trang Đăng ký / Đăng nhập** | FULL | READ | READ |
 | **Xem và Chỉnh sửa Hồ sơ cá nhân (Profile)** | DENIED | OWN | OWN |
 | **Xem Lịch sử Đơn mua (My Orders)** | DENIED | OWN | OWN |
@@ -352,6 +357,7 @@ Ký hiệu:
 | **Thêm / Sửa / Xóa Sản phẩm (`/admin/products`)** | DENIED | DENIED | FULL |
 | **Xem và Đổi trạng thái mọi Đơn hàng (`/admin/orders`)** | DENIED | DENIED | FULL |
 | **Xem danh sách Thành viên toàn hệ thống (`/admin/users`)** | DENIED | DENIED | FULL |
+| **Tạo / Bật tắt / Xóa Voucher (`/admin/vouchers`)** | DENIED | DENIED | FULL |
 
 ---
 
@@ -411,7 +417,7 @@ Ký hiệu:
 2. **Quy tắc Tính toán Tài chính & Vận chuyển (Financial Calculation Rule):**
    * $\text{Tạm tính (Subtotal)} = \sum (\text{Giá sản phẩm} \times \text{Số lượng})$.
    * **Chính sách Miễn phí vận chuyển:** Nếu $\text{Tạm tính} \ge \$200 \implies \text{Phí vận chuyển} = \$0$. Nếu $\text{Tạm tính} < \$200 \implies \text{Phí vận chuyển} = \$15$.
-   * **Chiết khấu khuyến mại:** Nếu áp dụng thành công mã hợp lệ (Ví dụ mã giảm 10% `LUNE10`) $\implies \text{Giảm giá} = \text{Tạm tính} \times 10\%$.
+    * **Chiết khấu voucher:** Voucher phải đang hoạt động, chưa hết hạn và đạt mức tạm tính tối thiểu. Voucher phần trăm tính theo tạm tính; voucher số tiền cố định giảm đúng giá trị voucher nhưng không vượt quá tạm tính.
    * $\text{Tổng thanh toán cuối cùng (Grand Total)} = \text{Tạm tính} - \text{Giảm giá} + \text{Phí vận chuyển}$.
 3. **Quy tắc Chuyển đổi Trạng thái Đơn hàng (State Transition Rule):**
    * Trạng thái khởi tạo mặc định luôn là `Pending`.
