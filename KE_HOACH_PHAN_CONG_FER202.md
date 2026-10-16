@@ -134,7 +134,7 @@
      * Nút bấm dẫn sang trang Thanh toán.
   2. **Trang Thanh Toán (`src/pages/CheckoutPage.jsx` & `CheckoutPage.css`):**
      * Form nhập thông tin giao hàng: Họ tên, Số điện thoại, Địa chỉ nhận hàng (Validate không để trống, kiểm tra định dạng SĐT).
-     * Ô nhập mã giảm giá (*Promo Code*: ví dụ nhập `LUNE10` được giảm 10% tổng hóa đơn).
+   * Danh sách voucher đủ điều kiện để khách chọn; tính giảm theo phần trăm hoặc số tiền cố định và lưu mã voucher vào đơn hàng. Voucher mẫu `LUNE10` giảm 10%.
      * Chọn phương thức thanh toán: COD (Thanh toán khi nhận hàng) hoặc Thẻ ngân hàng giả lập.
      * Cột tóm tắt đơn hàng: Tạm tính, phí vận chuyển, số tiền được giảm, tổng thanh toán cuối cùng.
   3. **Trang Đặt Hàng Thành Công (`src/pages/OrderSuccessPage.jsx` & `OrderSuccess.css`):**
@@ -167,7 +167,7 @@
 * **Vai trò:** Xây dựng cổng Quản trị viên cửa hàng và chức năng trọng tâm môn học: CRUD Sản Phẩm.
 * **Nhiệm vụ cụ thể:**
   1. **Bố cục khung Quản Trị (`src/layouts/AdminLayout.jsx` & `Admin.css`):**
-     * Thanh điều hướng Sidebar bên trái (Dashboard, Sản phẩm, Đơn hàng, Khách hàng) và Topbar quản trị viên (có nút Đăng xuất, avatar admin).
+   * Thanh điều hướng Sidebar bên trái (Dashboard, Sản phẩm, Đơn hàng, Voucher, Khách hàng) và Topbar quản trị viên (có nút Đăng xuất, avatar admin).
      * Dùng `<Outlet />` để nhúng các trang con bên trong.
   2. **Bảng Thống Kê Tổng Quan (`src/pages/admin/AdminDashboard.jsx`):**
      * 4 thẻ KPI số liệu trực quan: **Tổng doanh thu**, **Tổng đơn hàng**, **Tổng sản phẩm trong kho**, **Tổng thành viên**.
@@ -177,7 +177,8 @@
      * **Create:** Modal/Form thêm sản phẩm mới (Nhập tên, giá, link ảnh, chọn danh mục, mô tả) $\rightarrow$ Validate form không được để trống $\rightarrow$ Bấm lưu là sản phẩm lập tức hiển thị ra ngoài Trang Chủ và Trang Shop.
      * **Update:** Nút Sửa trên từng dòng sản phẩm $\rightarrow$ Mở form điền sẵn dữ liệu cũ $\rightarrow$ Cập nhật giá, đổi tên, đổi ảnh.
      * **Delete:** Nút Xóa sản phẩm kèm hộp thoại xác nhận (*"Bạn có chắc muốn xóa sản phẩm này?"*) $\rightarrow$ Xóa xong sản phẩm biến mất khỏi kho.
-* **Files phụ trách:** `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/Admin.css`.
+   4. **Quản Lý Voucher (`src/pages/admin/AdminVouchers.jsx`):** Tạo mã giảm giá duy nhất theo phần trăm hoặc số tiền cố định, đặt giá trị đơn tối thiểu/ngày hết hạn, bật tắt và xóa mã.
+* **Files phụ trách:** `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminVouchers.jsx`, `src/pages/admin/Admin.css`.
 
 ---
 
