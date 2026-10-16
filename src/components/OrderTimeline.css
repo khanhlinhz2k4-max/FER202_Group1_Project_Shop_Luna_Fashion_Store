@@ -1,0 +1,172 @@
+/* OrderTimeline.css - Warm Luxury Timeline Component */
+.order-timeline-wrapper {
+  background-color: #FAF7F2;
+  border: 1px solid #E7DDCE;
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin: 16px 0;
+}
+
+.order-timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #EBE4D8;
+}
+
+.order-timeline-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-h4);
+  font-weight: 600;
+  color: #2C2117;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.order-timeline-status-badge {
+  font-size: var(--text-badge);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 2px;
+}
+
+.order-timeline-status-badge.pending {
+  background-color: #FDF4E7;
+  color: #925E1A;
+  border: 1px solid #E2BE82;
+}
+
+.order-timeline-status-badge.shipping {
+  background-color: #EBF3FB;
+  color: #1F5F9E;
+  border: 1px solid #99C4EC;
+}
+
+.order-timeline-status-badge.delivered {
+  background-color: #EDF7EE;
+  color: #237834;
+  border: 1px solid #9BD2A3;
+}
+
+.order-timeline-status-badge.cancelled {
+  background-color: #FDF0ED;
+  color: #B3261E;
+  border: 1px solid #F5B3AB;
+}
+
+/* Steps track */
+.order-timeline-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: 10px;
+}
+
+/* Connecting line behind icons */
+.order-timeline-track {
+  position: absolute;
+  top: 16px;
+  left: 40px;
+  right: 40px;
+  height: 2px;
+  background-color: #E2D7C7;
+  z-index: 1;
+}
+
+.order-timeline-track-fill {
+  height: 100%;
+  background-color: #775B3F;
+  transition: width 0.4s ease;
+}
+
+.order-timeline-step {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.order-timeline-node {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  border: 2px solid #D5C7B5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8C7867;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(44, 33, 23, 0.06);
+}
+
+.order-timeline-step.completed .order-timeline-node {
+  background-color: #775B3F;
+  border-color: #775B3F;
+  color: #FFFFFF;
+}
+
+.order-timeline-step.current .order-timeline-node {
+  background-color: #FFFFFF;
+  border-color: #C8AE84;
+  color: #775B3F;
+  box-shadow: 0 0 0 4px rgba(200, 174, 132, 0.25);
+  animation: pulseNode 2s infinite ease-in-out;
+}
+
+@keyframes pulseNode {
+  0% { box-shadow: 0 0 0 0 rgba(200, 174, 132, 0.35); }
+  70% { box-shadow: 0 0 0 8px rgba(200, 174, 132, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(200, 174, 132, 0); }
+}
+
+.order-timeline-step-name {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5C4A3A;
+  transition: color 0.3s ease;
+}
+
+.order-timeline-step.completed .order-timeline-step-name,
+.order-timeline-step.current .order-timeline-step-name {
+  color: #2C2117;
+  font-weight: 700;
+}
+
+.order-timeline-step-desc {
+  margin-top: 2px;
+  font-size: 0.72rem;
+  color: #8C7867;
+  max-width: 120px;
+  line-height: 1.3;
+}
+
+/* Cancelled banner */
+.order-timeline-cancelled-notice {
+  background-color: #FDF0ED;
+  border: 1px solid #F5B3AB;
+  border-radius: 4px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #B3261E;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+  .order-timeline-step-desc {
+    display: none;
+  }
+  .order-timeline-step-name {
+    font-size: 0.72rem;
+  }
+}

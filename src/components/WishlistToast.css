@@ -1,0 +1,127 @@
+/* ==========================================================================
+   LUNE FASHION STORE — WISHLIST TOAST NOTIFICATION
+   Subtle floating notification in Warm Luxury theme
+   ========================================================================== */
+
+.wishlist-toast-container {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 1000;
+  max-width: 380px;
+  animation: wishlistToastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes wishlistToastSlideIn {
+  from {
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.wishlist-toast-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background-color: #FAF7F2;
+  border: 1px solid #C8AE84;
+  border-radius: 4px;
+  box-shadow: 0 12px 32px rgba(44, 33, 23, 0.16);
+}
+
+.wishlist-toast-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #F9F2E7;
+  border: 1px solid #E7DDCE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.wishlist-toast-heart-active {
+  color: #E11D48;
+  fill: #E11D48;
+}
+
+.wishlist-toast-check {
+  color: #775B3F;
+}
+
+.wishlist-toast-text-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.wishlist-toast-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2C2117;
+  letter-spacing: 0.02em;
+  margin-bottom: 3px;
+}
+
+.wishlist-toast-desc {
+  font-size: 0.78rem;
+  color: #5C4A3A;
+  line-height: 1.45;
+}
+
+.wishlist-toast-auth-prompt {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed #E7DDCE;
+}
+
+.wishlist-toast-auth-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #775B3F;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease;
+}
+
+.wishlist-toast-auth-link:hover {
+  color: #2C2117;
+  text-decoration: underline;
+}
+
+.wishlist-toast-close-btn {
+  background: none;
+  border: none;
+  color: #8F7965;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.wishlist-toast-close-btn:hover {
+  color: #2C2117;
+}
+
+@media (max-width: 480px) {
+  .wishlist-toast-container {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+}

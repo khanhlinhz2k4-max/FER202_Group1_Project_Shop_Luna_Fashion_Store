@@ -1,0 +1,245 @@
+/* ReviewModal.css - Luxury Atelier Review Submission Modal */
+.review-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(28, 20, 13, 0.65);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.review-modal-card {
+  background-color: #FAF7F2;
+  border: 1px solid #C8AE84;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 540px;
+  box-shadow: 0 16px 48px rgba(44, 33, 23, 0.22);
+  overflow: hidden;
+  animation: reviewModalFadeIn 0.25s ease-out;
+}
+
+@keyframes reviewModalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.review-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid #E7DDCE;
+}
+
+.review-modal-eyebrow {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #775B3F;
+  margin-bottom: 4px;
+}
+
+.review-modal-title {
+  font-family: var(--font-serif);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: #2C2117;
+  margin: 0;
+}
+
+.review-modal-close-btn {
+  background: transparent;
+  border: none;
+  color: #6B5645;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.review-modal-close-btn:hover {
+  background-color: #EFE8DC;
+  color: #2C2117;
+}
+
+.review-modal-body {
+  padding: 24px 28px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+/* Product quick preview */
+.review-product-preview {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  background-color: #FFFFFF;
+  border: 1px solid #E7DDCE;
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+
+.review-product-img {
+  width: 48px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.review-product-info h5 {
+  margin: 0 0 4px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #2C2117;
+}
+
+.review-product-info p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #775B3F;
+  font-weight: 600;
+}
+
+/* Star rating picker */
+.review-rating-picker-box {
+  text-align: center;
+  padding: 18px;
+  background-color: #FFFFFF;
+  border: 1px solid #E7DDCE;
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+
+.review-rating-picker-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #775B3F;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.review-rating-status-text {
+  margin-top: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #2C2117;
+}
+
+/* Form inputs */
+.review-form-group {
+  margin-bottom: 16px;
+}
+
+.review-form-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #4A3A2C;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+.review-form-input,
+.review-form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: #FFFFFF;
+  border: 1px solid #D8CCBD;
+  border-radius: 2px;
+  font-size: 0.88rem;
+  color: #2C2117;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.review-form-input:focus,
+.review-form-textarea:focus {
+  outline: none;
+  border-color: #775B3F;
+  box-shadow: 0 0 0 3px rgba(119, 91, 63, 0.12);
+}
+
+.review-form-textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.5;
+}
+
+.review-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.review-error-banner {
+  background-color: #FDF0ED;
+  border: 1px solid #F5B3AB;
+  color: #B3261E;
+  padding: 10px 14px;
+  border-radius: 2px;
+  font-size: 0.82rem;
+  margin-bottom: 16px;
+}
+
+/* Footer buttons */
+.review-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 28px 24px;
+  border-top: 1px solid #E7DDCE;
+}
+
+.review-btn-cancel {
+  background-color: transparent;
+  border: 1px solid #D8CCBD;
+  color: #5C4A3A;
+  padding: 10px 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.review-btn-cancel:hover {
+  background-color: #EFE8DC;
+  color: #2C2117;
+}
+
+.review-btn-submit {
+  background-color: #775B3F;
+  border: 1px solid #775B3F;
+  color: #FFFFFF;
+  padding: 10px 24px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.review-btn-submit:hover {
+  background-color: #5D4630;
+}

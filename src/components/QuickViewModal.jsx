@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { X, Heart, ShoppingBag, Minus, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
+import { useLanguage } from '../context/LanguageContext';
+import StarRating from './StarRating';
 
 export default function QuickViewModal({
   product,
@@ -11,8 +13,11 @@ export default function QuickViewModal({
   const {
     addToCart,
     toggleWishlist,
-    isInWishlist
+    isInWishlist,
+    getProductRatingStats
   } = useShop();
+
+  const { t, tp } = useLanguage();
 
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -42,6 +47,7 @@ export default function QuickViewModal({
   }
 
   const isFavorited = isInWishlist(product.id);
+  const stock = product.stock !== undefined ? product.stock : 20;
 
   const decreaseQuantity = () => {
     setQuantity((current) =>
@@ -50,12 +56,15 @@ export default function QuickViewModal({
   };
 
   const increaseQuantity = () => {
-    setQuantity((current) =>
-      current + 1
-    );
+    if (stock > 0) {
+      setQuantity((current) =>
+        Math.min(stock, current + 1)
+      );
+    }
   };
 
   const handleAddToCart = () => {
+    if (stock <= 0) return;
     addToCart(
       product,
       selectedSize || product.sizes?.[0] || 'M',
@@ -161,29 +170,39 @@ export default function QuickViewModal({
           <div
             style={{
               color: '#A16207',
-              fontSize: '0.72rem',
+              fontSize: 'var(--text-badge)',
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               marginBottom: '10px'
             }}
           >
-            {product.category}
+            {tp(product, 'garmentType') || product.category}
           </div>
 
 
           {/* Product Name */}
           <h2
             style={{
-              fontFamily: 'serif',
-              fontSize: '1.8rem',
+              fontFamily: 'var(--font-serif)',
+              fontSize: 'var(--text-h2)',
               fontWeight: 500,
               lineHeight: 1.2,
-              margin: '0 0 12px',
+              margin: '0 0 10px',
               color: '#1C1917'
             }}
           >
-            {product.name}
+            {tp(product, 'name')}
           </h2>
+
+          {/* Rating */}
+          <div style={{ marginBottom: '14px' }}>
+            <StarRating 
+              rating={getProductRatingStats && product?.id ? getProductRatingStats(product.id).averageRating : 5.0}
+              count={getProductRatingStats && product?.id ? getProductRatingStats(product.id).totalReviews : 0}
+              size={13}
+              showScore={true}
+            />
+          </div>
 
 
           {/* Price */}
@@ -230,7 +249,7 @@ export default function QuickViewModal({
               margin: '0 0 24px'
             }}
           >
-            {product.description}
+            {tp(product, 'description')}
           </p>
 
 
@@ -255,7 +274,7 @@ export default function QuickViewModal({
                   marginBottom: '11px'
                 }}
               >
-                COLOR
+                {t('productDetail.colorLabel')}
               </div>
 
               <div
@@ -281,11 +300,11 @@ export default function QuickViewModal({
                         backgroundColor: color,
                         border:
                           selectedColor === color
-                            ? '2px solid #1C1917'
+                            ? '2px solid #775B3F'
                             : '1px solid #D6D3D1',
                         boxShadow:
                           selectedColor === color
-                            ? '0 0 0 2px white, 0 0 0 3px #1C1917'
+                            ? '0 0 0 2px white, 0 0 0 3px #775B3F'
                             : 'none',
                         cursor: 'pointer'
                       }}
@@ -309,7 +328,7 @@ export default function QuickViewModal({
                   marginBottom: '11px'
                 }}
               >
-                SIZE
+                {t('productDetail.sizeLabel')}
               </div>
 
               <div
@@ -331,18 +350,19 @@ export default function QuickViewModal({
                       padding: '9px 12px',
                       backgroundColor:
                         selectedSize === size
-                          ? '#1C1917'
+                          ? '#775B3F'
                           : '#fff',
                       color:
                         selectedSize === size
                           ? '#fff'
-                          : '#1C1917',
+                          : '#2C2117',
                       border:
                         selectedSize === size
-                          ? '1px solid #1C1917'
+                          ? '1px solid #775B3F'
                           : '1px solid #D6D3D1',
                       cursor: 'pointer',
-                      fontSize: '0.75rem'
+                      fontSize: '0.75rem',
+                      transition: 'all 0.2s ease'
                     }}
                   >
                     {size}
@@ -352,6 +372,62 @@ export default function QuickViewModal({
             </div>
           )}
 
+
+          {/* ================= STOCK STATUS ================= */}
+          <div style={{ marginBottom: '18px' }}>
+            {stock === 0 ? (
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '5px 10px',
+                  backgroundColor: '#FEE2E2',
+                  color: '#991B1B',
+                  borderRadius: '4px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#DC2626' }} />
+                {t('productDetail.outOfStock')}
+              </div>
+            ) : stock <= 5 ? (
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '5px 10px',
+                  backgroundColor: '#FEF3C7',
+                  color: '#92400E',
+                  borderRadius: '4px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#D97706' }} />
+                {t('productDetail.lowStock')} {stock} {t('productDetail.unitsLeft')}
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '5px 10px',
+                  backgroundColor: '#ECFDF5',
+                  color: '#065F46',
+                  borderRadius: '4px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600
+                }}
+              >
+                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
+                {t('productDetail.stockAvailable')} ({stock})
+              </div>
+            )}
+          </div>
 
           {/* ================= QUANTITY ================= */}
           <div style={{ marginBottom: '24px' }}>
@@ -364,21 +440,22 @@ export default function QuickViewModal({
                 marginBottom: '11px'
               }}
             >
-              QUANTITY
+              {t('productDetail.quantityLabel')}
             </div>
 
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                border: '1px solid #D6D3D1'
+                border: '1px solid #D6D3D1',
+                opacity: stock === 0 ? 0.5 : 1
               }}
             >
 
               <button
                 type="button"
                 onClick={decreaseQuantity}
-                disabled={quantity === 1}
+                disabled={quantity <= 1 || stock === 0}
                 aria-label="Decrease quantity"
                 style={{
                   width: '36px',
@@ -386,11 +463,11 @@ export default function QuickViewModal({
                   border: 'none',
                   backgroundColor: '#fff',
                   cursor:
-                    quantity === 1
+                    quantity <= 1 || stock === 0
                       ? 'not-allowed'
                       : 'pointer',
                   opacity:
-                    quantity === 1 ? 0.4 : 1,
+                    quantity <= 1 || stock === 0 ? 0.4 : 1,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -406,19 +483,25 @@ export default function QuickViewModal({
                   fontSize: '0.85rem'
                 }}
               >
-                {quantity}
+                {stock === 0 ? 0 : quantity}
               </span>
 
               <button
                 type="button"
                 onClick={increaseQuantity}
+                disabled={quantity >= stock || stock === 0}
                 aria-label="Increase quantity"
                 style={{
                   width: '36px',
                   height: '36px',
                   border: 'none',
                   backgroundColor: '#fff',
-                  cursor: 'pointer',
+                  cursor:
+                    quantity >= stock || stock === 0
+                      ? 'not-allowed'
+                      : 'pointer',
+                  opacity:
+                    quantity >= stock || stock === 0 ? 0.4 : 1,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
@@ -443,23 +526,32 @@ export default function QuickViewModal({
             <button
               type="button"
               onClick={handleAddToCart}
+              disabled={stock === 0}
               style={{
                 flex: 1,
                 minHeight: '46px',
                 border: 'none',
-                backgroundColor: '#1C1917',
+                backgroundColor: stock === 0 ? '#A8A29E' : '#775B3F',
                 color: '#fff',
-                cursor: 'pointer',
+                cursor: stock === 0 ? 'not-allowed' : 'pointer',
                 fontSize: '0.78rem',
                 fontWeight: 600,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '7px'
+                gap: '7px',
+                transition: 'background-color 0.2s ease',
+                opacity: stock === 0 ? 0.7 : 1
+              }}
+              onMouseEnter={(e) => {
+                if (stock > 0) e.currentTarget.style.backgroundColor = '#5C4A3A';
+              }}
+              onMouseLeave={(e) => {
+                if (stock > 0) e.currentTarget.style.backgroundColor = '#775B3F';
               }}
             >
               <ShoppingBag size={15} />
-              ADD TO BAG
+              {stock === 0 ? t('common.soldOut') : t('common.addToBag')}
             </button>
 
 
@@ -514,7 +606,7 @@ export default function QuickViewModal({
               padding: '8px'
             }}
           >
-            VIEW FULL PRODUCT DETAILS
+            {t('common.viewDetails')}
           </Link>
 
         </div>

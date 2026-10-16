@@ -1,184 +1,228 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
-import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, ShieldCheck, Truck } from 'lucide-react';
+import './CartDrawer.css';
 
 /**
  * CartDrawer Component
  * Phụ trách: Thành viên 4 (Giỏ hàng & Quy trình thanh toán)
+ * Tích hợp Đa ngôn ngữ (i18n): Song ngữ VI / EN
  */
 export default function CartDrawer() {
-  const { isCartOpen, closeCart, cart, updateQuantity, removeFromCart, cartTotal } = useShop();
+  const { isCartOpen, closeCart, cart, updateQuantity, removeFromCart, cartTotal, products } = useShop();
+  const { t, tp } = useLanguage();
   const navigate = useNavigate();
+
+  // Close on Escape key press and prevent background scrolling
+  useEffect(() => {
+    if (!isCartOpen) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        closeCart();
+      }
+    };
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isCartOpen, closeCart]);
 
   if (!isCartOpen) return null;
 
-  const freeShippingThreshold = 250;
+  // Free shipping threshold matching TC-CART-04 ($140 + $60 = $200)
+  const freeShippingThreshold = 200;
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - cartTotal);
+  const shippingProgress = Math.min(100, Math.round((cartTotal / freeShippingThreshold) * 100));
 
   const handleCheckout = () => {
     closeCart();
     navigate('/checkout');
   };
 
+  const handleContinueShopping = () => {
+    closeCart();
+    navigate('/shop');
+  };
+
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      zIndex: 9999,
-      display: 'flex',
-      justifyContent: 'flex-end',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      backdropFilter: 'blur(3px)'
-    }} onClick={closeCart}>
+    <div 
+      className="cart-drawer-overlay" 
+      onClick={closeCart}
+      role="dialog"
+      aria-modal="true"
+      aria-label={t('cart.title')}
+    >
       <div 
-        style={{
-          width: '100%',
-          maxWidth: '440px',
-          height: '100%',
-          backgroundColor: '#FAF8F5',
-          color: '#1C1917',
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '-4px 0 25px rgba(0,0,0,0.15)',
-          overflowY: 'auto'
-        }} 
-        onClick={e => e.stopPropagation()}
+        className="cart-drawer-panel"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{
-          padding: '20px 24px',
-          borderBottom: '1px solid #E7E5E4',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShoppingBag size={20} color="#775B3F" />
-            <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.05em' }}>
-              SHOPPING BAG ({cart.length})
-            </h3>
+        <div className="cart-drawer-header">
+          <div className="cart-header-title-wrap">
+            <ShoppingBag size={20} className="cart-header-icon" />
+            <h2 className="cart-drawer-title">{t('cart.title')}</h2>
+            <span className="cart-header-badge">{cart.reduce((sum, item) => sum + (item.quantity || 1), 0)}</span>
           </div>
           <button 
+            type="button"
+            className="cart-drawer-close-btn"
             onClick={closeCart}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+            aria-label={t('common.close', 'Close')}
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Free Shipping Meter */}
-        <div style={{ padding: '12px 24px', backgroundColor: '#F5EFE6', fontSize: '0.85rem' }}>
-          {remainingForFreeShipping > 0 ? (
-            <span>Add <strong>${remainingForFreeShipping}</strong> more to unlock <strong>Free Shipping</strong></span>
-          ) : (
-            <span style={{ color: '#2E7D32', fontWeight: 600 }}>🎉 You've unlocked Free Complimentary Shipping!</span>
-          )}
+        {/* Free Shipping Progress Meter */}
+        <div className="cart-shipping-meter">
+          <div className="cart-shipping-info">
+            {remainingForFreeShipping > 0 ? (
+              <span className="cart-shipping-text">
+                {t('cart.freeShippingMeterPrefix', 'Mua thêm')}{' '}
+                <strong>${remainingForFreeShipping}</strong>{' '}
+                {t('cart.freeShippingMeterSuffix', 'nữa để nhận')}{' '}
+                <strong>{t('cart.freeShippingLabel', 'Miễn Phí Vận Chuyển')}</strong>
+              </span>
+            ) : (
+              <span className="cart-shipping-unlocked">
+                <Truck size={16} />
+                {t('cart.freeShippingUnlocked', '🎉 Quý khách được Miễn Phí Vận Chuyển Hỏa Tốc!')}
+              </span>
+            )}
+            <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#775B3F' }}>
+              {shippingProgress}%
+            </span>
+          </div>
+          <div className="cart-shipping-bar">
+            <div 
+              className={`cart-shipping-fill ${remainingForFreeShipping === 0 ? 'is-complete' : ''}`}
+              style={{ width: `${shippingProgress}%` }}
+            />
+          </div>
         </div>
 
         {/* Cart Item List */}
-        <div style={{ flex: 1, padding: '16px 24px', overflowY: 'auto' }}>
+        <div className="cart-drawer-body">
           {cart.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 0', color: '#78716C' }}>
-              <ShoppingBag size={48} strokeWidth={1} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-              <p>Your shopping bag is currently empty.</p>
+            <div className="cart-empty-state">
+              <ShoppingBag size={52} strokeWidth={1.2} className="cart-empty-icon" />
+              <h3 className="cart-empty-title">{t('cart.emptyTitle')}</h3>
+              <p className="cart-empty-desc">{t('cart.emptyDesc')}</p>
               <button 
-                onClick={() => { closeCart(); navigate('/shop'); }}
-                style={{
-                  marginTop: '12px',
-                  padding: '8px 20px',
-                  backgroundColor: '#1C1917',
-                  color: '#fff',
-                  border: 'none',
-                  fontSize: '0.85rem',
-                  cursor: 'pointer'
-                }}
+                type="button"
+                className="cart-continue-btn"
+                onClick={handleContinueShopping}
               >
-                DISCOVER COLLECTION
+                {t('common.continueShopping', 'Khám Phá Cửa Hàng')}
               </button>
             </div>
           ) : (
-            cart.map(item => (
-              <div 
-                key={item.cartItemId || item.id} 
-                style={{
-                  display: 'flex',
-                  gap: '16px',
-                  paddingBottom: '16px',
-                  marginBottom: '16px',
-                  borderBottom: '1px solid #E7E5E4'
-                }}
-              >
-                <img 
-                  src={item.image} 
-                  alt={item.name} 
-                  style={{ width: '80px', height: '100px', objectFit: 'cover' }} 
-                />
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                  <div>
-                    <h4 style={{ margin: '0 0 4px', fontSize: '0.9rem', fontWeight: 500 }}>{item.name}</h4>
-                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#78716C' }}>
-                      Size: {item.selectedSize} {item.selectedColor && `| Color: ${item.selectedColor}`}
-                    </p>
-                    <p style={{ margin: '4px 0 0', fontWeight: 600, fontSize: '0.9rem' }}>${item.price}</p>
+            cart.map((item) => {
+              const matchedProd = products?.find((p) => p.id === item.id);
+              const maxStock = matchedProd?.stock !== undefined ? Number(matchedProd.stock) : 99;
+              const isAtMaxStock = item.quantity >= maxStock;
+
+              return (
+                <div 
+                  key={item.cartItemId || `${item.id}-${item.selectedSize}-${item.selectedColor}`} 
+                  className="cart-item-card"
+                >
+                  <div className="cart-item-image-wrap">
+                    <img 
+                      src={item.image} 
+                      alt={tp(item, 'name') || item.name} 
+                      className="cart-item-image"
+                      loading="lazy"
+                    />
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #D6D3D1' }}>
-                      <button 
-                        onClick={() => updateQuantity(item.cartItemId || item.id, item.quantity - 1)}
-                        style={{ background: 'none', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
-                      >
-                        <Minus size={14} />
-                      </button>
-                      <span style={{ fontSize: '0.85rem', padding: '0 8px' }}>{item.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(item.cartItemId || item.id, item.quantity + 1)}
-                        style={{ background: 'none', border: 'none', padding: '4px 8px', cursor: 'pointer' }}
-                      >
-                        <Plus size={14} />
-                      </button>
+                  <div className="cart-item-info">
+                    <div className="cart-item-top">
+                      <h4 className="cart-item-name">{tp(item, 'name') || item.name}</h4>
+                      <div className="cart-item-variants">
+                        {item.selectedSize && (
+                          <span className="cart-variant-tag">
+                            {t('cart.size', 'Size')}: {item.selectedSize}
+                          </span>
+                        )}
+                        {item.selectedColor && (
+                          <span className="cart-variant-tag">
+                            {t('cart.color', 'Màu')}: {item.selectedColor}
+                          </span>
+                        )}
+                      </div>
+                      <p className="cart-item-price">${item.price}</p>
                     </div>
 
-                    <button 
-                      onClick={() => removeFromCart(item.cartItemId || item.id)}
-                      style={{ background: 'none', border: 'none', color: '#A8A29E', cursor: 'pointer', padding: '4px' }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="cart-item-bottom">
+                      {/* Quantity Selector */}
+                      <div className="cart-quantity-selector">
+                        <button 
+                          type="button"
+                          className="cart-qty-btn"
+                          onClick={() => updateQuantity(item.cartItemId || item.id, item.quantity - 1)}
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus size={13} />
+                        </button>
+                        <span className="cart-qty-display">{item.quantity}</span>
+                        <button 
+                          type="button"
+                          className="cart-qty-btn"
+                          disabled={isAtMaxStock}
+                          title={isAtMaxStock ? 'Đã đạt giới hạn tồn kho' : ''}
+                          onClick={() => updateQuantity(item.cartItemId || item.id, item.quantity + 1)}
+                          aria-label="Increase quantity"
+                        >
+                          <Plus size={13} />
+                        </button>
+                      </div>
+
+                      {/* Remove Button */}
+                      <button 
+                        type="button"
+                        className="cart-delete-btn"
+                        onClick={() => removeFromCart(item.cartItemId || item.id)}
+                        aria-label="Remove item"
+                        title={t('wishlist.removeBtn', 'Xóa khỏi giỏ')}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 
-        {/* Footer */}
+        {/* Footer (when cart is not empty) */}
         {cart.length > 0 && (
-          <div style={{ padding: '20px 24px', borderTop: '1px solid #E7E5E4', backgroundColor: '#fff' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <span style={{ fontSize: '0.95rem', color: '#78716C' }}>Estimated Subtotal</span>
-              <span style={{ fontSize: '1.1rem', fontWeight: 600 }}>${cartTotal}</span>
+          <div className="cart-drawer-footer">
+            <div className="cart-summary-line">
+              <span className="cart-subtotal-text">{t('cart.subtotalLabel')}</span>
+              <span className="cart-subtotal-price">${cartTotal}</span>
             </div>
             <button 
+              type="button"
+              className="cart-checkout-action-btn"
               onClick={handleCheckout}
-              style={{
-                width: '100%',
-                padding: '14px',
-                backgroundColor: '#1C1917',
-                color: '#fff',
-                border: 'none',
-                fontWeight: 600,
-                letterSpacing: '0.05em',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
             >
-              PROCEED TO CHECKOUT <ArrowRight size={18} />
+              <span>{t('cart.checkoutBtn')}</span>
+              <ArrowRight size={17} />
             </button>
+            <p className="cart-footer-security">
+              <ShieldCheck size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
+              {t('checkout.secureNotice', 'Bảo mật thanh toán 256-bit SSL tiêu chuẩn')}
+            </p>
           </div>
         )}
       </div>

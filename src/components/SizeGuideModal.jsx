@@ -1,11 +1,15 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 /**
  * SizeGuideModal Component
  * Phụ trách: Thành viên 3 (Trải nghiệm sản phẩm)
+ * Nâng cấp: Thành viên 1 (Leader - Tích hợp Đa ngôn ngữ song ngữ EN/VI)
  */
 export default function SizeGuideModal({ isOpen, onClose }) {
+  const { t } = useLanguage();
+
   if (!isOpen) return null;
 
   return (
@@ -30,20 +34,23 @@ export default function SizeGuideModal({ isOpen, onClose }) {
         <button 
           onClick={onClose}
           style={{ position: 'absolute', top: '16px', right: '16px', background: 'none', border: 'none', cursor: 'pointer' }}
+          aria-label={t('sizeGuide.closeBtn', 'Close')}
         >
           <X size={20} />
         </button>
-        <h3 style={{ margin: '0 0 16px', fontSize: '1.2rem', letterSpacing: '0.05em' }}>LUNE SIZE GUIDE (CM)</h3>
+        <h3 style={{ margin: '0 0 16px', fontSize: '1.2rem', letterSpacing: '0.05em' }}>
+          {t('sizeGuide.title', 'LUNE SIZE GUIDE (CM)')}
+        </h3>
         <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '20px' }}>
-          Measurements are based on body circumference. Choose your regular size for an authentic tailored fit.
+          {t('sizeGuide.desc', 'Measurements are based on body circumference. Choose your regular size for an authentic tailored fit.')}
         </p>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
           <thead>
-            <tr style={{ borderBottom: '2px solid #1C1917', backgroundColor: '#F5EFE6' }}>
-              <th style={{ padding: '8px' }}>Size</th>
-              <th style={{ padding: '8px' }}>Bust</th>
-              <th style={{ padding: '8px' }}>Waist</th>
-              <th style={{ padding: '8px' }}>Hips</th>
+            <tr style={{ borderBottom: '2px solid #775B3F', backgroundColor: '#F5EFE6' }}>
+              <th style={{ padding: '8px' }}>{t('sizeGuide.colSize', 'Size')}</th>
+              <th style={{ padding: '8px' }}>{t('sizeGuide.colBust', 'Bust')}</th>
+              <th style={{ padding: '8px' }}>{t('sizeGuide.colWaist', 'Waist')}</th>
+              <th style={{ padding: '8px' }}>{t('sizeGuide.colHips', 'Hips')}</th>
             </tr>
           </thead>
           <tbody>
@@ -77,3 +84,4 @@ export default function SizeGuideModal({ isOpen, onClose }) {
     </div>
   );
 }
+

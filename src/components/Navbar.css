@@ -1,0 +1,293 @@
+/* ==========================================================================
+   LUNE FASHION STORE — NAVBAR & LIVE SEARCH STYLES
+   Editorial Search Drawer, Trending Searches, Real-time Suggestions
+   ========================================================================== */
+
+/* Search Bar Dropdown & Drawer */
+.search-bar-dropdown {
+  background-color: #FAF7F2;
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 1.25rem 0 1.5rem 0;
+  box-shadow: 0 16px 36px rgba(44, 33, 23, 0.08);
+  animation: searchFadeInDown 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 999;
+}
+
+@keyframes searchFadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-inner-wrapper {
+  max-width: 820px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.search-input-box {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 0.65rem 1.15rem;
+  box-shadow: 0 2px 10px rgba(119, 91, 63, 0.04);
+  transition: all 0.25s ease;
+}
+
+.search-input-box:focus-within {
+  border-color: var(--primary-brown);
+  box-shadow: 0 4px 16px rgba(119, 91, 63, 0.12);
+}
+
+.search-input-icon {
+  color: var(--primary-brown);
+  flex-shrink: 0;
+}
+
+.search-input-box input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  outline: none;
+}
+
+.search-input-box input::placeholder {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.search-clear-btn,
+.search-close-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.search-clear-btn:hover,
+.search-close-btn:hover {
+  color: var(--primary-brown);
+  background-color: var(--bg-subtle);
+}
+
+/* Trending Searches Section */
+.search-trending-section {
+  margin-top: 1rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.search-trending-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.trending-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.trending-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trending-chip:hover {
+  border-color: var(--primary-brown);
+  color: var(--primary-brown);
+  background-color: rgba(254, 227, 175, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Live Search Suggestions Dropdown */
+.search-results-panel {
+  margin-top: 0.85rem;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  box-shadow: 0 12px 28px rgba(44, 33, 23, 0.09);
+  overflow: hidden;
+}
+
+.search-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.15rem;
+  background-color: #FBF8F3;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.search-results-list {
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.85rem 1.15rem;
+  border-bottom: 1px solid var(--border-light);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background-color: #FAF6F0;
+}
+
+.search-result-thumb {
+  width: 48px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 2px;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.search-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-name {
+  font-family: var(--font-serif);
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.search-result-category {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  color: var(--primary-brown);
+}
+
+.search-result-pricing {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.search-result-price {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.search-result-orig-price {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-decoration: line-through;
+  margin-left: 0.35rem;
+}
+
+/* Empty Search Results State */
+.search-empty-state {
+  padding: 2.25rem 1.5rem;
+  text-align: center;
+}
+
+.search-empty-title {
+  font-family: var(--font-serif);
+  font-size: 1.18rem;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.search-empty-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+/* View All Results Button in Dropdown Footer */
+.search-results-footer {
+  padding: 0.75rem 1.15rem;
+  background-color: #FBF8F3;
+  border-top: 1px solid var(--border-light);
+  text-align: center;
+}
+
+.search-view-all-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary-brown);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.search-view-all-btn:hover {
+  color: var(--text-primary);
+  transform: translateX(3px);
+}

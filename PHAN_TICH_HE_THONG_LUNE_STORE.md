@@ -31,9 +31,9 @@ graph TD
 * **Phạm vi quyền hạn:**
   * Khám phá toàn bộ giao diện công khai (Trang chủ, Bộ sưu tập, Cửa hàng tổng hợp, Chi tiết sản phẩm).
   * Sử dụng các bộ công cụ tra cứu: Live Search, bộ lọc đa thuộc tính, sắp xếp giá, xem nhanh (Quick View), xem bảng hướng dẫn chọn kích cỡ (Size Guide).
-  * Thao tác trên giỏ hàng tạm thời và danh sách yêu thích lưu cục bộ trên trình duyệt.
+  * Thao tác trên giỏ hàng tạm thời và danh sách yêu thích cá nhân (Guest Lookbook); khi thả tim sản phẩm, hệ thống kích hoạt thông báo nổi tinh tế (`WishlistToast`) hỗ trợ lưu tức thì vào bộ nhớ máy và gợi ý đăng nhập để đồng bộ lâu dài; trang `/wishlist` hiển thị đầy đủ bộ sưu tập đã lưu kèm thanh đồng bộ tài khoản không chặn (Non-blocking Sync Banner).
   * Có thể tiến hành đặt hàng thông qua hình thức nhập thông tin trực tiếp tại trang thanh toán mà không bắt buộc phải tạo tài khoản trước.
-* **Giới hạn:** Không thể xem lịch sử mua hàng cá nhân, không thể quản lý sổ địa chỉ tích hợp, không có quyền truy cập vào phân hệ Admin.
+* **Giới hạn:** Dữ liệu yêu thích của khách chỉ lưu tạm thời trên trình duyệt thiết bị hiện tại (cần đăng nhập để tự động đồng bộ vĩnh viễn vào tài khoản), không thể xem lịch sử mua hàng cá nhân, không thể quản lý sổ địa chỉ tích hợp, không có quyền truy cập vào phân hệ Admin.
 
 ### 2. Khách hàng thành viên (Customer / Registered User)
 * **Định nghĩa:** Người dùng đã hoàn tất đăng ký tài khoản hợp lệ và đăng nhập thành công vào hệ thống với vai trò `user`.
@@ -41,7 +41,8 @@ graph TD
   * Kế thừa toàn bộ quyền hạn của **Guest**.
   * Sở hữu không gian cá nhân (Profile Page): Xem, cập nhật thông tin cá nhân (Họ tên, Số điện thoại, Email, Mật khẩu).
   * **Quản lý đơn hàng cá nhân (My Orders):** Theo dõi danh sách đơn hàng do chính tài khoản tạo ra, xem chi tiết từng món đồ đã mua, chi phí và trạng thái đơn hàng theo thời gian thực (`Pending` -> `Shipping` -> `Delivered` -> `Cancelled`).
-  * Danh sách yêu thích (Wishlist) và giỏ hàng được gắn liền với tài khoản phiên đăng nhập.
+  * Danh sách yêu thích (Wishlist) được bảo mật và gắn chặt với tài khoản người dùng (`lune_wishlist_<email>`), tự động gộp danh sách đã chọn trước đó của khách vãng lai (Auto-merge Wishlist) và đồng bộ trên mọi thiết bị.
+  * **Hóa đơn & Đánh giá xác thực:** Xuất và in ấn Hóa đơn chuẩn Boutique (`window.print`), theo dõi tiến độ đơn hàng qua thanh Timeline 4 nấc trực quan, và gửi đánh giá có xác thực (`Verified Buyer`) cho các món đồ đã giao thành công.
 * **Giới hạn:** Bị chặn hoàn toàn quyền truy cập vào cổng quản trị (`/admin`). Mọi hành vi cố tình truy cập URL nội bộ này sẽ bị hệ thống điều hướng bảo vệ chặn lại.
 
 ### 3. Quản trị viên (Administrator / Store Manager)
@@ -99,7 +100,7 @@ graph TD
 | `/order-success` | **Đặt hàng thành công** | Màn hình hiển thị mã đơn hàng chính thức, tóm tắt các sản phẩm đã mua và lời cảm ơn từ thương hiệu. | Mọi đối tượng |
 | `/login` | **Đăng nhập (Sign In)** | Cổng định danh người dùng vào hệ thống bằng tài khoản và mật khẩu đã tạo. | Mọi đối tượng |
 | `/register` | **Đăng ký (Sign Up)** | Màn hình đăng ký thành viên mới với các quy tắc xác thực biểu mẫu đầy đủ. | Mọi đối tượng |
-| `/profile` | **Hồ sơ cá nhân (Account Profile)** | Bảng điều khiển tài khoản: cập nhật hồ sơ, đổi mật khẩu và theo dõi lịch sử đơn hàng cá nhân ("My Orders"). | Thành viên đã đăng nhập |
+| `/profile` | **Hồ sơ cá nhân (Account Profile)** | Bảng điều khiển tài khoản đa năng với 5 Tab độc lập: theo dõi lịch sử đơn hàng ("My Orders"), cập nhật hồ sơ cá nhân ("Personal Details"), đổi mật khẩu bảo mật chuyên biệt ("Password & Security"), quản lý sổ địa chỉ nhận hàng ("Address Book"), xem nhanh danh sách yêu thích ("Saved Wishlist"), nút đăng xuất an toàn và huy hiệu thành viên (Atelier VIP Member). | Thành viên đã đăng nhập |
 
 ### 2. Kiến trúc phân hệ Quản trị (Admin Portal)
 | Đường dẫn (Route) | Tên màn hình / Chức năng | Mô tả vai trò kiến trúc | Điều kiện bảo vệ |
@@ -230,7 +231,7 @@ sequenceDiagram
     Route->>Auth: Kiểm tra xem đã đăng nhập chưa?
     alt Đã đăng nhập
         Route-->>Prof: Cho phép mở giao diện hồ sơ
-        Prof-->>User: Hiển thị tab thông tin cá nhân & tab "My Orders"
+        Prof-->>User: Hiển thị 5 Tab chuyên biệt (My Orders, Personal Details, Password & Security, Address Book, Saved Wishlist), Huy hiệu VIP & Đăng xuất nhanh
     else Chưa đăng nhập
         Route-->>Log: Chặn truy cập và chuyển hướng về /login
     end
@@ -294,14 +295,17 @@ sequenceDiagram
 | **G-01** | Xem Banner & Bộ sưu tập | Hiển thị Banner chuyển động đa ảnh, các bộ sưu tập theo mùa, danh mục nổi bật (Women, Men, Accessories). | Người dùng vào trang chủ `/`. | Trình diễn giao diện thẩm mỹ cao, tự động chuyển slide hoặc bấm chuyển thủ công. |
 | **G-02** | Xem danh mục sản phẩm | Hiển thị danh sách sản phẩm theo dạng lưới (Grid 3-4 cột) với ảnh chính, tên, giá, nhãn "New". | Vào `/shop` hoặc cuộn xuống phần sản phẩm ở trang chủ. | Bố cục đều đặn, ảnh sắc nét, responsive trên mobile/tablet. |
 | **G-03** | Tìm kiếm sản phẩm trực tiếp | Nhập từ khóa vào ô Search trên thanh Navbar, tự động lọc và gợi ý danh sách sản phẩm khớp tên kèm ảnh thu nhỏ và giá. | Gõ ký tự vào ô tìm kiếm. | Xuất hiện dropdown gợi ý tức thì; nhấn Enter chuyển sang `/shop?search=...`. |
-| **G-04** | Bộ lọc sản phẩm đa chiều | Lọc danh sách sản phẩm đồng thời theo: Khoảng giá ($0-$100, $100-$250, $250+), Danh mục (Women/Men/Accessories), Size, Màu sắc. | Thao tác trên sidebar lọc tại `/shop`. | Danh sách sản phẩm lập tức cập nhật chỉ hiển thị các mặt hàng thỏa mãn tất cả tiêu chí. |
-| **G-05** | Sắp xếp sản phẩm | Sắp xếp thứ tự hiển thị: Giá tăng dần, Giá giảm dần, Mới nhất (Newest). | Chọn tiêu chí từ thanh dropdown Sắp xếp. | Danh sách sản phẩm tái sắp xếp ngay lập tức mà không cần reload trang. |
+| **G-04** | Bộ lọc đa chiều & Phân trang thông minh | Lọc danh sách sản phẩm đồng thời theo: Khoảng giá ($0-$100, $100-$250, $250+), Danh mục (Women/Men/Accessories), Size, Màu sắc; tự động đặt lại về trang 1 (`setCurrentPage(1)`) khi đổi tiêu chí lọc hoặc từ khóa tìm kiếm kèm cơ chế chống kẹt trang trống. | Thao tác trên sidebar lọc hoặc tìm kiếm tại `/shop`. | Danh sách sản phẩm lập tức cập nhật chỉ hiển thị các mặt hàng thỏa mãn tất cả tiêu chí; số trang hiển thị tự động nhảy về trang 1. |
+| **G-05** | Sắp xếp sản phẩm | Sắp xếp thứ tự hiển thị: Giá tăng dần, Giá giảm dần, Mới nhất (Newest); tự động đưa về trang 1 khi thay đổi thứ tự. | Chọn tiêu chí từ thanh dropdown Sắp xếp. | Danh sách sản phẩm tái sắp xếp ngay lập tức mà không cần reload trang. |
 | **G-06** | Xem chi tiết sản phẩm | Xem đầy đủ thông tin: Thư viện ảnh góc cạnh, mô tả chất liệu, bảng hướng dẫn chọn kích cỡ (Size Guide), giá tiền. | Nhấp vào thẻ sản phẩm bất kỳ. | Điều hướng tới `/product/:id`, hiển thị ảnh lớn và danh sách thumbnail có thể click chuyển đổi. |
 | **G-07** | Xem nhanh (Quick View) | Mở popup xem thông số sản phẩm và chọn mua trực tiếp ngay tại trang danh mục mà không cần rời màn hình hiện tại. | Nhấp biểu tượng "Quick View" trên thẻ sản phẩm. | Modal hiển thị đầy đủ thông tin biến thể và nút "Add to Bag". |
 | **G-08** | Quản lý Giỏ hàng (Cart Drawer) | Xem danh sách món hàng trong giỏ, tăng/giảm số lượng từng món, xóa món hàng, xem tổng tiền và mức tiền còn thiếu để được Free Ship. | Bấm icon Giỏ hàng trên Navbar hoặc sau khi nhấn "Add to Bag". | Ngăn kéo trượt mượt mà từ cạnh phải, tự động tính toán tổng số tiền theo thời gian thực. |
 | **G-09** | Quản lý Yêu thích (Wishlist) | Thả tim sản phẩm để lưu vào danh sách quan tâm; xem trang `/wishlist`; chuyển món hàng từ Wishlist vào Giỏ hàng. | Bấm icon Trái tim trên ảnh sản phẩm hoặc vào `/wishlist`. | Icon tim đổi trạng thái kích hoạt; trang `/wishlist` hiển thị đầy đủ các sản phẩm đã lưu. |
 | **G-10** | Đặt hàng không cần tài khoản | Điền thông tin người nhận (Họ tên, SĐT, Địa chỉ), áp dụng mã giảm giá, chọn phương thức thanh toán và chốt đơn. | Bấm "Checkout" từ Giỏ hàng. | Đơn hàng được tạo thành công, cấp mã `LUNE-XXXX`, giỏ hàng tự động làm sạch. |
 | **G-11** | Đăng ký nhận bản tin | Nhập email tại chân trang (Footer) để nhận thông tin ưu đãi từ thương hiệu. | Nhập email và bấm nút gửi tại Footer. | Kiểm tra tính hợp lệ của định dạng email; hiển thị thông báo thành công. |
+| **G-12** | Xem Đánh giá & Xếp hạng sao | Khám phá điểm số trung bình (ví dụ: `4.9/5.0`), biểu đồ phân bổ 5 sao và danh sách nhận xét thực tế từ khách hàng tại trang chi tiết sản phẩm. | Nhấp vào sản phẩm bất kỳ. | Hiển thị bảng tổng hợp đánh giá trực quan kèm nhãn Verified Buyer. |
+| **G-13** | Điều hướng Anchor Hash xuyên trang | Nhấp vào các liên kết anchor (`#categories`, `#new-arrivals`, `#about`) từ bất kỳ trang nào (`/shop`, `/product/:id`, `/profile`...). | Click menu anchor trên Navbar hoặc Mobile drawer. | Tự động chuyển hướng về trang chủ và kích hoạt hiệu ứng cuộn mượt mà có độ trễ 100ms; bù trừ khoảng cách `scroll-margin-top: 90px` giúp tiêu đề không bị Navbar che khuất. |
+| **G-14** | Chuyển đổi Song ngữ Storefront (i18n) | Nhấp nút chuyển đổi `VI \| EN` trên thanh Navbar máy tính hoặc ngăn kéo Mobile menu. | Click nút gạt ngôn ngữ. | Toàn bộ giao diện người dùng lập tức chuyển đổi mượt mà giữa tiếng Việt và tiếng Anh, tự động lưu lựa chọn vào `localStorage`. |
 
 ---
 
@@ -315,6 +319,9 @@ sequenceDiagram
 | **C-04** | Quản lý Hồ sơ cá nhân | Xem và cập nhật thông tin cá nhân: Đổi họ tên, số điện thoại, cập nhật mật khẩu mới. | Đã đăng nhập, truy cập `/profile` -> Tab "Hồ sơ". | Lưu thông tin cập nhật mới vào dữ liệu tài khoản, hiển thị thông báo thành công. |
 | **C-05** | Lịch sử Đơn mua (My Orders) | Theo dõi toàn bộ danh sách đơn hàng đã từng đặt bởi chính tài khoản này; hiển thị mã đơn, ngày mua, tổng tiền và trạng thái hiện tại. | Đã đăng nhập, truy cập `/profile` -> Tab "Đơn hàng của tôi". | Hiển thị bảng đơn hàng trực quan kèm nhãn màu trạng thái (`Pending`: Vàng, `Shipping`: Xanh lam, `Delivered`: Xanh lá, `Cancelled`: Đỏ). |
 | **C-06** | Kế thừa giỏ hàng & Yêu thích | Giữ nguyên các mặt hàng đã chọn trong giỏ hàng và danh sách yêu thích gắn liền với phiên làm việc của người dùng. | Đăng nhập tài khoản. | Dữ liệu giỏ hàng và yêu thích không bị mất đi khi chuyển đổi qua lại giữa các trang. |
+| **C-07** | Viết Đánh giá sản phẩm đã mua | Chọn số sao (1-5 sao bằng hiệu ứng hover chuột), nhập tiêu đề và nhận xét chi tiết cho món đồ đã nhận trong đơn hàng `Delivered`. | Bấm "Write Review" tại đơn hàng hoặc trang chi tiết. | Đánh giá được lưu bền vững, gắn nhãn `Verified Buyer` và cập nhật điểm trung bình ngay lập tức. |
+| **C-08** | In Hóa Đơn Bán Lẻ Sang Trọng | Bật bản xem trước Hóa đơn Boutique Paris và gọi lệnh in ấn trình duyệt (`window.print()`) với định dạng trang in `@media print` chuyên biệt. | Bấm nút "Print Receipt / Print Invoice". | Mở hộp thoại in trình duyệt chuẩn A4/A5, tự động ẩn giao diện web xung quanh. |
+| **C-09** | Theo dõi Tiến độ Đơn hàng (Timeline) | Theo dõi hành trình 4 nấc đơn hàng: `Order Placed` -> `Atelier Packaging` -> `In Transit` -> `Delivered`. | Xem đơn hàng tại `ProfilePage` hoặc `OrderSuccessPage`. | Thanh tiến trình đổi màu và biểu tượng theo thời gian thực khi Admin cập nhật trạng thái. |
 
 ---
 
@@ -330,7 +337,11 @@ sequenceDiagram
 | **A-06** | Quản lý danh sách Đơn hàng | Hiển thị bảng tổng hợp tất cả đơn hàng của mọi khách hàng trong hệ thống: Mã đơn, Tên người nhận, SĐT, Ngày tạo, Tổng tiền, Trạng thái. | Truy cập `/admin/orders`. | Bảng danh sách hỗ trợ lọc theo trạng thái và tìm kiếm mã đơn hàng. |
 | **A-07** | Cập nhật tiến độ Đơn hàng | Cho phép Admin chuyển đổi trạng thái vòng đời của đơn hàng: `Pending` (Chờ duyệt) $\rightarrow$ `Shipping` (Đang giao hàng) $\rightarrow$ `Delivered` (Đã giao thành công) hoặc `Cancelled` (Hủy đơn). | Chọn trạng thái mới từ danh sách dropdown hoặc nút bấm tại đơn hàng. | Trạng thái cập nhật tức thời; tài khoản khách đặt đơn hàng đó sẽ nhìn thấy trạng thái mới khi kiểm tra hồ sơ cá nhân. |
 | **A-08** | Quản lý danh sách Thành viên | Hiển thị danh sách toàn bộ người dùng đã đăng ký tài khoản trong hệ thống: Họ tên, Email, Vai trò (`admin` / `user`). | Truy cập `/admin/users`. | Cung cấp cái nhìn tổng quan về quy mô người dùng đăng ký của cửa hàng. |
+<<<<<<< HEAD
 | **A-09** | Tạo và quản lý Voucher | Tạo mã duy nhất, chọn giảm theo phần trăm/số tiền, đặt đơn tối thiểu và ngày hết hạn; cho phép bật/tắt hoặc xóa voucher. | Truy cập `/admin/vouchers` với quyền `admin`. | Voucher được lưu và xuất hiện tại Checkout khi còn hoạt động, còn hạn và đơn hàng đạt điều kiện. |
+=======
+| **A-09** | Bản địa hóa Song ngữ Phân hệ Quản trị (Admin i18n) | Tích hợp bộ chuyển đổi ngôn ngữ độc lập `LanguageSwitcher` (`VI \| EN`) ngay trên thanh Topbar quản trị; tự động bản địa hóa toàn bộ thanh Sidebar, 4 thẻ KPI, bộ lọc/tìm kiếm, tiêu đề cột bảng, modal form CRUD sản phẩm, thông báo xóa an toàn và thông báo toast sang tiếng Việt / tiếng Anh tức thì. | Đăng nhập với quyền `admin`, nhấp nút chuyển ngữ trên Admin Topbar. | 100% giao diện phân hệ Admin chuyển đổi ngôn ngữ trơn tru mà không cần reload trang; lưu trạng thái đồng bộ vào `localStorage`. |
+>>>>>>> dd6537150711d01c057db8227186955ea585ccac
 
 ---
 
@@ -376,6 +387,7 @@ Ký hiệu:
 * **Bộ sưu tập ảnh chi tiết (Images):** Danh sách mảng các đường dẫn ảnh góc phụ để người mua khảo sát chi tiết đường may và phối đồ.
 * **Dải kích cỡ (Sizes):** Mảng các kích cỡ khả dụng (Ví dụ: `XS`, `S`, `M`, `L`, `XL`).
 * **Bảng màu sắc (Colors):** Mảng các phiên bản màu sắc có sẵn (Ví dụ: `Black`, `Beige`, `Ivory`, `Navy`).
+* **Số lượng tồn kho (Stock):** Số nguyên không âm ($\ge 0$) biểu diễn số lượng sản phẩm thực tế còn sẵn sàng trong kho *(Do Thành viên 1 thiết kế và quản trị)*.
 * **Mô tả sản phẩm (Description):** Nội dung phân tích chất liệu vải, phom dáng và hướng dẫn sử dụng.
 * **Thuộc tính nổi bật (isNew):** Cờ trạng thái xác định sản phẩm thuộc bộ sưu tập mới xuất xưởng.
 
@@ -426,6 +438,26 @@ Ký hiệu:
 4. **Quy tắc Bảo mật Điều hướng (Route Protection Rule):**
    * Khu vực `/profile` yêu cầu người dùng phải có phiên đăng nhập hợp lệ. Nếu chưa đăng nhập $\rightarrow$ Điều hướng tức thì về `/login`.
    * Toàn bộ cụm đường dẫn `/admin/*` yêu cầu người dùng vừa phải đăng nhập, vừa phải sở hữu vai trò `role: admin`. Mọi đối tượng khác (Khách vãng lai, Người dùng thường) đều bị ngăn chặn tuyệt đối.
+5. **Quy tắc Quản trị Vòng đời Tồn kho Sản phẩm (Inventory & Stock Flow Rule - Do Thành viên 1 phụ trách):**
+   * **Khấu trừ tồn kho tự động khi tạo đơn:** Khi khách hàng đặt đơn thành công thông qua `addOrder()`, hệ thống tự động khấu trừ số lượng sản phẩm tương ứng trong kho hàng (`stock = Math.max(0, currentStock - boughtQuantity)`).
+   * **Hoàn kho tự động khi hủy đơn:** Khi đơn hàng chuyển trạng thái sang `Cancelled` (do khách hủy hoặc Admin hủy), hệ thống tự động hoàn lại đúng số lượng của từng mặt hàng về kho `products` trong `localStorage`.
+   * **Kiểm soát khả dụng trên giao diện Storefront:**
+     - Bộ chọn số lượng `quantity` bị giới hạn trên bởi `stock` (không thể vượt quá tồn kho khả dụng).
+     - Sản phẩm có `stock === 0`: Hiển thị nhãn `SOLD OUT` trên thẻ sản phẩm, nhãn `HẾT HÀNG (OUT OF STOCK)` tại trang chi tiết/xem nhanh, đồng thời vô hiệu hóa nút `ADD TO BAG`.
+     - Sản phẩm có `1 <= stock <= 5`: Hiển thị cảnh báo màu vàng cam `CHỈ CÒN X SẢN PHẨM (LOW STOCK)` kích thích quyết định mua hàng.
+   * **Quản trị Tồn kho Phía Admin (`/admin/products`):**
+     - Bảng sản phẩm hiển thị trực quan cột số lượng tồn kho kèm badge màu theo 3 cấp độ: Còn hàng (>10 sản phẩm - Xanh lục), Cảnh báo sắp hết (1-10 sản phẩm - Vàng cam), Hết hàng (0 sản phẩm - Đỏ).
+     - Hỗ trợ thêm mới hoặc chỉnh sửa trường số lượng tồn kho với kiểm tra ràng buộc số nguyên $\ge 0$.
+6. **Quy tắc Quốc tế hóa & Đa ngôn ngữ Song Ngữ Toàn Diện (Full-Site Bilingual i18n Rule - Do Thành viên 1 phụ trách):**
+   * **Kiến trúc Context Độc lập (Zero 3rd-party Dependency):** Hệ thống tích hợp `LanguageContext` và từ điển dịch thuật tập trung `src/data/translations.js` (`translations.vi` & `translations.en`), cho phép người dùng chuyển đổi qua lại giữa tiếng Việt (VI 🇻🇳) và tiếng Anh (EN 🇬🇧) tức thời mà không cần nạp lại trang và không phụ thuộc thư viện cồng kềnh ngoài.
+   * **Lưu trữ tùy chọn hiển thị cố định (Persistence):** Tùy chọn ngôn ngữ được đồng bộ tự động vào `localStorage` với khóa `'lune_language'` (`'vi'` | `'en'`), bảo toàn ngôn ngữ ưa thích của người dùng qua các phiên truy cập tiếp theo.
+   * **Hàm bản địa hóa thông minh `t()` & `tp()`:**
+     - Hàm `t(path, fallback)`: Tra cứu chuỗi dịch qua cấu trúc dot-path an toàn với cơ chế fallback tự động về tiếng Việt nếu thiếu khóa.
+     - Hàm `tp(product, field)`: Tự động tra cứu tên (`name`) và mô tả (`description`) bản địa hóa của từng trang phục trong từ điển `productTranslations` mà không làm thay đổi ID sản phẩm hay ảnh hưởng cấu trúc giỏ hàng.
+   * **Điểm truy cập điều khiển linh hoạt (`LanguageSwitcher.jsx`):**
+     - **Thanh thông báo đầu trang (Top Header Actions):** Nút gạt `VI | EN` tối giản, thanh lịch chuẩn phong cách Warm Luxury với hiệu ứng vi gạch chân vàng kim `#C8AE84`.
+     - **Menu điều hướng di động (Mobile Drawer):** Mục chọn ngôn ngữ nổi bật ở ngăn kéo di động giúp người dùng smartphone thao tác bằng một tay dễ dàng.
+   * **Phạm vi bản địa hóa 100% toàn diện:** Toàn bộ thanh điều hướng, ô tìm kiếm thời gian thực, bảng kích cỡ, nhãn tồn kho, giỏ hàng, trang thanh toán, chân trang, tiến trình may đo (`OrderTimeline`), hóa đơn boutique in ấn (`InvoiceModal` chuyển đổi định dạng ngày tháng `vi-VN` / `en-US`), modal đánh giá sao (`ReviewModal`), trang chi tiết sản phẩm, cùng toàn bộ phân hệ Xác thực (Trang Đăng nhập `/login` kèm modal Quên mật khẩu & đăng nhập xã hội, Trang Đăng ký `/register` kèm đo độ mạnh mật khẩu & modal Điều khoản hội viên) và Hồ sơ cá nhân (`/profile` bao gồm toàn bộ 5 tab: Đơn hàng, Thông tin cá nhân, Đổi mật khẩu, Sổ địa chỉ và Danh sách yêu thích) đều được bản địa hóa chuẩn mực 100% theo phong cách Warm Luxury.
 
 ---
 
