@@ -74,8 +74,8 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 | **TC-CART-03** | Tăng giảm & Xóa món đồ trong ngăn kéo | 1. Bấm nút `[+]` tại dòng sản phẩm trong giỏ.<br>2. Bấm biểu tượng Thùng rác (Xóa). | Click nút tăng và xóa | Số lượng tăng ngay, tổng tiền tự động tính lại; khi bấm thùng rác món hàng biến mất khỏi giỏ ngay lập tức. | [ ] PASS<br>[ ] FAIL |
 | **TC-CART-04** | Thanh tiến độ Miễn phí Vận chuyển | 1. Thêm sản phẩm có tổng tiền $140.<br>2. Thêm tiếp sản phẩm để tổng tiền đạt $210. | Mức tiền: $140 và $210 | Ở mức $140: Thanh đo hiển thị dòng chữ *"Mua thêm $60 để được Free Shipping"*; Khi đạt $210: Thanh đo đầy 100% kèm chữ chúc mừng *"Bạn đã được Miễn phí Vận chuyển!"*. | [ ] PASS<br>[ ] FAIL |
 | **TC-CHK-01** | Tính toán chi phí đơn hàng tại Checkout | 1. Giỏ hàng có tổng tiền $150.<br>2. Bấm chuyển sang trang `/checkout`. | Đơn hàng $150 | Cột tóm tắt hiển thị: Tạm tính: `$150`, Phí vận chuyển: `$15`, Tổng thanh toán: `$165`. | [ ] PASS<br>[ ] FAIL |
-| **TC-CHK-02** | Áp dụng Mã giảm giá (Promo Code) | 1. Tại trang checkout, nhập mã `LUNE10` vào ô khuyến mãi.<br>2. Bấm nút "Áp dụng". | Mã: `LUNE10` | Hiển thị thông báo mã hợp lệ; xuất hiện dòng chiết khấu giảm 10% (trừ $15); tổng thanh toán được tính lại chính xác: `$150` | [ ] PASS<br>[ ] FAIL |
-| **TC-CHK-03** | Báo lỗi mã giảm giá sai | 1. Nhập mã linh tinh: `GIAM50`.<br>2. Bấm Áp dụng. | Mã: `GIAM50` | Báo lỗi màu đỏ: *"Mã khuyến mại không hợp lệ hoặc đã hết hạn"*; tiền thanh toán không bị thay đổi. | [ ] PASS<br>[ ] FAIL |
+| **TC-CHK-02** | Chọn voucher hợp lệ | 1. Tại checkout, chọn `LUNE10` trong danh sách voucher.<br>2. Kiểm tra tóm tắt đơn hàng. | Tạm tính `$150`, voucher `LUNE10` giảm 10% | Voucher được áp dụng; dòng chiết khấu là `$15`; tổng thanh toán sau phí ship `$15` là `$150`; đơn hàng lưu mã `LUNE10`. | [ ] PASS<br>[ ] FAIL |
+| **TC-CHK-03** | Chỉ hiển thị voucher đủ điều kiện | 1. Tạo voucher có đơn tối thiểu `$200` và một voucher đã hết hạn.<br>2. Mở checkout với giỏ hàng `$150`. | Voucher tối thiểu `$200`; voucher hết hạn | Hai voucher không xuất hiện trong danh sách chọn; voucher không hợp lệ không làm thay đổi tổng tiền. | [ ] PASS<br>[ ] FAIL |
 | **TC-CHK-04** | Xác thực biểu mẫu thông tin giao hàng | 1. Để trống toàn bộ ô và bấm "Place Order".<br>2. Nhập số điện thoại chữ: `"abcxyz"`. | Bỏ trống / Sai định dạng | Các ô bắt buộc chuyển viền đỏ, hiển thị lỗi yêu cầu nhập đầy đủ; chặn không cho tiến hành đặt hàng. | [ ] PASS<br>[ ] FAIL |
 | **TC-CHK-05** | Hoàn tất đặt hàng & Dọn sạch giỏ | 1. Điền đầy đủ thông tin hợp lệ.<br>2. Chọn thanh toán COD.<br>3. Bấm "Place Order". | Dữ liệu hợp lệ | Chuyển ngay sang trang `/order-success`; hiển thị mã đơn dạng `LUNE-XXXX`; giỏ hàng được xóa rỗng hoàn toàn về 0 món. | [ ] PASS<br>[ ] FAIL |
 
@@ -97,7 +97,7 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 
 ---
 
-### 👤 TEST SUITE 6: CỔNG QUẢN TRỊ ADMIN & CRUD SẢN PHẨM (PHỤ TRÁCH: TV6)
+### 👤 TEST SUITE 6: CỔNG QUẢN TRỊ ADMIN, SẢN PHẨM & VOUCHER (PHỤ TRÁCH: TV6)
 
 | Mã ca kiểm thử | Tên tình huống kiểm thử | Các bước thực hiện (Steps) | Dữ liệu đầu vào (Input) | Kết quả mong đợi (Expected Outcome) | Đánh giá |
 | :---: | :--- | :--- | :--- | :--- | :---: |
@@ -108,6 +108,10 @@ Tài liệu này là **"Thước đo nghiệm thu" (Definition of Done)** bắt 
 | **TC-CRUD-03** | Chặn lưu khi biểu mẫu thêm sản phẩm bị bỏ trống | 1. Mở modal thêm mới, để trống Tên hoặc Giá.<br>2. Bấm "Lưu". | Bỏ trống trường bắt buộc | Hiển thị cảnh báo lỗi viền đỏ; không cho phép thêm vào danh sách kho. | [ ] PASS<br>[ ] FAIL |
 | **TC-CRUD-04** | Chỉnh sửa thông tin sản phẩm (Update) | 1. Tại dòng sản phẩm vừa thêm, bấm nút "Sửa".<br>2. Đổi giá từ `220` thành `195`, sửa lại tên.<br>3. Bấm "Cập nhật". | Sửa đổi giá và tên | Dữ liệu trong bảng cập nhật ngay giá mới `195`; ra ngoài trang Shop kiểm tra thấy giá đã đổi thành 195. | [ ] PASS<br>[ ] FAIL |
 | **TC-CRUD-05** | Xóa sản phẩm có hộp thoại xác nhận (Delete)| 1. Bấm nút "Xóa" tại một sản phẩm.<br>2. Xuất hiện hộp thoại hỏi: *"Bạn có chắc muốn xóa?"*.<br>3. Bấm "Đồng ý". | Xác nhận Xóa | Sản phẩm biến mất hoàn toàn khỏi bảng Admin và biến mất vĩnh viễn khỏi trang `/shop` của khách. | [ ] PASS<br>[ ] FAIL |
+| **TC-VCH-01** | Admin tạo voucher phần trăm | 1. Vào `/admin/vouchers`.<br>2. Tạo mã `LUNE15`, giảm 15%, đơn tối thiểu `$100`.<br>3. Lưu và tải lại trang. | Mã mới, giảm 15%, tối thiểu `$100` | Voucher xuất hiện trong danh sách và vẫn còn sau khi tải lại trang; mã được chuẩn hóa chữ hoa. | [ ] PASS<br>[ ] FAIL |
+| **TC-VCH-02** | Chặn mã trùng và dữ liệu giảm không hợp lệ | 1. Tạo mã đã tồn tại.<br>2. Thử phần trăm lớn hơn 100 hoặc giá trị giảm không dương. | Mã trùng; phần trăm `101` | Hiển thị lỗi xác thực; không tạo voucher mới. | [ ] PASS<br>[ ] FAIL |
+| **TC-VCH-03** | Bật/tắt voucher | 1. Bấm Disable tại voucher đang hoạt động.<br>2. Mở checkout với giỏ hàng đạt điều kiện. | Voucher trạng thái Inactive | Voucher không xuất hiện cho khách; bấm Enable sẽ cho phép hiển thị lại nếu còn hạn và đủ điều kiện. | [ ] PASS<br>[ ] FAIL |
+| **TC-VCH-04** | Xóa voucher | 1. Bấm nút xóa tại một voucher.<br>2. Xác nhận hộp thoại. | Voucher đã tạo | Voucher bị xóa khỏi danh sách quản trị và không còn được chọn ở checkout. | [ ] PASS<br>[ ] FAIL |
 | **TC-ORD-01** | Cập nhật trạng thái vòng đời đơn hàng | 1. Vào `/admin/orders`.<br>2. Tìm đơn hàng đang có trạng thái `Pending`.<br>3. Bấm chuyển sang `Shipping`, sau đó chuyển sang `Delivered`. | Click đổi trạng thái | Trạng thái đổi màu nhãn ngay lập tức; tài khoản khách đặt đơn đó mở `/profile` thấy đơn của mình đã chuyển sang `Delivered`. | [ ] PASS<br>[ ] FAIL |
 | **TC-USER-01** | Xem danh sách người dùng hệ thống | 1. Vào `/admin/users`. | Mở trang | Hiển thị đầy đủ danh sách các tài khoản đã đăng ký, hiển thị rõ vai trò `admin` hoặc `user`. | [ ] PASS<br>[ ] FAIL |
 
