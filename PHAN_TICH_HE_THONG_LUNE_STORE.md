@@ -85,7 +85,6 @@ graph TD
     AdminPortal --> AdminProd["/admin/products (Quản trị kho sản phẩm - CRUD)"]
     AdminPortal --> AdminOrd["/admin/orders (Quản trị luồng đơn hàng)"]
     AdminPortal --> AdminUsers["/admin/users (Quản lý danh sách thành viên)"]
-    AdminPortal --> AdminVouchers["/admin/vouchers (Tạo và quản lý voucher)"]
 ```
 
 ### 1. Kiến trúc phân hệ Khách hàng (Storefront)
@@ -105,11 +104,11 @@ graph TD
 ### 2. Kiến trúc phân hệ Quản trị (Admin Portal)
 | Đường dẫn (Route) | Tên màn hình / Chức năng | Mô tả vai trò kiến trúc | Điều kiện bảo vệ |
 | :--- | :--- | :--- | :--- |
-| `/admin` | **Admin Dashboard** | Màn hình trung tâm hiển thị 4 chỉ số KPI then chốt (Doanh thu, Đơn hàng, Tồn kho, Thành viên) và danh sách 5 đơn hàng mới nhất cần duyệt. | Chỉ tài khoản `role: admin` |
-| `/admin/products` | **Quản lý sản phẩm (Products)** | Bảng dữ liệu sản phẩm, tìm kiếm nội bộ, modal Thêm mới sản phẩm, form Sửa thông tin và thao tác Xóa sản phẩm khỏi kho. | Chỉ tài khoản `role: admin` |
+| `/admin` | **Admin Dashboard** | Màn hình trung tâm hiển thị 4 chỉ số KPI then chốt (Doanh thu, Đơn hàng, Tồn kho, Thành viên), bộ đôi biểu đồ phân tích kinh doanh SVG trực quan (Xu hướng doanh thu 7 ngày & Phân bổ tỷ trọng danh mục Donut) và danh sách 5 đơn hàng mới nhất cần duyệt. | Chỉ tài khoản `role: admin` |
+| `/admin/products` | **Quản lý sản phẩm (Products)** | Bảng dữ liệu sản phẩm, tìm kiếm nội bộ, modal Thêm mới sản phẩm, form Sửa thông tin, thao tác Xóa sản phẩm khỏi kho, và **cơ chế 1-click Bật/Tắt Ẩn/Hiện sản phẩm (`Eye / EyeOff`)** kèm chế độ xem trước Admin Preview Mode. | Chỉ tài khoản `role: admin` |
 | `/admin/orders` | **Quản lý đơn hàng (Orders)** | Toàn bộ danh sách đơn đặt hàng từ khách, công cụ thay đổi trạng thái đơn hàng (`Pending` -> `Shipping` -> `Delivered` -> `Cancelled`). | Chỉ tài khoản `role: admin` |
 | `/admin/users` | **Quản lý thành viên (Users)** | Danh mục người dùng đã đăng ký tài khoản trong hệ sinh thái, phân loại cấp bậc tài khoản (`admin` / `user`). | Chỉ tài khoản `role: admin` |
-| `/admin/vouchers` | **Quản lý voucher (Vouchers)** | Tạo voucher theo phần trăm hoặc số tiền cố định, đặt giá trị đơn hàng tối thiểu/ngày hết hạn, bật tắt và xóa voucher. | Chỉ tài khoản `role: admin` |
+| `/admin/vouchers` | **Quản lý Voucher & Ưu đãi (Vouchers)** | Bảng điều khiển quản lý mã ưu đãi, 4 thẻ KPI thống kê, bộ lọc tìm kiếm, bộ 3 nút thao tác (Eye/EyeOff, Edit, Delete) và Modal Popup tạo/sửa voucher chuẩn Warm Luxury. | Chỉ tài khoản `role: admin` |
 
 ---
 
@@ -175,9 +174,8 @@ sequenceDiagram
     
     Drawer->>Checkout: Chuyển hướng sang màn hình thanh toán
     Customer->>Checkout: Nhập thông tin người nhận (Họ tên, SĐT, Địa chỉ)
-    Checkout-->>Customer: Hiển thị voucher đang hoạt động, còn hạn và đủ điều kiện đơn hàng
-    Customer->>Checkout: (Tùy chọn) Chọn voucher phù hợp (VD: LUNE10)
-    Checkout-->>Customer: Tính mức giảm và tổng tiền; lưu mã voucher vào đơn hàng
+    Customer->>Checkout: (Tùy chọn) Nhập mã giảm giá (VD: LUNE10)
+    Checkout-->>Customer: Tính toán lại mức giảm trừ và tổng số tiền thanh toán cuối cùng
     Customer->>Checkout: Chọn phương thức trả tiền (COD hoặc Thẻ ngân hàng giả lập)
     Customer->>Checkout: Bấm nút "Place Order" (Hoàn tất đặt hàng)
     
@@ -191,7 +189,7 @@ sequenceDiagram
   * **Kiểm tra giỏ rỗng:** Không cho phép truy cập hoặc nhấn đặt hàng nếu giỏ hàng có 0 sản phẩm.
   * **Thanh tiến độ Free Shipping:** Hiển thị mức tiền còn thiếu để đạt hạn mức miễn phí vận chuyển (Ví dụ: Đạt từ $200 trở lên được miễn phí ship $15).
   * **Hợp nhất biến thể:** Nếu khách thêm cùng một sản phẩm với cùng Size và Màu, hệ thống tăng số lượng (`quantity`) chứ không tạo bản ghi mới trùng lặp.
-    * **Voucher:** Chỉ hiển thị voucher đang hoạt động, chưa hết hạn và đạt giá trị đơn hàng tối thiểu; hỗ trợ giảm theo phần trăm hoặc số tiền cố định. Khoản giảm không vượt quá tiền hàng và mã được lưu cùng đơn hàng.
+  * **Mã giảm giá:** Kiểm tra tính hợp lệ của mã khuyến mãi (Ví dụ mã giảm 10%), tự động tính toán lại số tiền chiết khấu trước khi chốt tổng hóa đơn.
 
 ---
 
@@ -329,7 +327,7 @@ sequenceDiagram
 
 | Mã yêu cầu | Tên chức năng | Mô tả chi tiết nghiệp vụ | Điều kiện kích hoạt / Tiền đề | Kết quả mong đợi |
 | :--- | :--- | :--- | :--- | :--- |
-| **A-01** | Bảng số liệu tổng quan (Dashboard) | Tổng hợp và hiển thị 4 chỉ số thống kê quan trọng: Doanh thu thực tế, Tổng số đơn hàng, Tổng mã sản phẩm trong kho, Tổng số thành viên. | Đăng nhập với quyền `admin`, truy cập `/admin`. | Hiển thị các khối thẻ KPI số liệu trực quan, tỷ lệ tăng trưởng và danh sách 5 đơn hàng mới nhất phát sinh. |
+| **A-01** | Bảng số liệu tổng quan & Phân tích trực quan (Dashboard & Analytics) | Tổng hợp và hiển thị 4 chỉ số thống kê quan trọng (Doanh thu thực tế, Tổng số đơn hàng, Tổng mã sản phẩm trong kho, Tổng số thành viên), kết hợp **bộ đôi biểu đồ SVG trực quan**: Biểu đồ đường diện tích xu hướng doanh thu 7 ngày gần nhất và Biểu đồ tròn Donut phân bổ tỷ trọng doanh số theo danh mục thời trang có tương tác rê chuột (Hover Tooltip). | Đăng nhập với quyền `admin`, truy cập `/admin`. | Hiển thị các khối thẻ KPI số liệu trực quan, biểu đồ SVG vẽ native không dùng thư viện ngoài, và danh sách 5 đơn hàng mới nhất phát sinh. |
 | **A-02** | Xem danh mục sản phẩm (Read) | Hiển thị toàn bộ danh sách sản phẩm trong kho theo dạng bảng quản trị: Ảnh đại diện, Tên sản phẩm, Giá niêm yết, Danh mục, Thao tác. | Truy cập `/admin/products`. | Bảng dữ liệu có thanh tìm kiếm nội bộ để tra cứu nhanh theo tên sản phẩm. |
 | **A-03** | Thêm sản phẩm mới (Create) | Mở form/modal nhập liệu sản phẩm mới gồm: Tên, Giá, Danh mục (Women/Men/Accessories), Link ảnh chính, Mảng ảnh phụ, Kích cỡ, Màu sắc, Mô tả. | Bấm nút "Thêm sản phẩm mới" tại `/admin/products`. | Kiểm tra tính hợp lệ biểu mẫu (không để trống trường bắt buộc). Bấm "Lưu" -> Sản phẩm xuất hiện ngay lập tức trên cả Admin và Storefront. |
 | **A-04** | Sửa sản phẩm (Update) | Tải lại toàn bộ dữ liệu hiện tại của sản phẩm được chọn lên form chỉnh sửa để Quản trị viên thay đổi giá tiền, tiêu đề, ảnh hoặc mô tả. | Bấm nút "Sửa" tại dòng sản phẩm tương ứng. | Dữ liệu cũ được tải chính xác lên form; bấm "Cập nhật" -> Dữ liệu mới lập tức đồng bộ toàn hệ thống. |
@@ -337,11 +335,9 @@ sequenceDiagram
 | **A-06** | Quản lý danh sách Đơn hàng | Hiển thị bảng tổng hợp tất cả đơn hàng của mọi khách hàng trong hệ thống: Mã đơn, Tên người nhận, SĐT, Ngày tạo, Tổng tiền, Trạng thái. | Truy cập `/admin/orders`. | Bảng danh sách hỗ trợ lọc theo trạng thái và tìm kiếm mã đơn hàng. |
 | **A-07** | Cập nhật tiến độ Đơn hàng | Cho phép Admin chuyển đổi trạng thái vòng đời của đơn hàng: `Pending` (Chờ duyệt) $\rightarrow$ `Shipping` (Đang giao hàng) $\rightarrow$ `Delivered` (Đã giao thành công) hoặc `Cancelled` (Hủy đơn). | Chọn trạng thái mới từ danh sách dropdown hoặc nút bấm tại đơn hàng. | Trạng thái cập nhật tức thời; tài khoản khách đặt đơn hàng đó sẽ nhìn thấy trạng thái mới khi kiểm tra hồ sơ cá nhân. |
 | **A-08** | Quản lý danh sách Thành viên | Hiển thị danh sách toàn bộ người dùng đã đăng ký tài khoản trong hệ thống: Họ tên, Email, Vai trò (`admin` / `user`). | Truy cập `/admin/users`. | Cung cấp cái nhìn tổng quan về quy mô người dùng đăng ký của cửa hàng. |
-<<<<<<< HEAD
-| **A-09** | Tạo và quản lý Voucher | Tạo mã duy nhất, chọn giảm theo phần trăm/số tiền, đặt đơn tối thiểu và ngày hết hạn; cho phép bật/tắt hoặc xóa voucher. | Truy cập `/admin/vouchers` với quyền `admin`. | Voucher được lưu và xuất hiện tại Checkout khi còn hoạt động, còn hạn và đơn hàng đạt điều kiện. |
-=======
 | **A-09** | Bản địa hóa Song ngữ Phân hệ Quản trị (Admin i18n) | Tích hợp bộ chuyển đổi ngôn ngữ độc lập `LanguageSwitcher` (`VI \| EN`) ngay trên thanh Topbar quản trị; tự động bản địa hóa toàn bộ thanh Sidebar, 4 thẻ KPI, bộ lọc/tìm kiếm, tiêu đề cột bảng, modal form CRUD sản phẩm, thông báo xóa an toàn và thông báo toast sang tiếng Việt / tiếng Anh tức thì. | Đăng nhập với quyền `admin`, nhấp nút chuyển ngữ trên Admin Topbar. | 100% giao diện phân hệ Admin chuyển đổi ngôn ngữ trơn tru mà không cần reload trang; lưu trạng thái đồng bộ vào `localStorage`. |
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
+| **A-10** | Quản lý Mã Giảm Giá & Ưu Đãi Đặc Quyền (Admin Vouchers Modal) | Bảng điều khiển quản lý voucher toàn diện: 4 thẻ KPI thống kê (Tổng mã, Đang áp dụng, Giảm theo %, Giảm cố định), bộ lọc tìm kiếm mã tức thời, bộ 3 nút thao tác biểu tượng đồng bộ (`Eye / EyeOff` bật/tắt kích hoạt tức thời, `Edit` sửa qua modal nạp dữ liệu cũ, `Delete` xóa an toàn), form **Modal Popup sang trọng (`Create / Edit Voucher Modal`)** hỗ trợ cài đặt Ngày & Giờ Bắt Đầu và Ngày & Giờ Kết Thúc chính xác, kiểm tra ràng buộc logic thời gian. | Đăng nhập với quyền `admin`, truy cập `/admin/vouchers`. | Quản trị viên quản lý voucher tiện lợi qua Modal Popup chuẩn Warm Luxury; voucher lưu bền vững vào `localStorage`, khách hàng được đối soát 3 điều kiện và gợi ý upsell mua thêm tại Checkout. |
+| **A-11** | Cơ chế Ẩn/Hiện Sản phẩm & Chế độ Xem trước Admin (Product Visibility & Preview Mode) | Cho phép Admin bật/tắt khả năng hiển thị ngoài cửa hàng (`isActive`) tức thì qua nút icon con mắt (`Eye / EyeOff`) đồng bộ tại `/admin/products`. Storefront tự động lọc bỏ các sản phẩm bị ẩn khỏi trang Home, trang Shop và Live Search. Khi Admin truy cập đường dẫn chi tiết của sản phẩm bị ẩn sẽ kích hoạt biểu ngữ cảnh báo màu hổ phách sang trọng *"Chế độ Xem Trước Quản Trị"* kèm nút điều hướng quay về kho; trong khi khách vãng lai sẽ thấy biểu ngữ lưu trữ sản phẩm (*Archived Piece*) và bị vô hiệu hóa nút mua hàng. | Nhấp icon `Eye / EyeOff` tại `/admin/products` hoặc truy cập URL sản phẩm ẩn với quyền Admin. | Bật/tắt trạng thái hiển thị tức thì không làm lệch bảng; bảo vệ kho hàng an toàn mà không cần xóa sản phẩm; cung cấp chế độ xem trước đặc quyền cho Quản trị viên. |
 
 ---
 
@@ -360,7 +356,6 @@ Ký hiệu:
 | **Thêm hàng vào Giỏ, Tăng giảm số lượng** | OWN | OWN | OWN |
 | **Yêu thích sản phẩm (Wishlist)** | OWN | OWN | OWN |
 | **Thực hiện Đặt hàng (Checkout)** | OWN | OWN | OWN |
-| **Xem và chọn voucher đủ điều kiện tại Checkout** | READ | READ | READ |
 | **Trang Đăng ký / Đăng nhập** | FULL | READ | READ |
 | **Xem và Chỉnh sửa Hồ sơ cá nhân (Profile)** | DENIED | OWN | OWN |
 | **Xem Lịch sử Đơn mua (My Orders)** | DENIED | OWN | OWN |
@@ -368,7 +363,7 @@ Ký hiệu:
 | **Thêm / Sửa / Xóa Sản phẩm (`/admin/products`)** | DENIED | DENIED | FULL |
 | **Xem và Đổi trạng thái mọi Đơn hàng (`/admin/orders`)** | DENIED | DENIED | FULL |
 | **Xem danh sách Thành viên toàn hệ thống (`/admin/users`)** | DENIED | DENIED | FULL |
-| **Tạo / Bật tắt / Xóa Voucher (`/admin/vouchers`)** | DENIED | DENIED | FULL |
+| **Quản lý Voucher & Khuyến mại (`/admin/vouchers`)** | DENIED | DENIED | FULL |
 
 ---
 
@@ -388,6 +383,7 @@ Ký hiệu:
 * **Dải kích cỡ (Sizes):** Mảng các kích cỡ khả dụng (Ví dụ: `XS`, `S`, `M`, `L`, `XL`).
 * **Bảng màu sắc (Colors):** Mảng các phiên bản màu sắc có sẵn (Ví dụ: `Black`, `Beige`, `Ivory`, `Navy`).
 * **Số lượng tồn kho (Stock):** Số nguyên không âm ($\ge 0$) biểu diễn số lượng sản phẩm thực tế còn sẵn sàng trong kho *(Do Thành viên 1 thiết kế và quản trị)*.
+* **Trạng thái khả dụng (isActive):** Giá trị logic boolean (`true`: mở bán công khai ngoài Storefront; `false`: tạm ẩn vào kho di sản, có cờ xem trước cho Admin).
 * **Mô tả sản phẩm (Description):** Nội dung phân tích chất liệu vải, phom dáng và hướng dẫn sử dụng.
 * **Thuộc tính nổi bật (isNew):** Cờ trạng thái xác định sản phẩm thuộc bộ sưu tập mới xuất xưởng.
 
@@ -418,6 +414,18 @@ Ký hiệu:
   * `admin`: Người có toàn quyền quản trị hệ sinh thái.
   * `user`: Khách hàng thông thường.
 
+#### E. Thực thể Mã Giảm Giá & Ưu Đãi (Voucher Entity)
+* **Mã định danh (ID):** Chuỗi ký tự duy nhất (Ví dụ: `v-1729123456789`).
+* **Mã ưu đãi (Code):** Chuỗi ký tự định danh viết hoa chuẩn nhận diện thương hiệu (Ví dụ: `LUNE10`, `WELCOME20`, `VIP30`).
+* **Loại chiết khấu (Type):** 
+  * `percentage`: Chiết khấu giảm theo tỷ lệ phần trăm (%).
+  * `fixed`: Chiết khấu khấu trừ số tiền cố định (USD).
+* **Giá trị chiết khấu (Value):** Số nguyên dương đại diện cho mức ưu đãi (Ví dụ: `10` tương đương 10% hoặc `$50` tiền mặt).
+* **Mức chi tiêu tối thiểu (Min Spend):** Giá trị đơn hàng tối thiểu để đủ điều kiện áp dụng mã (Ví dụ: `$100`, `$150`).
+* **Thời gian bắt đầu (Starts At):** Chuỗi ngày giờ bắt đầu hiệu lực (Định dạng chuẩn `YYYY-MM-DDTHH:mm`).
+* **Thời gian kết thúc (Expires At):** Chuỗi ngày giờ kết thúc hiệu lực (Định dạng chuẩn `YYYY-MM-DDTHH:mm`).
+* **Trạng thái kích hoạt (Active):** Cờ boolean (`true` / `false`) cho phép Quản trị viên bật hoặc tạm ngưng phát hành mã ưu đãi qua nút biểu tượng con mắt (`Eye` / `EyeOff`).
+
 ---
 
 ### 2. Các Quy tắc Nghiệp vụ Cốt lõi (Business Rules)
@@ -429,7 +437,7 @@ Ký hiệu:
 2. **Quy tắc Tính toán Tài chính & Vận chuyển (Financial Calculation Rule):**
    * $\text{Tạm tính (Subtotal)} = \sum (\text{Giá sản phẩm} \times \text{Số lượng})$.
    * **Chính sách Miễn phí vận chuyển:** Nếu $\text{Tạm tính} \ge \$200 \implies \text{Phí vận chuyển} = \$0$. Nếu $\text{Tạm tính} < \$200 \implies \text{Phí vận chuyển} = \$15$.
-    * **Chiết khấu voucher:** Voucher phải đang hoạt động, chưa hết hạn và đạt mức tạm tính tối thiểu. Voucher phần trăm tính theo tạm tính; voucher số tiền cố định giảm đúng giá trị voucher nhưng không vượt quá tạm tính.
+   * **Chiết khấu khuyến mại:** Nếu áp dụng thành công mã hợp lệ (Ví dụ mã giảm 10% `LUNE10`) $\implies \text{Giảm giá} = \text{Tạm tính} \times 10\%$.
    * $\text{Tổng thanh toán cuối cùng (Grand Total)} = \text{Tạm tính} - \text{Giảm giá} + \text{Phí vận chuyển}$.
 3. **Quy tắc Chuyển đổi Trạng thái Đơn hàng (State Transition Rule):**
    * Trạng thái khởi tạo mặc định luôn là `Pending`.
@@ -458,6 +466,18 @@ Ký hiệu:
      - **Thanh thông báo đầu trang (Top Header Actions):** Nút gạt `VI | EN` tối giản, thanh lịch chuẩn phong cách Warm Luxury với hiệu ứng vi gạch chân vàng kim `#C8AE84`.
      - **Menu điều hướng di động (Mobile Drawer):** Mục chọn ngôn ngữ nổi bật ở ngăn kéo di động giúp người dùng smartphone thao tác bằng một tay dễ dàng.
    * **Phạm vi bản địa hóa 100% toàn diện:** Toàn bộ thanh điều hướng, ô tìm kiếm thời gian thực, bảng kích cỡ, nhãn tồn kho, giỏ hàng, trang thanh toán, chân trang, tiến trình may đo (`OrderTimeline`), hóa đơn boutique in ấn (`InvoiceModal` chuyển đổi định dạng ngày tháng `vi-VN` / `en-US`), modal đánh giá sao (`ReviewModal`), trang chi tiết sản phẩm, cùng toàn bộ phân hệ Xác thực (Trang Đăng nhập `/login` kèm modal Quên mật khẩu & đăng nhập xã hội, Trang Đăng ký `/register` kèm đo độ mạnh mật khẩu & modal Điều khoản hội viên) và Hồ sơ cá nhân (`/profile` bao gồm toàn bộ 5 tab: Đơn hàng, Thông tin cá nhân, Đổi mật khẩu, Sổ địa chỉ và Danh sách yêu thích) đều được bản địa hóa chuẩn mực 100% theo phong cách Warm Luxury.
+
+7. **Quy tắc Kiểm duyệt & Khấu trừ Voucher Thông minh (Voucher Lifecycle & Smart Validation Rule):**
+   * **Điều kiện khả dụng tại Checkout:** Một mã giảm giá chỉ được phép áp dụng khi và chỉ khi thỏa mãn đồng thời 3 điều kiện:
+     1. Trạng thái kích hoạt khả dụng: `active === true` (được mở qua icon con mắt `Eye`).
+     2. Khung thời gian hiệu lực: $\text{startsAt} \le \text{Thời gian hiện tại} \le \text{expiresAt}$.
+     3. Đạt định mức chi tiêu tối thiểu: $\text{Tạm tính (Subtotal)} \ge \text{minSpend}$.
+   * **Giao diện trải nghiệm người dùng tại Checkout:** Hệ thống tự động lọc danh sách các mã thỏa mãn điều kiện và hiển thị trực tiếp trong bộ chọn `Dropdown` sang trọng để khách hàng dễ dàng áp dụng bằng 1 click; hỗ trợ hiển thị gợi ý upsell mua thêm đối với các voucher sắp đạt mốc tối thiểu; hỗ trợ cả hình thức nhập mã thủ công (`promoCode`).
+   * **Công thức khấu trừ chiết khấu:**
+     - Nếu loại `percentage`: $\text{Discount} = \text{Tạm tính} \times \left(\frac{\text{Value}}{100}\right)$.
+     - Nếu loại `fixed`: $\text{Discount} = \min(\text{Value}, \text{Tạm tính})$.
+   * **Ghi nhận đơn hàng:** Mã ưu đãi được lưu trữ trực tiếp vào thuộc tính `voucherCode` của thực thể Đơn hàng để phục vụ đối soát doanh thu.
+   * **Quản trị CRUD qua Modal Popup (`/admin/vouchers`):** Toàn bộ thao tác thêm mới và cập nhật thông tin voucher được thực hiện trong cửa sổ Modal Popup chuyên biệt hỗ trợ chọn Ngày & Giờ Bắt đầu và Kết thúc, bộ 3 nút thao tác biểu tượng đồng bộ (`Eye / EyeOff`, `Edit`, `Delete`) giúp Quản trị viên thao tác tập trung, chuẩn xác và hạn chế tối đa nhầm lẫn.
 
 ---
 

@@ -19,10 +19,10 @@
     - Hồ Sơ Hội Viên (`ProfilePage` trọn vẹn 5 Tab: Đơn hàng, Thông tin, Đổi mật khẩu, Sổ địa chỉ, Yêu thích).
     - Các Modals & Tiện ích: Đánh giá sao (`ReviewModal`), In hóa đơn boutique (`InvoiceModal`), Tiến trình may đo (`OrderTimeline`), Xem nhanh (`QuickViewModal`), Bảng kích cỡ (`SizeGuideModal`).
   - **Phân hệ Quản trị viên (Admin Portal - 100% Song ngữ):**
-    - Khung quản trị (`AdminLayout`) kèm bộ nút chuyển ngữ `VI | EN` độc lập ngay trên Topbar.
-    - Bảng điều khiển (`AdminDashboard`) với 4 thẻ KPI và bảng 5 đơn mới nhất song ngữ.
-    - Quản lý sản phẩm CRUD (`AdminProducts`) với thanh công cụ lọc/tìm kiếm, bảng dữ liệu tồn kho, modal thêm/sửa sản phẩm và thông báo toast.
-    - Quản lý đơn hàng (`AdminOrders`) và Quản lý người dùng (`AdminUsers`).
+    - Khung quản trị (`AdminLayout`) kèm bộ nút chuyển ngữ `VI | EN` độc lập dạng pill tối giản ngay trên Topbar.
+    - Bảng điều khiển (`AdminDashboard`) với 4 thẻ KPI, bộ đôi biểu đồ trực quan SVG (Xu hướng doanh thu 7 ngày & Phân bổ danh mục Donut) và bảng 5 đơn mới nhất song ngữ.
+    - Quản lý sản phẩm CRUD (`AdminProducts`) với cơ chế Ẩn/Hiện sản phẩm 1-click (`Eye / EyeOff`), bảng dữ liệu tồn kho, modal thêm/sửa sản phẩm và thông báo toast.
+    - Quản lý đơn hàng (`AdminOrders`), Quản lý voucher (`AdminVouchers`) và Quản lý người dùng (`AdminUsers`).
 - **Bản địa hóa Động Sản phẩm (`tp()`):** Tự động chuyển đổi tên và mô tả sản phẩm giữa tiếng Việt và tiếng Anh mà không làm sai lệch ID sản phẩm hoặc giỏ hàng.
 - **Lưu trữ Cố định (`localStorage`):** Tự động ghi nhớ tùy chọn ngôn ngữ (`'lune_language'`) qua các phiên truy cập và khi tải lại trang (F5).
 
@@ -48,6 +48,26 @@
 - **Cross-Route Smooth Anchor Scroll:** Component `ScrollToTop` tự động điều hướng và cuộn mượt mà có độ trễ 100ms khi người dùng bấm vào các mục menu anchor (`#categories`, `#new-arrivals`, `#about`) từ bất kỳ trang con nào. Bù trừ khoảng cách cố định `scroll-margin-top: 90px` giúp tiêu đề không bị Navbar che khuất.
 - **Smart Pagination Auto-Reset:** Tự động đưa số trang về trang 1 khi người dùng thay đổi bất kỳ bộ lọc nào tại trang Shop (từ khóa, danh mục, loại đồ, kích cỡ, màu sắc, thanh trượt giá, sắp xếp) kèm chốt chặn bảo vệ biên tránh trang trống.
 
+### 7. 🎟️ Quản Lý Voucher Ưu Đãi Đặc Quyền & Áp Dụng Giảm Giá (Voucher System)
+- **Phân hệ Quản trị (`/admin/vouchers`):** 4 thẻ KPI thống kê tổng quan (Tổng số voucher, Đang hoạt động, Giảm theo %, Giảm cố định), thanh tìm kiếm mã voucher và bảng dữ liệu trạng thái thông minh 4 cấp (*Active, Upcoming, Expired, Inactive*).
+- **Modal Popup Tạo & Chỉnh Sửa Voucher Sang Trọng:** Cửa sổ Modal Popup nổi tinh tế hỗ trợ cài đặt Ngày & Giờ Bắt Đầu (`startsAt`) và Ngày & Giờ Kết Thúc (`expiresAt`) chính xác với kiểm tra ràng buộc logic thời gian; **bộ 3 icon thao tác vuông đồng bộ (`36x36px`)** gồm icon con mắt (`Eye / EyeOff`) bật/tắt hiển thị tức thì không làm lệch bảng, icon Sửa và Xóa an toàn.
+- **Phân hệ Khách hàng (`/checkout`):** Dropdown tự động lọc các voucher hợp lệ thỏa mãn đồng thời 3 điều kiện (*kích hoạt, trong khung giờ hiệu lực, đạt giá trị đơn tối thiểu*); dòng gợi ý upsell tinh tế đối với các voucher sắp đạt mốc tối thiểu; hỗ trợ cả chọn từ danh sách lẫn gõ mã tay; tự động tính giảm giá và lưu mã voucher vào đơn hàng.
+- **Bản địa hóa Song ngữ 100%:** Toàn bộ giao diện quản trị voucher và thông báo tại giỏ hàng/thanh toán đồng bộ đối xứng giữa tiếng Việt và tiếng Anh.
+
+### 8. 👁️ Cơ Chế Ẩn/Hiện Sản Phẩm & Chế Độ Xem Trước Admin (Product Visibility & Preview Mode)
+- **1-Click Visibility Toggle:** Quản trị viên bật/tắt trạng thái hiển thị (`isActive`) sản phẩm tức thì bằng nút con mắt (`Eye / EyeOff`) tại bảng `/admin/products` mà không cần xóa dữ liệu.
+- **Bảo Vệ Storefront Tự Động:** Toàn bộ sản phẩm bị ẩn (`isActive: false`) tự động bị loại bỏ khỏi Trang chủ (`HomePage`), Danh mục cửa hàng (`ShopPage`), và Tìm kiếm trực tiếp thời gian thực (`LiveSearch`).
+- **Chế Độ Xem Trước Quản Trị (Admin Preview Mode):** Khi Quản trị viên truy cập đường dẫn trực tiếp của sản phẩm bị ẩn, giao diện hiển thị biểu ngữ cảnh báo màu hổ phách sang trọng *(Chế độ Xem Trước Quản Trị)* cho phép kiểm tra chi tiết hình ảnh và thông số; đối với khách hàng thông thường, hệ thống hiển thị thông báo sản phẩm đã được lưu trữ vào kho di sản (*Archived Piece*) và khóa nút đặt hàng.
+
+### 9. 📈 Phân Tích Kinh Doanh Trực Quan SVG Native (Admin Dashboard Interactive Charts)
+- **7-Day Revenue Trajectory Area Chart:** Biểu đồ đường diện tích vẽ bằng SVG thuần túy với đường cong Bezier mềm mại, lưới tọa độ tinh tế và tooltip rê chuột trực quan theo từng ngày doanh thu thực tế.
+- **Category Sales Distribution Donut Chart:** Biểu đồ tròn Donut phân bổ tỷ trọng doanh số theo danh mục thời trang với hiệu ứng hover tương tác từng phân đoạn hình học và hiển thị trực quan thông tin tại tâm vòng tròn.
+- **Zero-Dependency & Luxury Aesthetics:** 100% Pure SVG Native không phụ thuộc thư viện đồ họa ngoài, tối ưu hóa tốc độ tải trang và đồng bộ tuyệt đối với bảng màu Warm Luxury (`#2C2117`, `#5C4A3A`, `#C8AE84`).
+
+### 10. 🛡️ Lá Chắn Error Boundary & Bảo Vệ Điều Hướng An Toàn (Resilience & Anti-Redirect Loop)
+- **Global Error Boundary (`ErrorBoundary.jsx`):** Bao bọc toàn bộ ứng dụng tại tầng gốc, bắt giữ các ngoại lệ runtime JavaScript và cung cấp màn hình phục hồi trang nhã với nút làm mới an toàn, triệt tiêu hoàn toàn nguy cơ sập màn hình trắng (Blank Screen).
+- **Anti-Infinite Redirect Loop:** Bộ lọc làm sạch đường dẫn điều hướng `from.pathname` tại `LoginPage.jsx`, bảo vệ tài khoản thông thường không bị kẹt vào vòng lặp điều hướng vô hạn giữa trang đăng nhập và khu vực quản trị viên.
+
 ---
 
 ## 🛠️ CÔNG NGHỆ SỬ DỤNG (TECH STACK)
@@ -57,7 +77,7 @@
 - **Icon:** Lucide React (`lucide-react`)
 - **Giao diện & Thẩm mỹ:** Pure Vanilla CSS (CSS Variables, Flexbox, CSS Grid, Glassmorphism, Micro-animations)
 - **Quản lý Trạng thái:** React Context API (`ShopContext`, `LanguageContext`)
-- **Lưu trữ Cục bộ:** Browser `localStorage` (Giỏ hàng, Yêu thích, Đơn hàng, Đánh giá, Ngôn ngữ, Xác thực)
+- **Lưu trữ Cục bộ:** Browser `localStorage` (Giỏ hàng, Yêu thích, Đơn hàng, Đánh giá, Ngôn ngữ, Xác thực, Voucher)
 
 ---
 
@@ -71,6 +91,7 @@ FER202_Group1_Project_Shop_Lune_Fashion_Store/
 │   ├── components/             # Các Component tái sử dụng
 │   │   ├── CartDrawer.jsx      # Ngăn kéo giỏ hàng trượt
 │   │   ├── CategoryCard.jsx    # Thẻ danh mục sản phẩm
+│   │   ├── ErrorBoundary.jsx   # Lá chắn bắt lỗi ứng dụng toàn cục
 │   │   ├── Footer.jsx          # Chân trang atelier
 │   │   ├── InvoiceModal.jsx    # Hóa đơn in boutique
 │   │   ├── LanguageSwitcher.jsx# Nút chuyển song ngữ VI | EN
@@ -83,26 +104,26 @@ FER202_Group1_Project_Shop_Lune_Fashion_Store/
 │   │   └── StarRating.jsx      # Hiển thị dải sao vàng kim
 │   ├── context/
 │   │   ├── LanguageContext.jsx # Quản lý trạng thái đa ngôn ngữ
-│   │   └── ShopContext.jsx     # Quản lý giỏ hàng, đơn hàng, đánh giá
+│   │   └── ShopContext.jsx     # Quản lý giỏ hàng, đơn hàng, đánh giá, voucher
 │   ├── data/
 │   │   ├── products.js         # Dữ liệu trang phục & biến thể
-│   │   └── translations.js     # Từ điển Song ngữ VI / EN (>1,300 dòng)
+│   │   └── translations.js     # Từ điển Song ngữ VI / EN (>1,500 dòng)
 │   ├── pages/
-│   │   ├── admin/              # Phân hệ Quản trị viên (Dashboard, Orders, Products, Users)
-│   │   ├── CheckoutPage.jsx    # Trang thanh toán đơn hàng
+│   │   ├── admin/              # Phân hệ Quản trị viên (Dashboard, Orders, Products, Users, Vouchers)
+│   │   ├── CheckoutPage.jsx    # Trang thanh toán đơn hàng & chọn voucher
 │   │   ├── HomePage.jsx        # Trang chủ thương hiệu
 │   │   ├── LoginPage.jsx       # Trang đăng nhập hội viên & modal quên mật khẩu
 │   │   ├── OrderSuccessPage.jsx# Trang đặt hàng thành công & in hóa đơn
-│   │   ├── ProductDetailPage.jsx# Trang chi tiết trang phục & đánh giá
+│   │   ├── ProductDetailPage.jsx# Trang chi tiết trang phục, đánh giá & xem trước
 │   │   ├── ProfilePage.jsx     # Trang hồ sơ cá nhân (5 Tabs)
 │   │   ├── RegisterPage.jsx    # Trang đăng ký hội viên
 │   │   ├── ShopPage.jsx        # Danh mục cửa hàng & bộ lọc đa tiêu chí
 │   │   └── WishlistPage.jsx    # Danh sách yêu thích cá nhân
-│   ├── App.jsx                 # Cấu hình Route chính & Bọc Providers
+│   ├── App.jsx                 # Cấu hình Route chính, Error Boundary & Bọc Providers
 │   ├── index.css               # Hệ thống Token CSS Warm Luxury
 │   └── main.jsx                # Điểm khởi chạy ứng dụng React
 ├── KE_HOACH_PHAN_CONG_FER202.md# Phân chia nhiệm vụ 6 thành viên chi tiết
-├── KICH_BAN_KIEM_THU_TEST_CASES.md# 40+ Kịch bản kiểm thử tính năng
+├── KICH_BAN_KIEM_THU_TEST_CASES.md# 60+ Kịch bản kiểm thử tính năng (100% PASS)
 ├── PHAN_TICH_HE_THONG_LUNE_STORE.md# Tài liệu đặc tả yêu cầu & phân tích hệ thống
 ├── THIET_KE_GIAO_DIEN_UI_UX.md # Đặc tả thiết kế giao diện & bảng màu
 └── package.json
@@ -114,12 +135,12 @@ FER202_Group1_Project_Shop_Lune_Fashion_Store/
 
 | STT | Thành Viên | Vai Trò Chính | Các Tính Năng Đảm Nhiệm Cốt Lõi |
 |---|---|---|---|
-| **1** | **Thành viên 1** | **Trưởng nhóm & Kiến trúc sư Core** | **Hệ thống Song ngữ VI/EN toàn diện cả Storefront & Admin (`LanguageContext`, `translations.js`), Phân trang tự động reset trên Shop, Điều hướng neo hash xuyên trang (`App.jsx`), In hóa đơn boutique (`InvoiceModal`), Tiến trình đơn hàng (`OrderTimeline`), Đánh giá & xếp hạng sao (`ReviewModal`), Bản địa hóa Xác thực & Hồ sơ 5 Tabs.** |
+| **1** | **Thành viên 1** | **Trưởng nhóm & Kiến trúc sư Core** | **Hệ thống Song ngữ VI/EN toàn diện cả Storefront & Admin (`LanguageContext`, `translations.js`), Error Boundary toàn cục (`ErrorBoundary.jsx`), Chống vòng lặp điều hướng tại Login, Phân trang tự động reset trên Shop, Điều hướng neo hash xuyên trang (`App.jsx`), In hóa đơn boutique (`InvoiceModal`), Tiến trình đơn hàng (`OrderTimeline`), Đánh giá & xếp hạng sao (`ReviewModal`), Bản địa hóa Xác thực & Hồ sơ 5 Tabs.** |
 | 2 | Thành viên 2 | Trải nghiệm Trang chủ & Tìm kiếm | Hero Banner Carousel, Category Tabs, Thanh tìm kiếm trực tiếp thời gian thực (`Navbar`), Chân trang (`Footer`). |
-| 3 | Thành viên 3 | Chi tiết Sản phẩm & Yêu thích | Bộ chọn biến thể Size/Màu, Thư viện ảnh chi tiết, Danh sách yêu thích (`WishlistPage`), Thông báo Wishlist toast. |
-| 4 | Thành viên 4 | Giỏ hàng, Khuyến mãi & Đặt hàng | Ngăn kéo giỏ hàng (`CartDrawer`), Tiến độ Free Shipping, Mã giảm giá (`LUNE10`), Trang thanh toán (`CheckoutPage`). |
-| 5 | Thành viên 5 | Xác thực & Hồ sơ Hội viên | Bố cục đăng nhập/đăng ký Split Layout, Xác thực form, Trình quản lý hồ sơ cá nhân (`ProfilePage`), Bảo mật phiên đăng nhập. |
-| 6 | Thành viên 6 | Cổng Quản trị viên (Admin Portal) | Bảng điều khiển KPI (`AdminDashboard`), Quản trị sản phẩm CRUD, Quản trị đơn hàng & người dùng, Tích hợp 100% Song ngữ Admin & Topbar Language Switcher. |
+| 3 | Thành viên 3 | Chi tiết Sản phẩm & Yêu thích | Bộ chọn biến thể Size/Màu, Thư viện ảnh chi tiết, Danh sách yêu thích (`WishlistPage`), Thông báo Wishlist toast, Biểu ngữ sản phẩm lưu trữ di sản. |
+| 4 | Thành viên 4 | Giỏ hàng, Khuyến mãi & Đặt hàng | Ngăn kéo giỏ hàng (`CartDrawer`), Tiến độ Free Shipping, Mã giảm giá (`LUNE10`), Trang thanh toán (`CheckoutPage`), Tích hợp bộ chọn Voucher thông minh. |
+| 5 | Thành viên 5 | Xác thực & Hồ sơ Hội viên | Bố cục đăng nhập/đăng ký Split Layout, Xác thực form, Trình quản lý hồ sơ cá nhân (`ProfilePage`), Bảo mật phiên đăng nhập & phân quyền. |
+| 6 | Thành viên 6 | Cổng Quản trị viên (Admin Portal) | Bảng điều khiển KPI kèm 2 Biểu đồ SVG trực quan (`AdminDashboard`), Quản trị sản phẩm CRUD kèm cơ chế Ẩn/Hiện 1-click & Admin Preview Mode, Quản lý Voucher qua Modal Popup (`AdminVouchers`), Quản trị đơn hàng & người dùng, Tinh gọn Topbar & Chuẩn hóa bảng màu Warm Luxury Admin. |
 
 ---
 

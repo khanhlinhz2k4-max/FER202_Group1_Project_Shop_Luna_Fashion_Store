@@ -86,7 +86,7 @@ const sampleUsers = [
   }
 ];
 
-<<<<<<< HEAD
+// Sample default vouchers for testing Admin and Checkout discount features
 const sampleVouchers = [
   {
     id: 'voucher-lune10',
@@ -94,9 +94,32 @@ const sampleVouchers = [
     discountType: 'percent',
     discountValue: 10,
     minSubtotal: 0,
-    expiresAt: '',
+    startsAt: '2026-01-01T00:00',
+    expiresAt: '2026-12-31T23:59',
     isActive: true
-=======
+  },
+  {
+    id: 'voucher-welcome20',
+    code: 'WELCOME20',
+    discountType: 'fixed',
+    discountValue: 20,
+    minSubtotal: 100,
+    startsAt: '2026-01-01T00:00',
+    expiresAt: '2026-12-31T23:59',
+    isActive: true
+  },
+  {
+    id: 'voucher-vip30',
+    code: 'VIP30',
+    discountType: 'percent',
+    discountValue: 30,
+    minSubtotal: 200,
+    startsAt: '2026-01-01T00:00',
+    expiresAt: '2026-12-31T23:59',
+    isActive: true
+  }
+];
+
 // Sample initial reviews for testing luxury rating features
 const sampleReviews = [
   {
@@ -230,7 +253,6 @@ const sampleReviews = [
     comment: "Lightweight on the bridge of the nose with excellent UV shielding. Looks like high-end vintage eyewear.",
     date: "Oct 07, 2026",
     verifiedBuyer: true
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
   }
 ];
 
@@ -328,15 +350,6 @@ export function ShopProvider({ children }) {
     return sampleOrders;
   });
 
-  const [vouchers, setVouchers] = useState(() => {
-    try {
-      const saved = localStorage.getItem('lune_vouchers');
-      return saved ? JSON.parse(saved) : sampleVouchers;
-    } catch {
-      return sampleVouchers;
-    }
-  });
-
   // 5. USERS & CURRENT USER STATE
   const [users, setUsers] = useState(() => {
     try {
@@ -375,6 +388,20 @@ export function ShopProvider({ children }) {
       console.error("Error reading lune_reviews:", e);
     }
     return sampleReviews;
+  });
+
+  // 8. VOUCHERS STATE (ADMIN CRUD & CHECKOUT DISCOUNTS)
+  const [vouchers, setVouchers] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lune_vouchers');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error("Error reading lune_vouchers:", e);
+    }
+    return sampleVouchers;
   });
 
   // Sync to LocalStorage
@@ -588,6 +615,7 @@ export function ShopProvider({ children }) {
       price: Number(newProduct.price) || 0,
       stock: Number(newProduct.stock) >= 0 ? Number(newProduct.stock) : 20,
       isNew: newProduct.isNew !== undefined ? newProduct.isNew : true,
+      isActive: newProduct.isActive !== undefined ? newProduct.isActive : true,
       colors: Array.isArray(newProduct.colors) ? newProduct.colors : ["#000000"],
       sizes: Array.isArray(newProduct.sizes) ? newProduct.sizes : ["S", "M", "L"]
     };
@@ -602,18 +630,31 @@ export function ShopProvider({ children }) {
           ...prod,
           ...updatedFields,
           price: updatedFields.price !== undefined ? Number(updatedFields.price) : prod.price,
-          stock: updatedFields.stock !== undefined ? Number(updatedFields.stock) : (prod.stock ?? 20)
+          stock: updatedFields.stock !== undefined ? Number(updatedFields.stock) : (prod.stock ?? 20),
+          isActive: updatedFields.isActive !== undefined ? updatedFields.isActive : (prod.isActive !== false)
         };
       }
       return prod;
     }));
   };
 
+  const toggleProductVisibility = (id) => {
+    let nextStatus = true;
+    setProducts(prev => prev.map(prod => {
+      if (prod.id === id) {
+        const currentlyActive = prod.isActive !== false;
+        nextStatus = !currentlyActive;
+        return { ...prod, isActive: nextStatus };
+      }
+      return prod;
+    }));
+    return nextStatus;
+  };
+
   const deleteProduct = (id) => {
     setProducts(prev => prev.filter(prod => prod.id !== id));
   };
 
-<<<<<<< HEAD
   // ================= VOUCHER ACTIONS (ADMIN) =================
   const addVoucher = (voucherData) => {
     const created = {
@@ -638,10 +679,21 @@ export function ShopProvider({ children }) {
     setVouchers(prev => prev.filter(voucher => voucher.id !== id));
   };
 
-  // ================= AUTH / USER ACTIONS =================
-  const login = (email, password) => {
-    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-=======
+  const updateVoucher = (id, updatedFields) => {
+    setVouchers(prev => prev.map(voucher => {
+      if (voucher.id === id) {
+        return {
+          ...voucher,
+          ...updatedFields,
+          code: (updatedFields.code || voucher.code).trim().toUpperCase(),
+          discountValue: updatedFields.discountValue !== undefined ? Number(updatedFields.discountValue) : voucher.discountValue,
+          minSubtotal: updatedFields.minSubtotal !== undefined ? (Number(updatedFields.minSubtotal) || 0) : voucher.minSubtotal
+        };
+      }
+      return voucher;
+    }));
+  };
+
   // ================= REVIEWS & RATINGS ACTIONS =================
   const addReview = (reviewData) => {
     const newReview = {
@@ -718,7 +770,6 @@ export function ShopProvider({ children }) {
       return false;
     });
 
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
     if (user) {
       setCurrentUser(user);
 
@@ -850,7 +901,6 @@ export function ShopProvider({ children }) {
       cart,
       wishlist,
       orders,
-      vouchers,
       users,
       currentUser,
       isCartOpen,
@@ -885,16 +935,16 @@ export function ShopProvider({ children }) {
       // Product CRUD
       addProduct,
       updateProduct,
+      toggleProductVisibility,
       deleteProduct,
 
-<<<<<<< HEAD
       // Voucher management
+      vouchers,
       addVoucher,
+      updateVoucher,
       toggleVoucher,
       deleteVoucher,
 
-      // Auth actions
-=======
       // Reviews & Ratings
       reviews,
       addReview,
@@ -902,7 +952,6 @@ export function ShopProvider({ children }) {
       getProductRatingStats,
 
       // Auth & User CRUD actions
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
       login,
       logout,
       register,

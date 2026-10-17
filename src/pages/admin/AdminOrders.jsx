@@ -30,7 +30,7 @@ export default function AdminOrders() {
     updateOrder, 
     deleteOrder 
   } = useShop();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -206,76 +206,81 @@ export default function AdminOrders() {
         </button>
       </div>
 
-      {/* KPI Overview Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="admin-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#FAF7F2', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E7DDCE' }}>
+      {/* KPI Overview Cards - 4 Order Fulfillment Status Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+        <div className="admin-card" style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#FAF7F2', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E7DDCE', flexShrink: 0 }}>
             <ClipboardList size={20} color="#775B3F" />
           </div>
-          <div>
-            <span style={{ fontSize: 'var(--text-badge)', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.dashboard.totalOrders', 'Total Orders')}</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{totalOrdersCount}</h3>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontSize: '0.72rem', color: '#5C4A3A', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              {t('admin.dashboard.totalOrders', 'TOTAL ORDERS')}
+            </span>
+            <h3 className="notranslate" translate="no" style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117', lineHeight: '1.2' }}>
+              {totalOrdersCount}
+            </h3>
           </div>
         </div>
 
-        <div className="admin-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #FCD34D' }}>
-            <Clock size={20} color="#92400E" />
+        <div className="admin-card" style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#FAF7F2', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E7DDCE', flexShrink: 0 }}>
+            <Clock size={20} color="#CAA072" />
           </div>
-          <div>
-            <span style={{ fontSize: 'var(--text-badge)', color: '#92400E', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.orders.filterPending', 'Pending')}</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#92400E' }}>{pendingCount}</h3>
-          </div>
-        </div>
-
-        <div className="admin-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#E0F2FE', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #BAE6FD' }}>
-            <Truck size={20} color="#0369A1" />
-          </div>
-          <div>
-            <span style={{ fontSize: 'var(--text-badge)', color: '#0369A1', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.orders.filterShipping', 'Shipping')}</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#0369A1' }}>{shippingCount}</h3>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontSize: '0.72rem', color: '#5C4A3A', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              {t('admin.orders.filterPending', 'PENDING')}
+            </span>
+            <h3 className="notranslate" translate="no" style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117', lineHeight: '1.2' }}>
+              {pendingCount}
+            </h3>
           </div>
         </div>
 
-        <div className="admin-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#DCFCE7', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #BBF7D0' }}>
-            <CheckCircle size={20} color="#166534" />
+        <div className="admin-card" style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#F9F2E7', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #C8AE84', flexShrink: 0 }}>
+            <Truck size={20} color="#775B3F" />
           </div>
-          <div>
-            <span style={{ fontSize: 'var(--text-badge)', color: '#166534', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.orders.filterDelivered', 'Delivered')}</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#166534' }}>{deliveredCount}</h3>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontSize: '0.72rem', color: '#5C4A3A', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              {t('admin.orders.filterShipping', 'SHIPPING')}
+            </span>
+            <h3 className="notranslate" translate="no" style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117', lineHeight: '1.2' }}>
+              {shippingCount}
+            </h3>
           </div>
         </div>
 
-        <div className="admin-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#F9F2E7', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #C8AE84' }}>
-            <DollarSign size={20} color="#775B3F" />
+        <div className="admin-card" style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#F5EFEB', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E7DDCE', flexShrink: 0 }}>
+            <CheckCircle size={20} color="#775B3F" />
           </div>
-          <div>
-            <span style={{ fontSize: 'var(--text-badge)', color: '#775B3F', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.dashboard.totalRevenue', 'Revenue')}</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#775B3F' }}>${totalRevenue.toLocaleString()}</h3>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontSize: '0.72rem', color: '#5C4A3A', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              {t('admin.orders.filterDelivered', 'DELIVERED')}
+            </span>
+            <h3 className="notranslate" translate="no" style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117', lineHeight: '1.2' }}>
+              {deliveredCount}
+            </h3>
           </div>
         </div>
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="admin-card" style={{ marginBottom: '24px', padding: '16px 20px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '260px', backgroundColor: '#FAF7F2', padding: '8px 14px', borderRadius: '4px', border: '1px solid #E7DDCE' }}>
+      <div className="admin-card admin-toolbar">
+        <div className="admin-search">
           <Search size={18} color="#8F7965" />
           <input
             type="text"
             placeholder={t('admin.orders.searchPlaceholder', 'Search by Order ID, customer name, email or phone...')}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            style={{ border: 'none', background: 'none', outline: 'none', width: '100%', fontSize: '0.88rem', color: '#2C2117' }}
           />
         </div>
 
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          style={{ padding: '9px 14px', borderRadius: '4px', border: '1px solid #E7DDCE', outline: 'none', backgroundColor: '#fff', fontSize: '0.88rem', color: '#2C2117', cursor: 'pointer' }}
+          className="admin-select"
         >
           <option value="all">{t('admin.orders.filterAll', 'All Statuses')} ({totalOrdersCount})</option>
           <option value="pending">{t('admin.orders.filterPending', 'Pending')} ({pendingCount})</option>
@@ -283,93 +288,106 @@ export default function AdminOrders() {
           <option value="delivered">{t('admin.orders.filterDelivered', 'Delivered')} ({deliveredCount})</option>
           <option value="cancelled">{t('admin.orders.filterCancelled', 'Cancelled')} ({orders.filter(o => o.status === 'Cancelled').length})</option>
         </select>
+        <span className="admin-count">{filteredOrders.length} {t('common.items', 'orders')}</span>
       </div>
 
       {/* Orders Table */}
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ overflowX: 'auto' }}>
+        <div className="admin-table-container">
           <table className="admin-table">
             <thead>
               <tr>
-                <th>{t('admin.orders.colOrderId', 'Order Ref')}</th>
-                <th>{t('admin.orders.colCustomer', 'Recipient & Contact')}</th>
-                <th>{t('admin.orders.colItems', 'Items Ordered')}</th>
-                <th>{t('admin.orders.colTotal', 'Total ($)')}</th>
-                <th>{t('admin.orders.colPayment', 'Payment')}</th>
-                <th>{t('admin.orders.colStatus', 'Current Status')}</th>
-                <th style={{ textAlign: 'right' }}>{t('admin.orders.colActions', 'Actions')}</th>
+                <th className="text-center" style={{ width: '13%' }}>{t('admin.orders.colOrderId', 'Order Ref')}</th>
+                <th style={{ width: '22%' }}>{t('admin.orders.colCustomer', 'Customer')}</th>
+                <th style={{ width: '21%' }}>{t('admin.orders.colItems', 'Items')}</th>
+                <th className="text-center" style={{ width: '10%' }}>{t('admin.orders.colTotal', 'Total')}</th>
+                <th className="text-center" style={{ width: '11%' }}>{t('admin.orders.colPayment', 'Payment')}</th>
+                <th className="text-center" style={{ width: '12%' }}>{t('admin.orders.colStatus', 'Status')}</th>
+                <th className="text-center" style={{ width: '11%' }}>{t('admin.orders.colActions', 'Actions')}</th>
               </tr>
             </thead>
             <tbody>
               {filteredOrders.length === 0 ? (
                 <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '48px', color: '#64748B' }}>
+                  <td colSpan="7" className="admin-empty">
                     {t('common.noResults', 'No orders match your search and filter criteria.')}
                   </td>
                 </tr>
               ) : (
                 filteredOrders.map(order => (
                   <tr key={order.id}>
-                    <td>
-                      <strong style={{ color: '#2C2117', display: 'block' }}>{order.id}</strong>
-                      <span style={{ fontSize: '0.78rem', color: '#64748B' }}>
-                        {new Date(order.createdAt).toLocaleDateString()}
+                    <td className="text-center">
+                      <strong style={{ color: '#2C2117', display: 'block', whiteSpace: 'nowrap' }}>{order.id}</strong>
+                      <span style={{ fontSize: '0.78rem', color: '#8F7965', whiteSpace: 'nowrap' }}>
+                        {new Date(order.createdAt).toLocaleDateString(language === 'vi' ? 'vi-VN' : 'en-US')}
                       </span>
                     </td>
                     <td>
-                      <div style={{ fontWeight: 600, color: '#2C2117' }}>{order.customer?.name || 'Guest Client'}</div>
-                      <div style={{ fontSize: '0.8rem', color: '#64748B' }}>{order.customer?.phone || 'No phone'}</div>
-                      <div style={{ fontSize: '0.75rem', color: '#94A3B8', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <div style={{ fontWeight: 600, color: '#2C2117', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {order.customer?.name || 'Guest Client'}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: '#8F7965', whiteSpace: 'nowrap' }}>
+                        {order.customer?.phone || 'No phone'}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#8F7965', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={order.customer?.address}>
                         {order.customer?.address || 'Standard Address'}
                       </div>
                     </td>
                     <td>
-                      <div style={{ fontSize: '0.85rem' }}>
+                      <div style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
                         {(order.items || []).map((it, idx) => (
-                          <div key={idx} style={{ marginBottom: '2px' }}>
-                            • <strong>{it.quantity}x</strong> {it.name} <span style={{ color: '#64748B', fontSize: '0.78rem' }}>({it.selectedSize})</span>
+                          <div key={idx} style={{ marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={`${it.quantity}x ${it.name} (${it.selectedSize})`}>
+                            • <strong>{it.quantity}x</strong> {it.name} <span style={{ color: '#8F7965', fontSize: '0.75rem' }}>({it.selectedSize})</span>
                           </div>
                         ))}
                       </div>
                     </td>
-                    <td style={{ fontWeight: 700, color: '#775B3F', fontSize: '0.95rem' }}>
+                    <td className="text-center" style={{ fontWeight: 700, color: '#2C2117', fontSize: '0.92rem', whiteSpace: 'nowrap' }}>
                       ${order.totalAmount}
                     </td>
-                    <td>
-                      <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
-                        {order.paymentMethod || 'COD'}
+                    <td className="text-center">
+                      <span style={{ fontSize: '0.78rem', color: '#2C2117', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'inline-block' }}>
+                        {order.paymentMethod === 'Cash on Delivery' ? t('admin.orders.cod', 'COD') :
+                         order.paymentMethod === 'Credit Card' ? t('admin.orders.creditCard', 'Credit Card') :
+                         order.paymentMethod === 'Direct Bank Transfer' ? t('admin.orders.bankTransfer', 'Bank Transfer') : 
+                         (order.paymentMethod || 'COD')}
                       </span>
                     </td>
-                    <td>
-                      <select
-                        value={order.status || 'Pending'}
-                        onChange={e => updateOrderStatus(order.id, e.target.value)}
-                        style={{
-                          padding: '6px 10px',
-                          borderRadius: '4px',
-                          border: '1px solid #CBD5E1',
-                          backgroundColor: 
-                            order.status === 'Delivered' ? '#DCFCE7' :
-                            order.status === 'Shipping' ? '#E0F2FE' :
-                            order.status === 'Cancelled' ? '#FEE2E2' : '#FEF3C7',
-                          color: 
-                            order.status === 'Delivered' ? '#166534' :
-                            order.status === 'Shipping' ? '#0369A1' :
-                            order.status === 'Cancelled' ? '#991B1B' : '#92400E',
-                          fontSize: '0.82rem',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          outline: 'none'
-                        }}
-                      >
-                        <option value="Pending">Pending</option>
-                        <option value="Shipping">Shipping</option>
-                        <option value="Delivered">Delivered</option>
-                        <option value="Cancelled">Cancelled</option>
-                      </select>
+                    <td className="text-center">
+                      <div style={{ maxWidth: '120px', margin: '0 auto' }}>
+                        <select
+                          value={order.status || 'Pending'}
+                          onChange={e => updateOrderStatus(order.id, e.target.value)}
+                          style={{
+                            padding: '4px 6px',
+                            borderRadius: '4px',
+                            border: `1px solid ${
+                              order.status === 'Shipping' ? '#C8AE84' : '#E7DDCE'
+                            }`,
+                            backgroundColor: 
+                              order.status === 'Delivered' ? '#F5EFEB' :
+                              order.status === 'Shipping' ? '#F9F2E7' :
+                              order.status === 'Cancelled' ? '#FAF8F5' : '#FAF7F2',
+                            color: 
+                              order.status === 'Delivered' ? '#2C2117' :
+                              order.status === 'Shipping' ? '#775B3F' :
+                              order.status === 'Cancelled' ? '#8F7965' : '#5C4A3A',
+                            fontSize: '0.78rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            outline: 'none',
+                            width: '100%'
+                          }}
+                        >
+                          <option value="Pending">{t('admin.orders.filterPending', 'Pending')}</option>
+                          <option value="Shipping">{t('admin.orders.filterShipping', 'Shipping')}</option>
+                          <option value="Delivered">{t('admin.orders.filterDelivered', 'Delivered')}</option>
+                          <option value="Cancelled">{t('admin.orders.filterCancelled', 'Cancelled')}</option>
+                        </select>
+                      </div>
                     </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', gap: '8px' }}>
+                    <td className="text-center">
+                      <div className="admin-actions">
                         {/* View Details */}
                         <button
                           type="button"
@@ -377,34 +395,22 @@ export default function AdminOrders() {
                             setSelectedOrder(order);
                             setShowDetailModal(true);
                           }}
-                          style={{
-                            padding: '6px',
-                            background: '#FAF7F2',
-                            border: '1px solid #E7DDCE',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            color: '#775B3F'
-                          }}
-                          title="View Details / Receipt"
+                          className="admin-icon-btn"
+                          style={{ padding: '5px' }}
+                          title={t('admin.orders.btnViewInvoice', 'View Details / Receipt')}
                         >
-                          <Eye size={15} />
+                          <Eye size={14} />
                         </button>
 
                         {/* Edit Order */}
                         <button
                           type="button"
                           onClick={() => handleOpenEdit(order)}
-                          style={{
-                            padding: '6px',
-                            background: '#FAF7F2',
-                            border: '1px solid #E7DDCE',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            color: '#2C2117'
-                          }}
-                          title="Edit Recipient Details"
+                          className="admin-icon-btn edit"
+                          style={{ padding: '5px' }}
+                          title={t('admin.orders.btnEditInfo', 'Edit Recipient Details')}
                         >
-                          <Edit3 size={15} />
+                          <Edit3 size={14} />
                         </button>
 
                         {/* Delete Order */}
@@ -414,17 +420,11 @@ export default function AdminOrders() {
                             setSelectedOrder(order);
                             setShowDeleteModal(true);
                           }}
-                          style={{
-                            padding: '6px',
-                            background: '#FEF2F2',
-                            border: '1px solid #FECACA',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            color: '#DC2626'
-                          }}
-                          title="Delete Order"
+                          className="admin-icon-btn danger"
+                          style={{ padding: '5px' }}
+                          title={t('admin.orders.btnDeleteOrder', 'Delete Order')}
                         >
-                          <Trash2 size={15} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>
@@ -441,7 +441,7 @@ export default function AdminOrders() {
         <div className="admin-modal-overlay" onClick={() => setShowCreateModal(false)}>
           <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '620px' }}>
             <div className="admin-modal-header">
-              <h3>CREATE NEW ORDER</h3>
+              <h3>{t('admin.orders.modalCreateTitle', 'CREATE NEW ORDER')}</h3>
               <button type="button" className="admin-modal-close" onClick={() => setShowCreateModal(false)}>
                 <X size={20} />
               </button>
@@ -450,7 +450,7 @@ export default function AdminOrders() {
             <form onSubmit={handleCreateOrderSubmit}>
               <div className="admin-field-row">
                 <div className="admin-field">
-                  <label>Customer Name *</label>
+                  <label>{t('admin.orders.labelCustomerName', 'Customer Name *')}</label>
                   <input
                     type="text"
                     className="admin-input"
@@ -461,7 +461,7 @@ export default function AdminOrders() {
                   />
                 </div>
                 <div className="admin-field">
-                  <label>Phone Number *</label>
+                  <label>{t('admin.orders.labelCustomerPhone', 'Phone Number *')}</label>
                   <input
                     type="text"
                     className="admin-input"
@@ -474,7 +474,7 @@ export default function AdminOrders() {
               </div>
 
               <div className="admin-field">
-                <label>Email Address</label>
+                <label>{t('admin.orders.labelCustomerEmail', 'Email Address')}</label>
                 <input
                   type="email"
                   className="admin-input"
@@ -485,7 +485,7 @@ export default function AdminOrders() {
               </div>
 
               <div className="admin-field">
-                <label>Delivery Address *</label>
+                <label>{t('admin.orders.labelCustomerAddress', 'Delivery Address *')}</label>
                 <input
                   type="text"
                   className="admin-input"
@@ -498,7 +498,7 @@ export default function AdminOrders() {
 
               <div className="admin-field-row">
                 <div className="admin-field">
-                  <label>Select Product *</label>
+                  <label>{t('admin.orders.labelSelectProduct', 'Select Product *')}</label>
                   <select
                     className="admin-input"
                     value={newOrderForm.productId}
@@ -514,7 +514,7 @@ export default function AdminOrders() {
                 </div>
 
                 <div className="admin-field">
-                  <label>Size</label>
+                  <label>{t('admin.orders.labelSize', 'Size')}</label>
                   <select
                     className="admin-input"
                     value={newOrderForm.selectedSize}
@@ -532,7 +532,7 @@ export default function AdminOrders() {
 
               <div className="admin-field-row">
                 <div className="admin-field">
-                  <label>Quantity</label>
+                  <label>{t('admin.orders.labelQuantity', 'Quantity')}</label>
                   <input
                     type="number"
                     min="1"
@@ -544,15 +544,15 @@ export default function AdminOrders() {
                 </div>
 
                 <div className="admin-field">
-                  <label>Payment Method</label>
+                  <label>{t('admin.orders.labelPaymentMethod', 'Payment Method')}</label>
                   <select
                     className="admin-input"
                     value={newOrderForm.paymentMethod}
                     onChange={e => setNewOrderForm({ ...newOrderForm, paymentMethod: e.target.value })}
                   >
-                    <option value="Cash on Delivery">Cash on Delivery</option>
-                    <option value="Credit Card">Credit Card</option>
-                    <option value="Direct Bank Transfer">Direct Bank Transfer</option>
+                    <option value="Cash on Delivery">{t('admin.orders.cod', 'Cash on Delivery')}</option>
+                    <option value="Credit Card">{t('admin.orders.creditCard', 'Credit Card')}</option>
+                    <option value="Direct Bank Transfer">{t('admin.orders.bankTransfer', 'Direct Bank Transfer')}</option>
                   </select>
                 </div>
               </div>
@@ -563,10 +563,10 @@ export default function AdminOrders() {
                   className="admin-secondary-btn"
                   onClick={() => setShowCreateModal(false)}
                 >
-                  Cancel
+                  {t('admin.orders.btnCancel', 'Cancel')}
                 </button>
                 <button type="submit" className="admin-primary-btn">
-                  Create Order
+                  {t('admin.orders.btnCreateOrder', 'Create Order')}
                 </button>
               </div>
             </form>
@@ -580,9 +580,9 @@ export default function AdminOrders() {
           <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
             <div className="admin-modal-header">
               <div>
-                <h3 style={{ margin: 0 }}>ORDER RECEIPT: {selectedOrder.id}</h3>
-                <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
-                  Placed on {new Date(selectedOrder.createdAt).toLocaleString()}
+                <h3 style={{ margin: 0 }}>{t('admin.orders.modalDetailTitle', 'ORDER RECEIPT')}: {selectedOrder.id}</h3>
+                <span style={{ fontSize: '0.8rem', color: '#8F7965' }}>
+                  {t('admin.orders.placedOn', 'Placed on')} {new Date(selectedOrder.createdAt).toLocaleString(language === 'vi' ? 'vi-VN' : 'en-US')}
                 </span>
               </div>
               <button type="button" className="admin-modal-close" onClick={() => setShowDetailModal(false)}>
@@ -591,17 +591,28 @@ export default function AdminOrders() {
             </div>
 
             <div style={{ marginBottom: '20px', padding: '14px', backgroundColor: '#FAF7F2', borderRadius: '4px', border: '1px solid #E7DDCE' }}>
-              <div style={{ fontWeight: 600, color: '#2C2117', marginBottom: '4px' }}>Customer Information</div>
-              <div style={{ fontSize: '0.85rem', color: '#5C4A3A' }}><strong>Name:</strong> {selectedOrder.customer?.name}</div>
-              <div style={{ fontSize: '0.85rem', color: '#5C4A3A' }}><strong>Phone:</strong> {selectedOrder.customer?.phone}</div>
-              <div style={{ fontSize: '0.85rem', color: '#5C4A3A' }}><strong>Email:</strong> {selectedOrder.customer?.email || 'N/A'}</div>
-              <div style={{ fontSize: '0.85rem', color: '#5C4A3A' }}><strong>Address:</strong> {selectedOrder.customer?.address}</div>
-              <div style={{ fontSize: '0.85rem', color: '#5C4A3A' }}><strong>Payment:</strong> {selectedOrder.paymentMethod}</div>
-              <div style={{ fontSize: '0.85rem', color: '#5C4A3A' }}><strong>Status:</strong> <span style={{ fontWeight: 600 }}>{selectedOrder.status}</span></div>
+              <div style={{ fontWeight: 600, color: '#2C2117', marginBottom: '4px' }}>{t('admin.orders.customerInfo', 'Customer Information')}</div>
+              <div style={{ fontSize: '0.85rem', color: '#2C2117' }}><strong style={{ color: '#5C4A3A' }}>{t('admin.orders.name', 'Name')}:</strong> {selectedOrder.customer?.name}</div>
+              <div style={{ fontSize: '0.85rem', color: '#2C2117' }}><strong style={{ color: '#5C4A3A' }}>{t('admin.orders.phone', 'Phone')}:</strong> {selectedOrder.customer?.phone}</div>
+              <div style={{ fontSize: '0.85rem', color: '#2C2117' }}><strong style={{ color: '#5C4A3A' }}>{t('admin.orders.email', 'Email')}:</strong> {selectedOrder.customer?.email || 'N/A'}</div>
+              <div style={{ fontSize: '0.85rem', color: '#2C2117' }}><strong style={{ color: '#5C4A3A' }}>{t('admin.orders.address', 'Address')}:</strong> {selectedOrder.customer?.address}</div>
+              <div style={{ fontSize: '0.85rem', color: '#2C2117' }}><strong style={{ color: '#5C4A3A' }}>{t('admin.orders.payment', 'Payment')}:</strong> {
+                selectedOrder.paymentMethod === 'Cash on Delivery' ? t('admin.orders.cod', 'COD') :
+                selectedOrder.paymentMethod === 'Credit Card' ? t('admin.orders.creditCard', 'Credit Card') :
+                selectedOrder.paymentMethod === 'Direct Bank Transfer' ? t('admin.orders.bankTransfer', 'Bank Transfer') :
+                selectedOrder.paymentMethod
+              }</div>
+              <div style={{ fontSize: '0.85rem', color: '#2C2117' }}><strong style={{ color: '#5C4A3A' }}>{t('admin.orders.status', 'Status')}:</strong> <span style={{ fontWeight: 600 }}>{
+                selectedOrder.status === 'Pending' ? t('admin.orders.filterPending', 'Pending') :
+                selectedOrder.status === 'Shipping' ? t('admin.orders.filterShipping', 'Shipping') :
+                selectedOrder.status === 'Delivered' ? t('admin.orders.filterDelivered', 'Delivered') :
+                selectedOrder.status === 'Cancelled' ? t('admin.orders.filterCancelled', 'Cancelled') :
+                selectedOrder.status
+              }</span></div>
             </div>
 
             <div style={{ marginBottom: '20px' }}>
-              <div style={{ fontWeight: 600, color: '#2C2117', marginBottom: '10px' }}>Purchased Items</div>
+              <div style={{ fontWeight: 600, color: '#2C2117', marginBottom: '10px' }}>{t('admin.orders.purchasedItems', 'Purchased Items')}</div>
               {(selectedOrder.items || []).map((it, idx) => (
                 <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px 0', borderBottom: '1px solid #F0E8DC' }}>
                   <img
@@ -611,11 +622,11 @@ export default function AdminOrders() {
                   />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600, fontSize: '0.88rem', color: '#2C2117' }}>{it.name}</div>
-                    <div style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                    <div style={{ fontSize: '0.78rem', color: '#8F7965' }}>
                       Size: {it.selectedSize || 'Standard'} • Quantity: {it.quantity}
                     </div>
                   </div>
-                  <div style={{ fontWeight: 600, color: '#775B3F' }}>
+                  <div style={{ fontWeight: 600, color: '#2C2117' }}>
                     ${it.price * it.quantity}
                   </div>
                 </div>
@@ -623,8 +634,8 @@ export default function AdminOrders() {
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '2px solid #E7DDCE', paddingTop: '16px' }}>
-              <span style={{ fontSize: '1rem', fontWeight: 600 }}>Total Order Value:</span>
-              <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#775B3F' }}>${selectedOrder.totalAmount}</span>
+              <span style={{ fontSize: '1rem', fontWeight: 600 }}>{t('admin.orders.totalOrderValue', 'Total Order Value:')}</span>
+              <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#2C2117' }}>${selectedOrder.totalAmount}</span>
             </div>
 
             <div style={{ marginTop: '24px', textAlign: 'right' }}>
@@ -633,7 +644,7 @@ export default function AdminOrders() {
                 className="admin-primary-btn"
                 onClick={() => setShowDetailModal(false)}
               >
-                Close Receipt
+                {t('admin.orders.closeReceipt', 'Close Receipt')}
               </button>
             </div>
           </div>
@@ -645,7 +656,7 @@ export default function AdminOrders() {
         <div className="admin-modal-overlay" onClick={() => setShowEditModal(false)}>
           <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '540px' }}>
             <div className="admin-modal-header">
-              <h3>EDIT ORDER {selectedOrder.id}</h3>
+              <h3>{t('admin.orders.modalEditTitle', 'EDIT ORDER')} {selectedOrder.id}</h3>
               <button type="button" className="admin-modal-close" onClick={() => setShowEditModal(false)}>
                 <X size={20} />
               </button>
@@ -653,7 +664,7 @@ export default function AdminOrders() {
 
             <form onSubmit={handleEditSubmit}>
               <div className="admin-field">
-                <label>Recipient Name *</label>
+                <label>{t('admin.orders.labelCustomerName', 'Recipient Name *')}</label>
                 <input
                   type="text"
                   className="admin-input"
@@ -665,7 +676,7 @@ export default function AdminOrders() {
 
               <div className="admin-field-row">
                 <div className="admin-field">
-                  <label>Recipient Phone *</label>
+                  <label>{t('admin.orders.labelCustomerPhone', 'Recipient Phone *')}</label>
                   <input
                     type="text"
                     className="admin-input"
@@ -675,7 +686,7 @@ export default function AdminOrders() {
                   />
                 </div>
                 <div className="admin-field">
-                  <label>Recipient Email</label>
+                  <label>{t('admin.orders.labelCustomerEmail', 'Recipient Email')}</label>
                   <input
                     type="email"
                     className="admin-input"
@@ -686,7 +697,7 @@ export default function AdminOrders() {
               </div>
 
               <div className="admin-field">
-                <label>Delivery Address *</label>
+                <label>{t('admin.orders.labelCustomerAddress', 'Delivery Address *')}</label>
                 <input
                   type="text"
                   className="admin-input"
@@ -698,29 +709,29 @@ export default function AdminOrders() {
 
               <div className="admin-field-row">
                 <div className="admin-field">
-                  <label>Order Status</label>
+                  <label>{t('admin.orders.labelStatus', 'Order Status')}</label>
                   <select
                     className="admin-input"
                     value={editOrderForm.status}
                     onChange={e => setEditOrderForm({ ...editOrderForm, status: e.target.value })}
                   >
-                    <option value="Pending">Pending</option>
-                    <option value="Shipping">Shipping</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
+                    <option value="Pending">{t('admin.orders.filterPending', 'Pending')}</option>
+                    <option value="Shipping">{t('admin.orders.filterShipping', 'Shipping')}</option>
+                    <option value="Delivered">{t('admin.orders.filterDelivered', 'Delivered')}</option>
+                    <option value="Cancelled">{t('admin.orders.filterCancelled', 'Cancelled')}</option>
                   </select>
                 </div>
 
                 <div className="admin-field">
-                  <label>Payment Method</label>
+                  <label>{t('admin.orders.labelPaymentMethod', 'Payment Method')}</label>
                   <select
                     className="admin-input"
                     value={editOrderForm.paymentMethod}
                     onChange={e => setEditOrderForm({ ...editOrderForm, paymentMethod: e.target.value })}
                   >
-                    <option value="Cash on Delivery">Cash on Delivery</option>
-                    <option value="Credit Card">Credit Card</option>
-                    <option value="Direct Bank Transfer">Direct Bank Transfer</option>
+                    <option value="Cash on Delivery">{t('admin.orders.cod', 'Cash on Delivery')}</option>
+                    <option value="Credit Card">{t('admin.orders.creditCard', 'Credit Card')}</option>
+                    <option value="Direct Bank Transfer">{t('admin.orders.bankTransfer', 'Direct Bank Transfer')}</option>
                   </select>
                 </div>
               </div>
@@ -731,10 +742,10 @@ export default function AdminOrders() {
                   className="admin-secondary-btn"
                   onClick={() => setShowEditModal(false)}
                 >
-                  Cancel
+                  {t('admin.orders.btnCancel', 'Cancel')}
                 </button>
                 <button type="submit" className="admin-primary-btn">
-                  Save Changes
+                  {t('admin.orders.btnSaveChanges', 'Save Changes')}
                 </button>
               </div>
             </form>
@@ -749,7 +760,7 @@ export default function AdminOrders() {
             <div className="admin-modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#DC2626' }}>
                 <AlertTriangle size={22} />
-                <h3 style={{ margin: 0, color: '#DC2626' }}>Delete Order</h3>
+                <h3 style={{ margin: 0, color: '#DC2626' }}>{t('admin.orders.modalDeleteTitle', 'Delete Order')}</h3>
               </div>
               <button type="button" className="admin-modal-close" onClick={() => setShowDeleteModal(false)}>
                 <X size={20} />
@@ -757,8 +768,7 @@ export default function AdminOrders() {
             </div>
 
             <p style={{ fontSize: '0.92rem', color: '#5C4A3A', margin: '0 0 20px' }}>
-              Are you sure you want to permanently delete Order <strong>{selectedOrder.id}</strong> placed by <strong>{selectedOrder.customer?.name}</strong>?
-              This action cannot be undone.
+              {t('admin.orders.deleteConfirmText', 'Are you sure you want to permanently delete this order?')} (<strong>{selectedOrder.id}</strong>)
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
@@ -767,7 +777,7 @@ export default function AdminOrders() {
                 className="admin-secondary-btn"
                 onClick={() => setShowDeleteModal(false)}
               >
-                Cancel
+                {t('admin.orders.btnCancel', 'Cancel')}
               </button>
               <button
                 type="button"
@@ -783,7 +793,7 @@ export default function AdminOrders() {
                   cursor: 'pointer'
                 }}
               >
-                Confirm Delete
+                {t('admin.orders.btnConfirmDelete', 'Confirm Delete')}
               </button>
             </div>
           </div>

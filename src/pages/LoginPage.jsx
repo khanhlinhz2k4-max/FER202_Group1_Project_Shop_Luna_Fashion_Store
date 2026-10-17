@@ -17,12 +17,8 @@ import { useShop } from '../context/ShopContext';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function LoginPage() {
-<<<<<<< HEAD
-  const { login: contextLogin, users: contextUsers } = useShop();
-=======
   const { login: contextLogin, currentUser } = useShop();
   const { t } = useLanguage();
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -32,7 +28,11 @@ export default function LoginPage() {
       if (currentUser.role === 'admin' || currentUser.email === 'admin@lune.com') {
         navigate('/admin', { replace: true });
       } else {
-        const destination = location.state?.redirect || location.state?.from?.pathname || '/';
+        let destination = location.state?.redirect || location.state?.from?.pathname || '/';
+        // Prevent infinite redirect loops if previous destination was an admin page or login page
+        if (typeof destination !== 'string' || destination.startsWith('/admin') || destination === '/login') {
+          destination = '/';
+        }
         navigate(destination, { replace: true });
       }
     }
@@ -139,17 +139,7 @@ export default function LoginPage() {
     setTimeout(() => {
       const result = contextLogin(identifier, password);
 
-<<<<<<< HEAD
-      // Check registered accounts first, then accounts managed by the shop context.
-      const inputTrimmed = identifier.trim().toLowerCase();
-      const matchedUser = [...users, ...contextUsers].find(
-        u => (u.email?.toLowerCase() === inputTrimmed || u.username?.toLowerCase() === inputTrimmed)
-      );
-
-      if (!matchedUser || matchedUser.password !== password) {
-=======
       if (!result.success) {
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
         setIsLoading(false);
         setErrorMsg('Invalid email/username or password. Please verify your credentials.');
         setFieldErrors({
@@ -185,7 +175,10 @@ export default function LoginPage() {
         if (matchedUser.role === 'admin' || matchedUser.email === 'admin@lune.com') {
           navigate('/admin');
         } else {
-          const destination = location.state?.redirect || location.state?.from?.pathname || '/';
+          let destination = location.state?.redirect || location.state?.from?.pathname || '/';
+          if (typeof destination !== 'string' || destination.startsWith('/admin') || destination === '/login') {
+            destination = '/';
+          }
           navigate(destination);
         }
       }, 350);

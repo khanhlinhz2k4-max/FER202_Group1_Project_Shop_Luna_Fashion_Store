@@ -23,6 +23,7 @@ export default function ProductDetailPage() {
 
   const {
     products,
+    currentUser,
     addToCart,
     toggleWishlist,
     isInWishlist,
@@ -77,8 +78,11 @@ export default function ProductDetailPage() {
     setActiveTab('description');
   }, [product]);
 
-  // Product not found
-  if (!product) {
+  const isHidden = product?.isActive === false;
+  const isAdmin = currentUser?.role === 'admin';
+
+  // Product not found or hidden from customer
+  if (!product || (isHidden && !isAdmin)) {
     return (
       <div
         style={{
@@ -92,19 +96,24 @@ export default function ProductDetailPage() {
           style={{
             fontFamily: 'var(--font-serif)',
             fontSize: 'var(--text-h1)',
-            fontWeight: 500
+            fontWeight: 500,
+            color: '#2C2117'
           }}
         >
-          {t('productDetail.notFoundTitle', 'PRODUCT NOT FOUND')}
+          {isHidden ? t('productDetail.hiddenTitle', 'DESIGN CURRENTLY ARCHIVED') : t('productDetail.notFoundTitle', 'PRODUCT NOT FOUND')}
         </h1>
 
         <p
           style={{
             color: '#78716C',
-            marginBottom: '24px'
+            marginBottom: '24px',
+            maxWidth: '520px',
+            margin: '0 auto 24px'
           }}
         >
-          {t('productDetail.notFoundDesc', 'The product you are looking for does not exist.')}
+          {isHidden
+            ? t('productDetail.hiddenDesc', 'This atelier design is currently hidden or archived from the seasonal collection. Please explore our other designs.')
+            : t('productDetail.notFoundDesc', 'The product you are looking for does not exist.')}
         </p>
 
         <Link
@@ -116,7 +125,8 @@ export default function ProductDetailPage() {
             color: '#fff',
             textDecoration: 'none',
             fontSize: '0.85rem',
-            fontWeight: 600
+            fontWeight: 600,
+            borderRadius: '4px'
           }}
         >
           {t('productDetail.backToShop', 'BACK TO SHOP')}
@@ -167,6 +177,30 @@ export default function ProductDetailPage() {
           padding: '24px'
         }}
       >
+        {/* Admin Preview Mode Notice */}
+        {isAdmin && isHidden && (
+          <div style={{
+            backgroundColor: '#FAF5F2',
+            border: '1px solid #E8D3C8',
+            color: '#8F534F',
+            padding: '12px 18px',
+            borderRadius: '4px',
+            marginBottom: '24px',
+            fontSize: '0.86rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            flexWrap: 'wrap'
+          }}>
+            <span>
+              <strong>👁️ {t('productDetail.adminPreviewBadge', 'Admin Preview Mode')}:</strong> {t('productDetail.adminPreviewNotice', 'This design is currently HIDDEN from boutique clients.')}
+            </span>
+            <Link to="/admin/products" style={{ color: '#775B3F', fontWeight: 600, fontSize: '0.82rem', textDecoration: 'underline' }}>
+              {t('productDetail.adminManageLink', 'Manage in Admin →')}
+            </Link>
+          </div>
+        )}
 
         {/* ================= BREADCRUMB ================= */}
         <div

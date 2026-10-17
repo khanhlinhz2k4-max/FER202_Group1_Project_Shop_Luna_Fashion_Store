@@ -1,613 +1,378 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
-<<<<<<< HEAD
-import { ArrowLeft } from 'lucide-react';
-=======
 import { useLanguage } from '../context/LanguageContext';
-import { 
-  ShieldCheck, 
-  ArrowLeft, 
-  ShoppingBag, 
-  CreditCard, 
-  Banknote, 
-  CheckCircle, 
-  AlertCircle,
-  Truck
-} from 'lucide-react';
-import './CheckoutPage.css';
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
+import { ShieldCheck, ArrowLeft, CheckCircle2 } from 'lucide-react';
 
 /**
  * CheckoutPage Component
  * Phụ trách: Thành viên 4 (Giỏ hàng & Quy trình thanh toán)
- * Tích hợp Đa ngôn ngữ (i18n): Song ngữ VI / EN
+ * Nâng cấp: Thành viên 1 (Leader - Tích hợp Đa ngôn ngữ song ngữ EN/VI)
+ * Harmonized with LUNE Warm Luxury Brand Guidelines
  */
 export default function CheckoutPage() {
-<<<<<<< HEAD
   const { cart, cartTotal, addOrder, currentUser, vouchers } = useShop();
-=======
-  const { cart, cartTotal, addOrder, currentUser } = useShop();
   const { t, tp } = useLanguage();
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
   const navigate = useNavigate();
 
-  // Form State with pre-fill from logged-in user
   const [formData, setFormData] = useState({
     name: currentUser?.name || '',
     phone: currentUser?.phone || '',
     email: currentUser?.email || '',
     address: currentUser?.address || '',
-<<<<<<< HEAD
     city: 'TP. Ho Chi Minh',
-    paymentMethod: 'COD' // COD or Card
-  });
-
-  const [selectedVoucherId, setSelectedVoucherId] = useState('');
-  const [errors, setErrors] = useState({});
-
-  const today = new Date().toISOString().slice(0, 10);
-  const eligibleVouchers = vouchers.filter(voucher =>
-    voucher.isActive &&
-    (!voucher.expiresAt || voucher.expiresAt >= today) &&
-    cartTotal >= (Number(voucher.minSubtotal) || 0)
-  );
-  const selectedVoucher = eligibleVouchers.find(voucher => voucher.id === selectedVoucherId);
-  const appliedDiscount = selectedVoucher
-    ? Math.min(
-        cartTotal,
-        selectedVoucher.discountType === 'percent'
-          ? Math.round(cartTotal * Number(selectedVoucher.discountValue) / 100)
-          : Number(selectedVoucher.discountValue)
-      )
-    : 0;
-
-=======
-    city: 'TP. Hồ Chí Minh',
-    notes: '',
-    paymentMethod: 'COD', // 'COD' or 'CARD'
+    paymentMethod: 'COD', // COD or Card
     promoCode: ''
   });
 
-  // Simulated Card State
-  const [cardData, setCardData] = useState({
-    cardNumber: '4532 •••• •••• 8829',
-    expiry: '12/28',
-    cvv: '888',
-    cardHolder: currentUser?.name || 'LUNE CLIENT VIP'
-  });
-
+  const [selectedVoucherId, setSelectedVoucherId] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
-  const [appliedCode, setAppliedCode] = useState('');
-  const [promoMessage, setPromoMessage] = useState({ type: '', text: '' });
+  const [promoMessage, setPromoMessage] = useState('');
   const [errors, setErrors] = useState({});
 
-  // If shopping bag is empty, display boutique empty state
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
+  const now = new Date();
+  const eligibleVouchers = (vouchers || []).filter(voucher => {
+    if (!voucher.isActive) return false;
+    if (voucher.startsAt && new Date(voucher.startsAt) > now) return false;
+    if (voucher.expiresAt && new Date(voucher.expiresAt) < now) return false;
+    return cartTotal >= (Number(voucher.minSubtotal) || 0);
+  });
+  const lockedVouchers = (vouchers || []).filter(voucher => {
+    if (!voucher.isActive) return false;
+    if (voucher.startsAt && new Date(voucher.startsAt) > now) return false;
+    if (voucher.expiresAt && new Date(voucher.expiresAt) < now) return false;
+    return cartTotal < (Number(voucher.minSubtotal) || 0);
+  });
+  const selectedVoucher = eligibleVouchers.find(voucher => voucher.id === selectedVoucherId);
+
   if (cart.length === 0) {
     return (
-      <div className="checkout-container">
-        <div className="checkout-empty-state">
-          <ShoppingBag size={56} strokeWidth={1.2} className="checkout-empty-icon" />
-          <h2 className="checkout-empty-title">{t('checkout.emptyCartTitle', 'Giỏ hàng của bạn đang trống')}</h2>
-          <p className="checkout-empty-desc">
-            {t('checkout.emptyCartDesc', 'Vui lòng thêm sản phẩm vào giỏ trước khi tiến hành thanh toán.')}
-          </p>
-          <Link to="/shop" className="checkout-empty-btn">
-            {t('checkout.returnToShop', 'Khám Phá Cửa Hàng')}
-          </Link>
-        </div>
+      <div style={{ padding: '80px 20px', textAlign: 'center' }}>
+        <h2 style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--text-h2)', color: '#2C2117' }}>{t('checkout.emptyCartTitle', 'Your shopping bag is empty')}</h2>
+        <p style={{ color: '#5C4A3A', marginBottom: '24px' }}>{t('checkout.emptyCartDesc', 'Add items to your bag before proceeding to checkout.')}</p>
+        <Link to="/shop" style={{ color: '#775B3F', fontWeight: 600, textDecoration: 'underline' }}>{t('checkout.returnToShop', 'Return to Shop')}</Link>
       </div>
     );
   }
 
-<<<<<<< HEAD
-  const handleVoucherChange = (voucherId) => {
+  const handleVoucherSelect = (voucherId) => {
     setSelectedVoucherId(voucherId);
-=======
-  // Shipping Fee calculation (Free shipping threshold = $200, otherwise $15)
-  const shippingFee = cartTotal >= 200 ? 0 : 15;
-  const finalTotal = Math.max(0, cartTotal - appliedDiscount + shippingFee);
+    if (!voucherId) {
+      setAppliedDiscount(0);
+      setPromoMessage('');
+      return;
+    }
+    const v = eligibleVouchers.find(item => item.id === voucherId);
+    if (v) {
+      const discount = v.discountType === 'percent'
+        ? Math.round(cartTotal * Number(v.discountValue) / 100)
+        : Math.min(cartTotal, Number(v.discountValue));
+      setAppliedDiscount(discount);
+      setFormData(prev => ({ ...prev, promoCode: v.code }));
+      setPromoMessage(t('checkout.voucherAppliedMsg', `Voucher ${v.code} applied: -${v.discountType === 'percent' ? `${v.discountValue}%` : `$${v.discountValue}`}!`));
+    }
+  };
 
-  // Apply Promo Code
   const handleApplyPromo = () => {
     const code = formData.promoCode.trim().toUpperCase();
     if (!code) return;
 
-    if (code === 'LUNE10') {
+    // Check in vouchers list
+    const matchedVoucher = (vouchers || []).find(v => v.code.toUpperCase() === code);
+    if (matchedVoucher) {
+      if (!matchedVoucher.isActive) {
+        setAppliedDiscount(0);
+        setSelectedVoucherId('');
+        setPromoMessage(t('checkout.invalidPromoMsg', 'This voucher is currently inactive.'));
+        return;
+      }
+      const curTime = new Date();
+      if (matchedVoucher.startsAt && new Date(matchedVoucher.startsAt) > curTime) {
+        setAppliedDiscount(0);
+        setSelectedVoucherId('');
+        setPromoMessage(t('checkout.upcomingVoucherMsg', 'This voucher is not active yet.'));
+        return;
+      }
+      if (matchedVoucher.expiresAt && new Date(matchedVoucher.expiresAt) < curTime) {
+        setAppliedDiscount(0);
+        setSelectedVoucherId('');
+        setPromoMessage(t('checkout.expiredVoucherMsg', 'This voucher has expired.'));
+        return;
+      }
+      if (cartTotal < (Number(matchedVoucher.minSubtotal) || 0)) {
+        setAppliedDiscount(0);
+        setSelectedVoucherId('');
+        const diff = Number(matchedVoucher.minSubtotal) - cartTotal;
+        setPromoMessage(`${t('checkout.minSubtotalMsg', `Minimum order for this voucher is $${matchedVoucher.minSubtotal}.`)} ${t('checkout.upsellMsg', `Add $${diff} more to unlock this voucher!`).replace('${amount}', diff)}`);
+        return;
+      }
+      setSelectedVoucherId(matchedVoucher.id);
+      const discount = matchedVoucher.discountType === 'percent'
+        ? Math.round(cartTotal * Number(matchedVoucher.discountValue) / 100)
+        : Math.min(cartTotal, Number(matchedVoucher.discountValue));
+      setAppliedDiscount(discount);
+      setPromoMessage(t('checkout.voucherAppliedMsg', `Voucher ${matchedVoucher.code} applied: -${matchedVoucher.discountType === 'percent' ? `${matchedVoucher.discountValue}%` : `$${matchedVoucher.discountValue}`}!`));
+    } else if (code === 'LUNE10') {
       const discount = Math.round(cartTotal * 0.1);
       setAppliedDiscount(discount);
-      setAppliedCode('LUNE10');
-      setPromoMessage({
-        type: 'success',
-        text: t('checkout.appliedPromoMsg', 'Đã áp dụng mã LUNE10: Giảm ngay 10%!')
-      });
+      setPromoMessage(t('checkout.appliedPromoMsg', 'Promo code LUNE10 applied: 10% OFF!'));
     } else {
       setAppliedDiscount(0);
-      setAppliedCode('');
-      setPromoMessage({
-        type: 'error',
-        text: t('checkout.invalidPromoMsg', 'Mã khuyến mại không hợp lệ hoặc đã hết hạn. Hãy thử mã LUNE10')
-      });
+      setSelectedVoucherId('');
+      setPromoMessage(t('checkout.invalidPromoMsg', 'Invalid promo code.'));
     }
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
   };
 
-  // Remove Promo Code
-  const handleRemovePromo = () => {
-    setAppliedDiscount(0);
-    setAppliedCode('');
-    setFormData(prev => ({ ...prev, promoCode: '' }));
-    setPromoMessage({ type: '', text: '' });
-  };
+  const shippingFee = cartTotal >= 250 ? 0 : 15;
+  const finalTotal = Math.max(0, cartTotal - appliedDiscount + shippingFee);
 
-  // Validate form inputs (TC-CHK-04: kiểm tra bắt buộc & định dạng số điện thoại)
-  const validateForm = () => {
-    const errs = {};
-
-    // 1. Full name validation
-    if (!formData.name.trim()) {
-      errs.name = t('checkout.errName', 'Vui lòng nhập họ và tên');
-    }
-
-    // 2. Phone validation (check empty and valid phone format)
-    const cleanedPhone = formData.phone.trim();
-    if (!cleanedPhone) {
-      errs.phone = t('checkout.errPhone', 'Vui lòng nhập số điện thoại');
-    } else {
-      // Must contain only digits, plus, spaces or hyphens, length 9-11 digits
-      const digitsOnly = cleanedPhone.replace(/\D/g, '');
-      const hasInvalidChars = /[a-zA-Z]/.test(cleanedPhone);
-      if (hasInvalidChars || digitsOnly.length < 9 || digitsOnly.length > 11) {
-        errs.phone = t('checkout.errPhoneFormat', 'Số điện thoại không hợp lệ (Vui lòng nhập 9-11 chữ số, không chứa chữ cái)');
-      }
-    }
-
-    // 3. Email validation (if filled, check standard pattern)
-    if (formData.email.trim()) {
-      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailPattern.test(formData.email.trim())) {
-        errs.email = t('checkout.errEmailFormat', 'Địa chỉ email không đúng định dạng');
-      }
-    }
-
-    // 4. Street address validation
-    if (!formData.address.trim()) {
-      errs.address = t('checkout.errAddress', 'Vui lòng nhập địa chỉ nhận hàng');
-    }
-
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
-
-  // Handle Order Placement
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
+    // Basic validation
+    const errs = {};
+    if (!formData.name.trim()) errs.name = t('checkout.errName', 'Full name is required');
+    if (!formData.phone.trim()) errs.phone = t('checkout.errPhone', 'Phone number is required');
+    if (!formData.address.trim()) errs.address = t('checkout.errAddress', 'Delivery address is required');
+
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
       return;
     }
 
     const newOrder = addOrder({
       customer: {
-        name: formData.name.trim(),
-        phone: formData.phone.trim(),
-        email: formData.email.trim(),
-        address: `${formData.address.trim()}, ${formData.city}`
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        address: `${formData.address}, ${formData.city}`
       },
       items: cart,
       totalAmount: finalTotal,
       discount: appliedDiscount,
-      voucherCode: selectedVoucher?.code || '',
+      voucherCode: selectedVoucher?.code || (appliedDiscount > 0 ? formData.promoCode.trim().toUpperCase() : ''),
       shippingFee: shippingFee,
-      paymentMethod: formData.paymentMethod === 'COD' 
-        ? 'Cash on Delivery (COD)' 
-        : 'Credit Card (Simulated)',
-      promoCode: appliedCode || null,
-      notes: formData.notes.trim() || undefined
+      paymentMethod: formData.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Credit Card (Simulated)'
     });
-
-    // Cache order in sessionStorage so refreshing OrderSuccessPage retains the order
-    try {
-      sessionStorage.setItem('lune_last_order', JSON.stringify(newOrder));
-    } catch (e) {
-      // Storage quota or private mode fallback
-    }
 
     navigate('/order-success', { state: { order: newOrder } });
   };
 
   return (
-    <div className="checkout-container">
-      {/* Top Navigation */}
-      <div className="checkout-nav-bar">
-        <Link to="/shop" className="checkout-back-link">
-          <ArrowLeft size={16} /> {t('orderSuccess.continueShoppingBtn', 'Tiếp Tục Mua Sắm')}
+    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '48px 24px 80px' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <Link to="/shop" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#5C4A3A', textDecoration: 'none', fontSize: '0.85rem' }}>
+          <ArrowLeft size={16} /> {t('orderSuccess.continueShoppingBtn', 'Continue Shopping')}
         </Link>
-        <h1 className="checkout-header-title">{t('checkout.title', 'THANH TOÁN ĐƠN HÀNG')}</h1>
-        <p className="checkout-header-subtitle">
-          {t('checkout.deliveryInfoTitle', 'Vui lòng cung cấp thông tin giao hàng và chọn hình thức thanh toán thuận tiện nhất.')}
-        </p>
+        <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--text-h1)', fontWeight: 500, margin: '12px 0 4px', color: '#2C2117' }}>{t('checkout.title', 'ORDER CHECKOUT')}</h1>
+        <p style={{ color: '#5C4A3A', fontSize: 'var(--text-body)' }}>{t('checkout.deliveryInfoTitle', 'Please enter your delivery details and choose your payment method.')}</p>
       </div>
 
-      <div className="checkout-grid-layout">
-        {/* Left Column: Form */}
-        <form onSubmit={handleSubmit} className="checkout-form-card" noValidate>
-          {/* Section 1: Delivery Information */}
-          <div className="checkout-section-title">
-            <span className="checkout-section-badge">1</span>
-            <span>{t('checkout.deliveryInfoTitle', 'THÔNG TIN GIAO HÀNG')}</span>
-          </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '48px' }}>
+        {/* Left: Form */}
+        <form onSubmit={handleSubmit} style={{ backgroundColor: '#FFFFFF', padding: '36px', border: '1px solid #E7DDCE', borderRadius: '4px', boxShadow: '0 2px 8px rgba(44, 33, 23, 0.03)' }}>
+          <h2 style={{ fontSize: 'var(--text-h4)', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>1. {t('checkout.deliveryInfoTitle', 'SHIPPING ADDRESS')}</h2>
 
-          {/* Full Name */}
-          <div className="checkout-form-group">
-            <label className="checkout-label">
-              {t('checkout.fullNameLabel', 'Họ và tên người nhận')}
-              <span className="checkout-label-required">*</span>
-            </label>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>{t('checkout.fullNameLabel', 'Full Name')} *</label>
             <input 
               type="text" 
-              name="name"
-              className={`checkout-input ${errors.name ? 'has-error' : ''}`}
               value={formData.name} 
-              onChange={e => {
-                setFormData({ ...formData, name: e.target.value });
-                if (errors.name) setErrors({ ...errors, name: '' });
-              }}
-              placeholder="Nguyễn Văn A / Alexander Vance"
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
+              style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }}
+              placeholder="e.g. Nguyen Van A"
             />
-            {errors.name && <span className="checkout-error-text">{errors.name}</span>}
+            {errors.name && <span style={{ color: '#B91C1C', fontSize: '0.78rem' }}>{errors.name}</span>}
           </div>
 
-          {/* Phone & Email Row */}
-          <div className="checkout-form-row">
-            <div className="checkout-form-group">
-              <label className="checkout-label">
-                {t('checkout.phoneLabel', 'Số điện thoại')}
-                <span className="checkout-label-required">*</span>
-              </label>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>{t('checkout.phoneLabel', 'Phone Number')} *</label>
               <input 
-                type="tel" 
-                name="phone"
-                className={`checkout-input ${errors.phone ? 'has-error' : ''}`}
+                type="text" 
                 value={formData.phone} 
-                onChange={e => {
-                  setFormData({ ...formData, phone: e.target.value });
-                  if (errors.phone) setErrors({ ...errors, phone: '' });
-                }}
+                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }}
                 placeholder="0912 345 678"
               />
-              {errors.phone && <span className="checkout-error-text">{errors.phone}</span>}
+              {errors.phone && <span style={{ color: '#B91C1C', fontSize: '0.78rem' }}>{errors.phone}</span>}
             </div>
 
-            <div className="checkout-form-group">
-              <label className="checkout-label">
-                {t('checkout.emailLabel', 'Email (Nhận hóa đơn điện tử)')}
-              </label>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>{t('checkout.emailLabel', 'Email')}</label>
               <input 
                 type="email" 
-                name="email"
-                className={`checkout-input ${errors.email ? 'has-error' : ''}`}
                 value={formData.email} 
-                onChange={e => {
-                  setFormData({ ...formData, email: e.target.value });
-                  if (errors.email) setErrors({ ...errors, email: '' });
-                }}
-                placeholder="client@example.com"
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }}
+                placeholder="your.email@example.com"
               />
-              {errors.email && <span className="checkout-error-text">{errors.email}</span>}
             </div>
           </div>
 
-          {/* Street Address */}
-          <div className="checkout-form-group">
-            <label className="checkout-label">
-              {t('checkout.addressLabel', 'Địa chỉ giao hàng chi tiết')}
-              <span className="checkout-label-required">*</span>
-            </label>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 500, marginBottom: '6px', color: '#2C2117' }}>{t('checkout.addressLabel', 'Street Address')} *</label>
             <input 
               type="text" 
-              name="address"
-              className={`checkout-input ${errors.address ? 'has-error' : ''}`}
               value={formData.address} 
-              onChange={e => {
-                setFormData({ ...formData, address: e.target.value });
-                if (errors.address) setErrors({ ...errors, address: '' });
-              }}
-              placeholder="Số nhà, tên đường, Phường/Xã, Quận/Huyện"
+              onChange={e => setFormData({ ...formData, address: e.target.value })}
+              style={{ width: '100%', padding: '10px 12px', border: '1px solid #C8AE84', borderRadius: '2px', outline: 'none', color: '#2C2117' }}
+              placeholder="House number, Street, Ward, District"
             />
-            {errors.address && <span className="checkout-error-text">{errors.address}</span>}
+            {errors.address && <span style={{ color: '#B91C1C', fontSize: '0.78rem' }}>{errors.address}</span>}
           </div>
 
-          {/* City / Province */}
-          <div className="checkout-form-group">
-            <label className="checkout-label">
-              {t('checkout.cityLabel', 'Tỉnh / Thành phố')}
-            </label>
-            <select 
-              className="checkout-select"
-              value={formData.city}
-              onChange={e => setFormData({ ...formData, city: e.target.value })}
-            >
-              <option value="TP. Hồ Chí Minh">TP. Hồ Chí Minh</option>
-              <option value="Hà Nội">Hà Nội</option>
-              <option value="Đà Nẵng">Đà Nẵng</option>
-              <option value="Hải Phòng">Hải Phòng</option>
-              <option value="Cần Thơ">Cần Thơ</option>
-              <option value="Tỉnh / Thành phố khác">Tỉnh / Thành phố khác</option>
-            </select>
-          </div>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', margin: '32px 0 20px', color: '#2C2117' }}>2. {t('checkout.paymentMethodTitle', 'PAYMENT METHOD')}</h2>
 
-          {/* Delivery Notes */}
-          <div className="checkout-form-group">
-            <label className="checkout-label">
-              {t('checkout.notesLabel', 'Ghi chú đơn hàng (Tùy chọn)')}
-            </label>
-            <textarea 
-              className="checkout-textarea"
-              value={formData.notes}
-              onChange={e => setFormData({ ...formData, notes: e.target.value })}
-              placeholder={t('checkout.notesPlaceholder', 'Ví dụ: Giao giờ hành chính, gọi trước khi giao...')}
-            />
-          </div>
-
-          {/* Section 2: Payment Method */}
-          <div className="checkout-section-title" style={{ marginTop: '36px' }}>
-            <span className="checkout-section-badge">2</span>
-            <span>{t('checkout.paymentMethodTitle', 'PHƯƠNG THỨC THANH TOÁN')}</span>
-          </div>
-
-          <div className="checkout-payment-options">
-            {/* COD Option */}
-            <label className={`checkout-payment-card ${formData.paymentMethod === 'COD' ? 'is-selected' : ''}`}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', border: '1px solid #C8AE84', borderRadius: '3px', cursor: 'pointer', backgroundColor: formData.paymentMethod === 'COD' ? '#FAF7F2' : '#FFFFFF' }}>
               <input 
                 type="radio" 
-                name="paymentMethod"
-                className="checkout-payment-radio"
-                checked={formData.paymentMethod === 'COD'}
-                onChange={() => setFormData({ ...formData, paymentMethod: 'COD' })}
+                name="payment" 
+                checked={formData.paymentMethod === 'COD'} 
+                onChange={() => setFormData({ ...formData, paymentMethod: 'COD' })} 
               />
-              <div className="checkout-payment-content">
-                <div className="checkout-payment-title">
-                  <span>{t('checkout.codOption', 'Thanh toán khi nhận hàng (COD)')}</span>
-                  <Banknote size={18} color="#775B3F" />
-                </div>
-                <p className="checkout-payment-desc">
-                  {t('checkout.codDesc', 'Thanh toán tiền mặt cho nhân viên giao vận khi nhận kiện hàng')}
-                </p>
+              <div>
+                <strong style={{ color: '#2C2117' }}>{t('checkout.codOption', 'Cash On Delivery (COD)')}</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#5C4A3A' }}>{t('checkout.codDesc')}</p>
               </div>
             </label>
 
-            {/* Simulated Card Option */}
-            <label className={`checkout-payment-card ${formData.paymentMethod === 'CARD' ? 'is-selected' : ''}`}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '14px', border: '1px solid #C8AE84', borderRadius: '3px', cursor: 'pointer', backgroundColor: formData.paymentMethod === 'CARD' ? '#FAF7F2' : '#FFFFFF' }}>
               <input 
                 type="radio" 
-                name="paymentMethod"
-                className="checkout-payment-radio"
-                checked={formData.paymentMethod === 'CARD'}
-                onChange={() => setFormData({ ...formData, paymentMethod: 'CARD' })}
+                name="payment" 
+                checked={formData.paymentMethod === 'CARD'} 
+                onChange={() => setFormData({ ...formData, paymentMethod: 'CARD' })} 
               />
-              <div className="checkout-payment-content">
-                <div className="checkout-payment-title">
-                  <span>{t('checkout.cardOption', 'Chuyển khoản / Thẻ ngân hàng (Mô phỏng)')}</span>
-                  <CreditCard size={18} color="#775B3F" />
-                </div>
-                <p className="checkout-payment-desc">
-                  {t('checkout.cardDesc', 'Hỗ trợ thẻ Visa, MasterCard, JCB và QR Napas247')}
-                </p>
-
-                {/* Simulated Card Interactive Subform */}
-                {formData.paymentMethod === 'CARD' && (
-                  <div className="checkout-card-simulation-box" onClick={e => e.stopPropagation()}>
-                    <div className="checkout-simulated-badges">
-                      <span className="checkout-badge-pill">VISA</span>
-                      <span className="checkout-badge-pill">MASTERCARD</span>
-                      <span className="checkout-badge-pill">JCB</span>
-                      <span className="checkout-badge-pill">NAPAS</span>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '8px' }}>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#7A6B5D', marginBottom: '2px' }}>
-                          {t('checkout.cardNumberLabel', 'Số thẻ')}
-                        </label>
-                        <input 
-                          type="text" 
-                          value={cardData.cardNumber}
-                          onChange={e => setCardData({ ...cardData, cardNumber: e.target.value })}
-                          style={{ width: '100%', padding: '6px 8px', fontSize: '0.8rem', border: '1px solid #C8AE84', borderRadius: '2px', backgroundColor: '#FFFFFF' }}
-                        />
-                      </div>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#7A6B5D', marginBottom: '2px' }}>
-                          {t('checkout.cardExpiryLabel', 'Hạn thẻ')}
-                        </label>
-                        <input 
-                          type="text" 
-                          value={cardData.expiry}
-                          onChange={e => setCardData({ ...cardData, expiry: e.target.value })}
-                          style={{ width: '100%', padding: '6px 8px', fontSize: '0.8rem', border: '1px solid #C8AE84', borderRadius: '2px', backgroundColor: '#FFFFFF' }}
-                        />
-                      </div>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.72rem', fontWeight: 600, color: '#7A6B5D', marginBottom: '2px' }}>
-                          CVV
-                        </label>
-                        <input 
-                          type="password" 
-                          value={cardData.cvv}
-                          maxLength={3}
-                          onChange={e => setCardData({ ...cardData, cvv: e.target.value })}
-                          style={{ width: '100%', padding: '6px 8px', fontSize: '0.8rem', border: '1px solid #C8AE84', borderRadius: '2px', backgroundColor: '#FFFFFF' }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
+              <div>
+                <strong style={{ color: '#2C2117' }}>{t('checkout.cardOption', 'Credit / Debit Card (Simulated)')}</strong>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: '#5C4A3A' }}>{t('checkout.cardDesc')}</p>
               </div>
             </label>
           </div>
 
-          {/* Submit Button */}
-          <button type="submit" className="checkout-submit-btn">
-            <span>{t('checkout.placeOrderBtn', 'XÁC NHẬN ĐẶT HÀNG')}</span>
-            <span>(${finalTotal})</span>
+          <button
+            type="submit"
+            style={{
+              width: '100%',
+              padding: '16px',
+              backgroundColor: '#775B3F',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '2px',
+              fontWeight: 600,
+              letterSpacing: '0.06em',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s ease'
+            }}
+          >
+            {t('checkout.placeOrderBtn', 'CONFIRM & PLACE ORDER')} (${finalTotal})
           </button>
-
-          <p className="checkout-trust-guarantee">
-            <ShieldCheck size={14} color="#775B3F" />
-            <span>{t('checkout.secureNotice', 'Giao dịch được mã hóa và bảo vệ an toàn 100%')}</span>
-          </p>
         </form>
 
-        {/* Right Column: Order Summary Aside */}
-        <aside className="checkout-summary-card">
-          <div className="checkout-summary-header">
-            <h2 className="checkout-summary-title">{t('checkout.orderSummaryTitle', 'TÓM TẮT ĐƠN HÀNG')}</h2>
-            <span className="checkout-summary-count">
-              {cart.reduce((sum, item) => sum + (item.quantity || 1), 0)} {t('wishlist.piecePlural', 'món')}
-            </span>
-          </div>
+        {/* Right: Order Summary */}
+        <aside style={{ backgroundColor: '#FAF7F2', padding: '36px', border: '1px solid #E7DDCE', borderRadius: '4px', height: 'fit-content' }}>
+          <h2 style={{ fontSize: '1.1rem', fontWeight: 600, letterSpacing: '0.04em', marginBottom: '20px', color: '#2C2117' }}>{t('checkout.orderSummaryTitle', 'ORDER SUMMARY')} ({cart.length})</h2>
 
-          {/* Mini Items List */}
-          <div className="checkout-item-list">
-            {cart.map((item) => (
-              <div 
-                key={item.cartItemId || `${item.id}-${item.selectedSize}-${item.selectedColor}`} 
-                className="checkout-summary-item"
-              >
-                <div className="checkout-item-thumb-wrap">
-                  <img 
-                    src={item.image} 
-                    alt={tp(item, 'name') || item.name} 
-                    className="checkout-item-thumb" 
-                  />
-                  <span className="checkout-item-thumb-qty">{item.quantity}</span>
-                </div>
-                <div className="checkout-summary-item-info">
-                  <h4 className="checkout-item-name">{tp(item, 'name') || item.name}</h4>
-                  <p className="checkout-item-meta">
-                    {t('checkout.size', 'Size:')} {item.selectedSize}
-                    {item.selectedColor && ` | ${t('cart.color', 'Màu:')} ${item.selectedColor}`}
-                  </p>
-                  <p className="checkout-item-line-price">${item.price * item.quantity}</p>
+          <div style={{ maxHeight: '280px', overflowY: 'auto', marginBottom: '24px' }}>
+            {cart.map(item => (
+              <div key={item.cartItemId || item.id} style={{ display: 'flex', gap: '12px', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid #E7DDCE' }}>
+                <img src={item.image} alt={tp(item, 'name')} style={{ width: '50px', height: '65px', objectFit: 'cover', borderRadius: '2px' }} />
+                <div style={{ flex: 1 }}>
+                  <h4 style={{ margin: '0 0 2px', fontSize: '0.85rem', color: '#2C2117' }}>{tp(item, 'name')}</h4>
+                  <p style={{ margin: 0, fontSize: '0.78rem', color: '#5C4A3A' }}>{t('checkout.qty')} {item.quantity} | {t('checkout.size')} {item.selectedSize}</p>
+                  <p style={{ margin: '2px 0 0', fontWeight: 600, fontSize: '0.85rem', color: '#775B3F' }}>${item.price * item.quantity}</p>
                 </div>
               </div>
             ))}
           </div>
 
-<<<<<<< HEAD
-          {/* Voucher selection */}
+          {/* Voucher selection & Promo code */}
           <div style={{ marginBottom: '20px' }}>
-            <label htmlFor="checkout-voucher" style={{ display: 'block', marginBottom: '7px', fontSize: '0.85rem', fontWeight: 600 }}>Choose a voucher</label>
-            <select
-              id="checkout-voucher"
-              value={selectedVoucher?.id || ''}
-              onChange={e => handleVoucherChange(e.target.value)}
-              style={{ width: '100%', padding: '9px 12px', border: '1px solid #D6D3D1', backgroundColor: '#fff', fontSize: '0.85rem', outline: 'none' }}
-            >
-              <option value="">No voucher</option>
-              {eligibleVouchers.map(voucher => (
-                <option key={voucher.id} value={voucher.id}>
-                  {voucher.code} - {voucher.discountType === 'percent' ? `${voucher.discountValue}% off` : `$${voucher.discountValue} off`}
-                  {Number(voucher.minSubtotal) > 0 ? ` (min. $${voucher.minSubtotal})` : ''}
-                </option>
-              ))}
-            </select>
-            {eligibleVouchers.length === 0 && (
-              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: '#78716C' }}>No vouchers are available for this order.</p>
+            {eligibleVouchers.length > 0 && (
+              <div style={{ marginBottom: '12px' }}>
+                <label 
+                  htmlFor="checkout-voucher" 
+                  style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#5C4A3A', textTransform: 'uppercase', letterSpacing: '0.04em' }}
+                >
+                  {t('checkout.selectVoucherLabel', 'Available Boutique Vouchers')}
+                </label>
+                <select
+                  id="checkout-voucher"
+                  value={selectedVoucherId}
+                  onChange={e => handleVoucherSelect(e.target.value)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '9px 12px', 
+                    border: '1px solid #C8AE84', 
+                    borderRadius: '2px', 
+                    backgroundColor: '#FFFFFF', 
+                    fontSize: '0.85rem', 
+                    color: '#2C2117',
+                    outline: 'none',
+                    cursor: 'pointer' 
+                  }}
+                >
+                  <option value="">{t('checkout.noVoucher', '-- Select a Voucher --')}</option>
+                  {eligibleVouchers.map(voucher => (
+                    <option key={voucher.id} value={voucher.id}>
+                      {voucher.code} - {voucher.discountType === 'percent' ? `${voucher.discountValue}% OFF` : `$${voucher.discountValue} OFF`}
+                      {Number(voucher.minSubtotal) > 0 ? ` (Min. $${voucher.minSubtotal})` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
             )}
-            {selectedVoucher && (
-              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: '#16A34A' }}>
-                Voucher {selectedVoucher.code} applied.
-              </p>
-=======
-          {/* Promo Code Input */}
-          <div className="checkout-promo-box">
-            <label className="checkout-promo-label">
-              {t('checkout.promoTitle', 'MÃ ƯU ĐÃI ĐẶC QUYỀN')}
-            </label>
-            <div className="checkout-promo-input-group">
+
+            {lockedVouchers.length > 0 && (
+              <div style={{ marginBottom: '12px', padding: '8px 10px', backgroundColor: '#FDFBF7', border: '1px dashed #D5C3A5', borderRadius: '3px', fontSize: '0.78rem', color: '#775B3F' }}>
+                ✨ {lockedVouchers.slice(0, 2).map(v => `${v.code} (${v.discountType === 'percent' ? `${v.discountValue}%` : `$${v.discountValue}`} OFF - Min. $${v.minSubtotal})`).join(' • ')}
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '8px' }}>
               <input 
                 type="text" 
-                className="checkout-promo-input"
-                placeholder={t('checkout.promoPlaceholder', 'Ví dụ: LUNE10')}
+                placeholder={t('checkout.promoPlaceholder', 'Promo Code (e.g. LUNE10)')} 
                 value={formData.promoCode}
                 onChange={e => setFormData({ ...formData, promoCode: e.target.value })}
-                onKeyDown={e => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleApplyPromo();
-                  }
-                }}
+                style={{ flex: 1, padding: '8px 12px', border: '1px solid #C8AE84', borderRadius: '2px', fontSize: '0.85rem', outline: 'none', backgroundColor: '#FFFFFF', color: '#2C2117' }}
               />
               <button 
                 type="button" 
-                className="checkout-promo-btn"
                 onClick={handleApplyPromo}
+                style={{ padding: '8px 18px', backgroundColor: '#775B3F', color: '#FFFFFF', border: 'none', borderRadius: '2px', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}
               >
-                {t('checkout.applyBtn', 'Áp dụng')}
+                {t('checkout.applyBtn', 'Apply')}
               </button>
             </div>
-
-            {promoMessage.text && (
-              <div className={`checkout-promo-status is-${promoMessage.type}`}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                  {promoMessage.type === 'success' ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
-                  {promoMessage.text}
-                </span>
-                {appliedDiscount > 0 && (
-                  <button 
-                    type="button" 
-                    className="checkout-remove-promo-btn"
-                    onClick={handleRemovePromo}
-                  >
-                    {t('checkout.removePromoBtn', 'Gỡ mã')}
-                  </button>
-                )}
-              </div>
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
+            {promoMessage && (
+              <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: appliedDiscount > 0 ? '#16A34A' : '#B91C1C' }}>
+                {promoMessage}
+              </p>
             )}
           </div>
 
-          {/* Transparent Cost Breakdown */}
-          <div className="checkout-breakdown-list">
-            <div className="checkout-breakdown-row">
-              <span>{t('cart.subtotalLabel', 'Tạm tính')}</span>
-              <span style={{ fontWeight: 600 }}>${cartTotal}</span>
+          {/* Calculations */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.9rem', borderTop: '1px solid #E7DDCE', paddingTop: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5C4A3A' }}>
+              <span>{t('cart.subtotalLabel', 'Subtotal')}</span>
+              <span>${cartTotal}</span>
             </div>
-
             {appliedDiscount > 0 && (
-<<<<<<< HEAD
               <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16A34A' }}>
-                <span>Discount ({selectedVoucher?.code})</span>
-=======
-              <div className="checkout-breakdown-row is-discount">
-                <span>{t('checkout.discount10', 'Ưu đãi LUNE10 (10%)')}</span>
->>>>>>> dd6537150711d01c057db8227186955ea585ccac
+                <span>{t('checkout.discount10')}</span>
                 <span>-${appliedDiscount}</span>
               </div>
             )}
-
-            <div className="checkout-breakdown-row">
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                <Truck size={14} />
-                {t('checkout.shippingFeeLabel', 'Phí vận chuyển')}
-              </span>
-              <span>
-                {shippingFee === 0 ? (
-                  <span className="checkout-shipping-free-badge">
-                    {t('common.free', 'MIỄN PHÍ')}
-                  </span>
-                ) : (
-                  `$${shippingFee}`
-                )}
-              </span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#5C4A3A' }}>
+              <span>{t('checkout.shippingFeeLabel')}</span>
+              <span>{shippingFee === 0 ? t('common.free').toUpperCase() : `$${shippingFee}`}</span>
             </div>
-
-            <div className="checkout-total-row">
-              <span className="checkout-total-label">{t('checkout.totalLabel', 'Tổng thanh toán')}</span>
-              <span className="checkout-total-amount">${finalTotal}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.15rem', fontWeight: 700, borderTop: '1px solid #E7DDCE', paddingTop: '12px', marginTop: '4px', color: '#2C2117' }}>
+              <span>{t('checkout.totalLabel')}</span>
+              <span style={{ color: '#775B3F' }}>${finalTotal}</span>
             </div>
           </div>
         </aside>
@@ -615,3 +380,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

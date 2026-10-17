@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import WishlistToast from './components/WishlistToast';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 import AdminLayout from './layouts/AdminLayout';
 
 // Public & Client Pages
@@ -123,12 +124,14 @@ function AppContent() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <LanguageProvider>
-        <ShopProvider>
-          <AppContent />
-        </ShopProvider>
-      </LanguageProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <LanguageProvider>
+          <ShopProvider>
+            <AppContent />
+          </ShopProvider>
+        </LanguageProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
