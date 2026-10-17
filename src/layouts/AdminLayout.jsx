@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { useLanguage } from '../context/LanguageContext';
-import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu, Globe } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu, Globe, Ticket } from 'lucide-react';
 import '../pages/admin/Admin.css';
 
 export default function AdminLayout() {
@@ -15,6 +15,7 @@ export default function AdminLayout() {
     { to: '/admin', label: t('admin.sidebar.dashboard', 'Dashboard'), icon: LayoutDashboard, end: true },
     { to: '/admin/products', label: t('admin.sidebar.products', 'Products'), icon: ShoppingBag },
     { to: '/admin/orders', label: t('admin.sidebar.orders', 'Orders'), icon: ClipboardList },
+    { to: '/admin/vouchers', label: t('admin.sidebar.vouchers', 'Vouchers'), icon: Ticket },
     { to: '/admin/users', label: t('admin.sidebar.users', 'Users'), icon: Users },
   ];
 
@@ -111,60 +112,70 @@ export default function AdminLayout() {
               <Menu size={20} />
             </button>
             <div style={{ fontSize: '0.9rem', color: '#5C4A3A' }}>
-              Admin Portal / <strong>FER202 Final Project</strong>
+              <span>{t('admin.topbar.portal', 'Admin Portal')}</span> / <strong style={{ color: '#2C2117' }}>Lune Fashion Store</strong>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {/* Bilingual Switcher in Admin Topbar */}
+            {/* Minimal Luxury Bilingual Switcher */}
             <div style={{ 
               display: 'inline-flex', 
               alignItems: 'center', 
-              gap: '4px',
-              backgroundColor: '#FAF7F2', 
-              padding: '3px 6px', 
-              borderRadius: '4px',
-              border: '1px solid #E7DDCE'
+              gap: '6px',
+              fontSize: '0.78rem',
+              color: '#8F7965',
+              padding: '4px 8px',
+              borderRadius: '20px',
+              backgroundColor: '#FAF7F2'
             }}>
-              <Globe size={13} color="#775B3F" />
+              <Globe size={13} color="#8F7965" />
               <button
                 type="button"
                 onClick={() => setLanguage('vi')}
                 style={{
                   border: 'none',
-                  background: language === 'vi' ? '#775B3F' : 'none',
-                  color: language === 'vi' ? '#fff' : '#5C4A3A',
-                  fontSize: '0.72rem',
-                  fontWeight: 600,
-                  padding: '2px 6px',
+                  background: 'none',
+                  color: language === 'vi' ? '#2C2117' : '#8F7965',
+                  fontWeight: language === 'vi' ? 700 : 500,
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  padding: '2px 4px',
                   borderRadius: '3px',
-                  cursor: 'pointer'
+                  textDecoration: language === 'vi' ? 'underline' : 'none',
+                  textUnderlineOffset: '3px'
                 }}
               >
                 VI
               </button>
+              <span style={{ color: '#D9C3A8', fontSize: '0.7rem' }}>•</span>
               <button
                 type="button"
                 onClick={() => setLanguage('en')}
                 style={{
                   border: 'none',
-                  background: language === 'en' ? '#775B3F' : 'none',
-                  color: language === 'en' ? '#fff' : '#5C4A3A',
-                  fontSize: '0.72rem',
-                  fontWeight: 600,
-                  padding: '2px 6px',
+                  background: 'none',
+                  color: language === 'en' ? '#2C2117' : '#8F7965',
+                  fontWeight: language === 'en' ? 700 : 500,
+                  fontSize: '0.75rem',
+                  cursor: 'pointer',
+                  padding: '2px 4px',
                   borderRadius: '3px',
-                  cursor: 'pointer'
+                  textDecoration: language === 'en' ? 'underline' : 'none',
+                  textUnderlineOffset: '3px'
                 }}
               >
                 EN
               </button>
             </div>
 
-            <div className="admin-avatar">{initials}</div>
-            <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#2C2117' }}>{displayName}</span>
-            <span style={{ padding: '3px 8px', backgroundColor: '#F9F2E7', color: '#775B3F', border: '1px solid #C8AE84', fontSize: '0.75rem', borderRadius: '4px', fontWeight: 600 }}>
-              ADMIN
-            </span>
+            <div style={{ width: '1px', height: '18px', backgroundColor: '#E7DDCE' }} />
+
+            {/* Streamlined User Profile without redundant badge */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="admin-avatar notranslate" translate="no">{initials}</div>
+              <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#2C2117', letterSpacing: '0.01em' }}>
+                {displayName}
+              </span>
+            </div>
           </div>
         </header>
 

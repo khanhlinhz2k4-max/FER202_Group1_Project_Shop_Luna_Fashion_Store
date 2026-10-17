@@ -18,12 +18,17 @@ export function LanguageProvider({ children }) {
   const setLanguage = useCallback((lang) => {
     const validLang = lang === 'en' ? 'en' : 'vi';
     setLanguageState(validLang);
+    document.documentElement.lang = validLang;
     try {
       localStorage.setItem(STORAGE_KEY_LANGUAGE, validLang);
     } catch (e) {
       console.warn('Unable to persist language to localStorage', e);
     }
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   const toggleLanguage = useCallback(() => {
     setLanguage(language === 'vi' ? 'en' : 'vi');

@@ -366,15 +366,33 @@ Giao diện Chân trang được nâng cấp toàn diện theo chuẩn Haute Cou
 +---------------------------+-----------------------------------------------------------------+
 ```
 
-* **Khung Quản trị (`AdminLayout.jsx`):** Sidebar cố định 260px bên trái tông màu tối lịch lãm; Topbar quản trị bên phải tích hợp **Bộ chuyển đổi ngôn ngữ độc lập `LanguageSwitcher` (`VI | EN`)**, avatar admin và nút Đăng xuất an toàn.
+* **Khung Quản trị (`AdminLayout.jsx`):** Sidebar cố định 260px bên trái tông màu tối lịch lãm; Topbar quản trị bên phải tinh gọn (loại bỏ huy hiệu `[Administrator]` trùng lặp, tối giản bộ chuyển đổi ngôn ngữ sang dạng pill sang trọng `VI | EN`, avatar admin và nút Đăng xuất an toàn).
+* **Chuẩn Hóa Thiết Kế Đồng Bộ "1 Form Duy Nhất" (Unified Admin Design System):** Toàn bộ 5 trang Admin (`/admin`, `/admin/products`, `/admin/orders`, `/admin/users`, `/admin/vouchers`) tuân thủ tuyệt đối 1 cấu trúc hình học và hệ màu Warm Luxury duy nhất:
+  * **Tiêu đề trang:** Khung `.admin-page-header` với tiêu đề chính `.admin-title` (Font serif *Playfair Display* `var(--text-h2)` `2.0rem`, màu nâu gỗ `#2C2117`), phụ đề `.admin-subtitle` (Font sans *Montserrat* `0.95rem`, màu cà phê `#5C4A3A`) và nút thao tác chính `.admin-primary-btn` (icon `size={16}`).
+  * **Thẻ số liệu KPI thống nhất:** Hệ thống lưới `grid repeat(auto-fit, minmax(180px, 1fr))` gap `16px`. Mỗi thẻ mang định dạng Flex hàng ngang (`padding: 16px 20px`), hộp biểu tượng chuẩn `42x42px` bo góc `4px` viền mảnh `#E7DDCE`, nhãn danh mục hoa (`var(--text-badge)` `0.75rem`, letterSpacing `0.04em`, màu `#5C4A3A`), và giá trị số liệu lớn in đậm font sans tabular-nums `1.6rem` (`#2C2117`).
+  * **Quy chuẩn Phân cấp Typography 3 Tầng & Bảng Màu Luxury:** Áp dụng nghiêm ngặt cho toàn bộ bảng biểu Admin: Nâu gỗ đen `#2C2117` cho tiêu đề, mã đơn, số tiền và doanh thu; Nâu cà phê `#5C4A3A` cho tiêu đề cột và nhãn phân loại; Nâu cát xám `#8F7965` cho metadata phụ và ngày giờ. Triệt tiêu hoàn toàn các màu bootstrap sặc sỡ; cố định kích thước và chống rớt chữ cho các thẻ pill danh mục bằng `whitespace-nowrap flex-shrink-0`.
+  * **Thanh công cụ Toolbar:** Bao trọn trong thẻ trắng `.admin-card.admin-toolbar` gồm ô tìm kiếm `.admin-search` với icon kính lúp màu `#8F7965`, bộ lọc danh mục/trạng thái `.admin-select` và bộ đếm kết quả thực `.admin-count`.
+  * **Bảng dữ liệu Table Card:** Thẻ nền trắng ngà `.admin-card` (`padding: 0`, bo góc `6px`, viền `#E7DDCE`), bỏ thanh phụ đề lặp lại để bảng bắt đầu trực tiếp từ `<thead>`.
+  * **Hàng nút thao tác Action Buttons:** Bộ nút đồng kích thước `.admin-actions` và `.admin-icon-btn` (icon size `15px`), trạng thái hover êm ái, bảo toàn 100% bảng màu thương hiệu Warm Luxury.
 * **Hệ thống Song ngữ Toàn diện (Full Admin i18n):** 100% các trang con, tiêu đề cột bảng, thẻ KPI, nhãn trạng thái và thông báo toast trong phân hệ Admin đều được bản địa hóa qua `LanguageContext` và từ điển `translations.js` mà không reload trang.
-* **Bảng điều khiển (`AdminDashboard.jsx`):** 4 thẻ KPI thống kê tổng hợp (Tổng doanh thu, Tổng đơn hàng, Tồn kho sản phẩm, Khách hàng) và bảng 5 đơn mới nhất cần duyệt gấp, đầy đủ nhãn song ngữ và định dạng tiền tệ.
-* **Quản trị Sản phẩm - CRUD & Song ngữ (`AdminProducts.jsx`):**
+* **Bảng điều khiển & Bộ đôi Biểu đồ Native SVG (`AdminDashboard.jsx`):**
+  * 4 thẻ KPI thống kê tổng hợp (Tổng doanh thu, Tổng đơn hàng, Tồn kho sản phẩm, Khách hàng) và bảng 5 đơn mới nhất cần duyệt gấp, đầy đủ nhãn song ngữ và định dạng tiền tệ.
+  * **7-Day Revenue Trajectory Area Chart:** Biểu đồ diện tích đường cong Bezier toán học mượt mà, nền dải màu cát ấm mờ ảo chuyển dần sang trong suốt, các mốc điểm tròn phình to khi hover và khung Tooltip bóng bẩy hiển thị ngày cùng doanh thu thực tế.
+  * **Category Sales Distribution Donut Chart:** Biểu đồ tròn Donut vẽ bằng SVG Native, chia tỷ lệ % doanh số Đồ Nữ, Đồ Nam và Phụ Kiện. Tương tác rê chuột làm nổi bật lát cắt tương ứng và hiển thị thông tin trực quan ngay tại tâm vòng tròn.
+* **Quản trị Sản phẩm - CRUD, Cơ Chế Ẩn/Hiện & Song ngữ (`AdminProducts.jsx`):**
+  * Tích hợp 4 thẻ KPI đồng bộ chuẩn (Tổng số sản phẩm, Thiết kế Nữ, Thiết kế Nam, Cảnh báo sắp hết/hết hàng tồn kho).
   * Bảng dữ liệu sản phẩm đầy đủ ảnh nhỏ, tên, danh mục, số lượng tồn kho (kèm badge trạng thái màu xanh/cam/đỏ), giá tiền.
+  * **Cơ chế Ẩn/Hiện Sản phẩm 1-Click (`Eye / EyeOff`):** Bộ nút biểu tượng con mắt mở (`Eye`) và con mắt gạch chéo (`EyeOff`) đồng bộ kích thước chuẩn `36x36px`, cho phép Quản trị viên bật/tắt khả dụng hiển thị tức thời mà không làm mất sản phẩm; Storefront tự động lọc bỏ các sản phẩm bị ẩn.
+  * **Biểu ngữ Chế độ Xem Trước Quản Trị (Admin Preview Banner):** Tại `ProductDetailPage.jsx`, khi Admin xem một sản phẩm đang bị ẩn, hệ thống hiển thị biểu ngữ cảnh báo màu hổ phách sang trọng (`#FDF8EE` viền `#F59E0B`, chữ `#92400E`) kèm nút quay lại kho hàng; trong khi khách vãng lai sẽ thấy biểu ngữ di sản lưu trữ (*Archived Piece*) và bị vô hiệu hóa nút đặt hàng.
   * Form modal thêm sản phẩm mới (Create) và sửa sản phẩm (Update) với kiểm tra hợp lệ dữ liệu.
   * Nút xóa sản phẩm (Delete) kèm hộp thoại xác nhận an toàn song ngữ trước khi xóa khỏi kho.
-* **Quản trị Đơn hàng (`AdminOrders.jsx`):** Thẻ KPI thống kê đơn hàng, bộ lọc trạng thái và bảng toàn bộ đơn của khách, cho phép Admin nhấp chuyển đổi trạng thái đơn (`Pending` $\rightarrow$ `Shipping` $\rightarrow$ `Delivered` $\rightarrow$ `Cancelled`).
-* **Quản trị Thành viên (`AdminUsers.jsx`):** Thẻ KPI khách hàng, danh sách tài khoản thành viên trong hệ sinh thái, gắn nhãn phân quyền và bảo vệ an toàn tài khoản Quản trị viên.
+* **Quản trị Đơn hàng (`AdminOrders.jsx`):** 5 thẻ KPI thống kê đơn hàng chuẩn ngang, bộ lọc trạng thái và bảng toàn bộ đơn của khách, cho phép Admin nhấp chuyển đổi trạng thái đơn (`Pending` $\rightarrow$ `Shipping` $\rightarrow$ `Delivered` $\rightarrow$ `Cancelled`).
+* **Quản trị Thành viên (`AdminUsers.jsx`):** 3 thẻ KPI tài khoản khách hàng, danh sách tài khoản thành viên trong hệ sinh thái, gắn nhãn phân quyền và bảo vệ an toàn tài khoản Quản trị viên.
+* **Quản trị Voucher Ưu Đãi (`AdminVouchers.jsx` & Modal Popup):**
+  * 4 thẻ KPI thống kê trực quan (Tổng số voucher, Đang hoạt động, Giảm %, Giảm tiền mặt).
+  * Nút bấm `+ Create Voucher` trên tiêu đề mở cửa sổ **Modal Popup sang trọng (`Create Voucher Modal`)** với lớp nền mờ `backdrop-blur`, hiệu ứng vi chuyển động mở mượt mà, hỗ trợ bộ chọn **Ngày & Giờ Bắt Đầu** và **Ngày & Giờ Kết Thúc** (`datetime-local`) có xác thực logic thời gian.
+  * Modal chỉnh sửa (`Edit Voucher Modal`) nạp sẵn dữ liệu cũ, giúp Admin tập trung thao tác mà không làm xao nhãng việc đối soát bảng dữ liệu.
+  * Bảng dữ liệu hiển thị mã code viền màu kem nổi bật, cột loại ưu đãi, mức giảm, đơn tối thiểu, thời gian hiệu lực và **Bộ 3 Icon thao tác hình vuông đồng bộ (`36x36px`)**: Icon con mắt (`Eye` / `EyeOff`) cho phép bật/tắt hiển thị voucher tức thời mà không gây lệch bảng, bên cạnh icon Sửa (`Edit3`) và Xóa (`Trash2`).
 
 ---
 

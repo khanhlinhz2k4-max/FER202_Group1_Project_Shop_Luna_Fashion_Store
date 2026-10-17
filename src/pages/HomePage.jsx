@@ -71,7 +71,8 @@ const HERO_SLIDES = [
 export default function HomePage() {
   const { products: contextProducts } = useShop();
   const { t, language } = useLanguage();
-  const allProducts = contextProducts && contextProducts.length > 0 ? contextProducts : fallbackProducts;
+  const rawProducts = contextProducts && contextProducts.length > 0 ? contextProducts : fallbackProducts;
+  const allProducts = rawProducts.filter(p => p.isActive !== false);
 
   // 1. Hero Carousel State
   const [currentSlide, setCurrentSlide] = useState(0);

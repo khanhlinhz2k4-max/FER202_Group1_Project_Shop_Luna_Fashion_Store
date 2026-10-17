@@ -28,7 +28,11 @@ export default function LoginPage() {
       if (currentUser.role === 'admin' || currentUser.email === 'admin@lune.com') {
         navigate('/admin', { replace: true });
       } else {
-        const destination = location.state?.redirect || location.state?.from?.pathname || '/';
+        let destination = location.state?.redirect || location.state?.from?.pathname || '/';
+        // Prevent infinite redirect loops if previous destination was an admin page or login page
+        if (typeof destination !== 'string' || destination.startsWith('/admin') || destination === '/login') {
+          destination = '/';
+        }
         navigate(destination, { replace: true });
       }
     }
@@ -171,7 +175,10 @@ export default function LoginPage() {
         if (matchedUser.role === 'admin' || matchedUser.email === 'admin@lune.com') {
           navigate('/admin');
         } else {
-          const destination = location.state?.redirect || location.state?.from?.pathname || '/';
+          let destination = location.state?.redirect || location.state?.from?.pathname || '/';
+          if (typeof destination !== 'string' || destination.startsWith('/admin') || destination === '/login') {
+            destination = '/';
+          }
           navigate(destination);
         }
       }, 350);

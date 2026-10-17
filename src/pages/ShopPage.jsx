@@ -62,9 +62,10 @@ export default function ShopPage() {
       { id: 'Leather Goods', label: t('shop.leatherGoods') },
     ];
 
-    let relevantProducts = products;
+    const activeProducts = products.filter(p => p.isActive !== false);
+    let relevantProducts = activeProducts;
     if (urlCategory && urlCategory !== 'all') {
-      relevantProducts = products.filter(
+      relevantProducts = activeProducts.filter(
         p => p.category && p.category.toLowerCase() === urlCategory.toLowerCase()
       );
     }
@@ -75,7 +76,7 @@ export default function ShopPage() {
 
   // Filter & Sort Logic
   const filteredProducts = useMemo(() => {
-    let result = [...products];
+    let result = products.filter(p => p.isActive !== false);
 
     // 1. Search keyword
     if (searchKeyword.trim()) {

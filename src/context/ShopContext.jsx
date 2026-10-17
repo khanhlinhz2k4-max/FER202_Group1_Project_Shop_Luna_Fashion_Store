@@ -86,6 +86,40 @@ const sampleUsers = [
   }
 ];
 
+// Sample default vouchers for testing Admin and Checkout discount features
+const sampleVouchers = [
+  {
+    id: 'voucher-lune10',
+    code: 'LUNE10',
+    discountType: 'percent',
+    discountValue: 10,
+    minSubtotal: 0,
+    startsAt: '2026-01-01T00:00',
+    expiresAt: '2026-12-31T23:59',
+    isActive: true
+  },
+  {
+    id: 'voucher-welcome20',
+    code: 'WELCOME20',
+    discountType: 'fixed',
+    discountValue: 20,
+    minSubtotal: 100,
+    startsAt: '2026-01-01T00:00',
+    expiresAt: '2026-12-31T23:59',
+    isActive: true
+  },
+  {
+    id: 'voucher-vip30',
+    code: 'VIP30',
+    discountType: 'percent',
+    discountValue: 30,
+    minSubtotal: 200,
+    startsAt: '2026-01-01T00:00',
+    expiresAt: '2026-12-31T23:59',
+    isActive: true
+  }
+];
+
 // Sample initial reviews for testing luxury rating features
 const sampleReviews = [
   {
@@ -356,6 +390,20 @@ export function ShopProvider({ children }) {
     return sampleReviews;
   });
 
+  // 8. VOUCHERS STATE (ADMIN CRUD & CHECKOUT DISCOUNTS)
+  const [vouchers, setVouchers] = useState(() => {
+    try {
+      const saved = localStorage.getItem('lune_vouchers');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error("Error reading lune_vouchers:", e);
+    }
+    return sampleVouchers;
+  });
+
   // Sync to LocalStorage
   useEffect(() => {
     localStorage.setItem('lune_products', JSON.stringify(products));
@@ -375,6 +423,10 @@ export function ShopProvider({ children }) {
   useEffect(() => {
     localStorage.setItem('lune_orders', JSON.stringify(orders));
   }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem('lune_vouchers', JSON.stringify(vouchers));
+  }, [vouchers]);
 
   useEffect(() => {
     localStorage.setItem('lune_users', JSON.stringify(users));
@@ -563,6 +615,7 @@ export function ShopProvider({ children }) {
       price: Number(newProduct.price) || 0,
       stock: Number(newProduct.stock) >= 0 ? Number(newProduct.stock) : 20,
       isNew: newProduct.isNew !== undefined ? newProduct.isNew : true,
+      isActive: newProduct.isActive !== undefined ? newProduct.isActive : true,
       colors: Array.isArray(newProduct.colors) ? newProduct.colors : ["#000000"],
       sizes: Array.isArray(newProduct.sizes) ? newProduct.sizes : ["S", "M", "L"]
     };
@@ -577,15 +630,68 @@ export function ShopProvider({ children }) {
           ...prod,
           ...updatedFields,
           price: updatedFields.price !== undefined ? Number(updatedFields.price) : prod.price,
-          stock: updatedFields.stock !== undefined ? Number(updatedFields.stock) : (prod.stock ?? 20)
+          stock: updatedFields.stock !== undefined ? Number(updatedFields.stock) : (prod.stock ?? 20),
+          isActive: updatedFields.isActive !== undefined ? updatedFields.isActive : (prod.isActive !== false)
         };
       }
       return prod;
     }));
   };
 
+  const toggleProductVisibility = (id) => {
+    let nextStatus = true;
+    setProducts(prev => prev.map(prod => {
+      if (prod.id === id) {
+        const currentlyActive = prod.isActive !== false;
+        nextStatus = !currentlyActive;
+        return { ...prod, isActive: nextStatus };
+      }
+      return prod;
+    }));
+    return nextStatus;
+  };
+
   const deleteProduct = (id) => {
     setProducts(prev => prev.filter(prod => prod.id !== id));
+  };
+
+  // ================= VOUCHER ACTIONS (ADMIN) =================
+  const addVoucher = (voucherData) => {
+    const created = {
+      ...voucherData,
+      id: `voucher-${Date.now()}`,
+      code: voucherData.code.trim().toUpperCase(),
+      discountValue: Number(voucherData.discountValue),
+      minSubtotal: Number(voucherData.minSubtotal) || 0,
+      isActive: true
+    };
+    setVouchers(prev => [created, ...prev]);
+    return created;
+  };
+
+  const toggleVoucher = (id) => {
+    setVouchers(prev => prev.map(voucher =>
+      voucher.id === id ? { ...voucher, isActive: !voucher.isActive } : voucher
+    ));
+  };
+
+  const deleteVoucher = (id) => {
+    setVouchers(prev => prev.filter(voucher => voucher.id !== id));
+  };
+
+  const updateVoucher = (id, updatedFields) => {
+    setVouchers(prev => prev.map(voucher => {
+      if (voucher.id === id) {
+        return {
+          ...voucher,
+          ...updatedFields,
+          code: (updatedFields.code || voucher.code).trim().toUpperCase(),
+          discountValue: updatedFields.discountValue !== undefined ? Number(updatedFields.discountValue) : voucher.discountValue,
+          minSubtotal: updatedFields.minSubtotal !== undefined ? (Number(updatedFields.minSubtotal) || 0) : voucher.minSubtotal
+        };
+      }
+      return voucher;
+    }));
   };
 
   // ================= REVIEWS & RATINGS ACTIONS =================
@@ -829,7 +935,15 @@ export function ShopProvider({ children }) {
       // Product CRUD
       addProduct,
       updateProduct,
+      toggleProductVisibility,
       deleteProduct,
+
+      // Voucher management
+      vouchers,
+      addVoucher,
+      updateVoucher,
+      toggleVoucher,
+      deleteVoucher,
 
       // Reviews & Ratings
       reviews,

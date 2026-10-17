@@ -9,6 +9,7 @@ import Footer from './components/Footer';
 import CartDrawer from './components/CartDrawer';
 import WishlistToast from './components/WishlistToast';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 import AdminLayout from './layouts/AdminLayout';
 
 // Public & Client Pages
@@ -27,6 +28,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
+import AdminVouchers from './pages/admin/AdminVouchers';
 
 import './App.css';
 
@@ -92,6 +94,7 @@ function AppContent() {
           <Route path="products" element={<AdminProducts />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />
+          <Route path="vouchers" element={<AdminVouchers />} />
         </Route>
 
         {/* ================= CLIENT STOREFRONT ROUTES ================= */}
@@ -121,12 +124,14 @@ function AppContent() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <LanguageProvider>
-        <ShopProvider>
-          <AppContent />
-        </ShopProvider>
-      </LanguageProvider>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <LanguageProvider>
+          <ShopProvider>
+            <AppContent />
+          </ShopProvider>
+        </LanguageProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }

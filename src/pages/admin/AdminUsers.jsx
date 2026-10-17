@@ -10,7 +10,8 @@ import {
   Edit3, 
   Trash2, 
   X, 
-  AlertTriangle
+  AlertTriangle,
+  CheckCircle2
 } from 'lucide-react';
 
 /**
@@ -51,10 +52,11 @@ export default function AdminUsers() {
   });
   const [editError, setEditError] = useState('');
 
-  // KPIs
+  // KPIs (4 Symmetrical Cards)
   const totalUsersCount = users.length;
   const adminCount = users.filter(u => u.role === 'admin').length;
   const customerCount = users.filter(u => u.role !== 'admin').length;
+  const activeCount = users.length;
 
   // Filtered users
   const filteredUsers = users.filter(u => {
@@ -194,81 +196,107 @@ export default function AdminUsers() {
         </button>
       </div>
 
-      {/* KPI Cards */}
+      {/* 4 KPI Cards - Symmetrical Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-        <div className="admin-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#FAF7F2', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E7DDCE' }}>
+        <div className="admin-card" style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#FAF7F2', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E7DDCE', flexShrink: 0 }}>
             <Users size={20} color="#775B3F" />
           </div>
-          <div>
-            <span style={{ fontSize: 'var(--text-badge)', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.users.totalAccounts', 'Total Users')}</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{totalUsersCount}</h3>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              {t('admin.users.totalAccounts', 'TOTAL ACCOUNTS')}
+            </span>
+            <h3 className="notranslate" translate="no" style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117', lineHeight: '1.2' }}>
+              {totalUsersCount}
+            </h3>
           </div>
         </div>
 
-        <div className="admin-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#F9F2E7', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #C8AE84' }}>
+        <div className="admin-card" style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#F9F2E7', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #C8AE84', flexShrink: 0 }}>
             <Shield size={20} color="#775B3F" />
           </div>
-          <div>
-            <span style={{ fontSize: 'var(--text-badge)', color: '#775B3F', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.users.administrators', 'Administrators')}</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#775B3F' }}>{adminCount}</h3>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              {t('admin.users.administrators', 'ADMINISTRATORS')}
+            </span>
+            <h3 className="notranslate" translate="no" style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117', lineHeight: '1.2' }}>
+              {adminCount}
+            </h3>
           </div>
         </div>
 
-        <div className="admin-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#FAF8F5', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E7DDCE' }}>
+        <div className="admin-card" style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#FAF8F5', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E7DDCE', flexShrink: 0 }}>
             <UserCheck size={20} color="#5C4A3A" />
           </div>
-          <div>
-            <span style={{ fontSize: 'var(--text-badge)', color: '#5C4A3A', fontWeight: 600, textTransform: 'uppercase' }}>{t('admin.users.customers', 'Clients')}</span>
-            <h3 style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117' }}>{customerCount}</h3>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              {t('admin.users.customers', 'CUSTOMERS')}
+            </span>
+            <h3 className="notranslate" translate="no" style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117', lineHeight: '1.2' }}>
+              {customerCount}
+            </h3>
+          </div>
+        </div>
+
+        <div className="admin-card" style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0 }}>
+          <div style={{ width: '42px', height: '42px', borderRadius: '4px', backgroundColor: '#F5EFEB', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E7DDCE', flexShrink: 0 }}>
+            <CheckCircle2 size={20} color="#775B3F" />
+          </div>
+          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+            <span style={{ fontSize: '0.75rem', color: '#5C4A3A', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', whiteSpace: 'nowrap', display: 'block', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+              {t('admin.users.activeAccounts', 'ACTIVE ACCOUNTS')}
+            </span>
+            <h3 className="notranslate" translate="no" style={{ margin: '2px 0 0', fontSize: '1.6rem', fontFamily: 'var(--font-sans)', fontVariantNumeric: 'lining-nums tabular-nums', fontWeight: 700, color: '#2C2117', lineHeight: '1.2' }}>
+              {activeCount}
+            </h3>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="admin-card" style={{ marginBottom: '24px', padding: '16px 20px', display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: '260px', backgroundColor: '#FAF7F2', padding: '8px 14px', borderRadius: '4px', border: '1px solid #E7DDCE' }}>
+      <div className="admin-card admin-toolbar">
+        <div className="admin-search">
           <Search size={18} color="#8F7965" />
           <input
             type="text"
             placeholder={t('admin.users.searchPlaceholder', 'Search by name, email, username or phone...')}
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            style={{ border: 'none', background: 'none', outline: 'none', width: '100%', fontSize: '0.88rem', color: '#2C2117' }}
           />
         </div>
 
         <select
           value={roleFilter}
           onChange={e => setRoleFilter(e.target.value)}
-          style={{ padding: '9px 14px', borderRadius: '4px', border: '1px solid #E7DDCE', outline: 'none', backgroundColor: '#fff', fontSize: '0.88rem', color: '#2C2117', cursor: 'pointer' }}
+          className="admin-select"
         >
           <option value="all">{t('admin.users.filterAll', 'All Roles')} ({totalUsersCount})</option>
           <option value="admin">{t('admin.users.filterAdmin', 'Administrators')} ({adminCount})</option>
           <option value="user">{t('admin.users.filterUser', 'Customers')} ({customerCount})</option>
         </select>
+        <span className="admin-count">{filteredUsers.length} {t('admin.users.totalAccounts', 'users')}</span>
       </div>
 
       {/* Users Table */}
       <div className="admin-card" style={{ padding: 0, overflow: 'hidden' }}>
-        <div style={{ overflowX: 'auto' }}>
+        <div className="admin-table-container">
           <table className="admin-table">
             <thead>
               <tr>
-                <th>{t('admin.users.colUser', 'User / Client')}</th>
-                <th>{t('admin.users.labelEmail', 'Email Address')}</th>
-                <th>{t('admin.users.labelPhone', 'Phone Number')}</th>
-                <th>{t('admin.users.colAddress', 'Delivery Address')}</th>
-                <th>{t('admin.users.colRole', 'Role (Permission)')}</th>
-                <th style={{ textAlign: 'right' }}>{t('admin.users.colActions', 'Actions')}</th>
+                <th style={{ width: '22%' }}>{t('admin.users.colUser', 'User')}</th>
+                <th style={{ width: '20%' }}>{t('admin.users.colEmail', 'Email')}</th>
+                <th className="text-center" style={{ width: '13%' }}>{t('admin.users.colPhone', 'Phone')}</th>
+                <th style={{ width: '22%' }}>{t('admin.users.colAddress', 'Address')}</th>
+                <th className="text-center" style={{ width: '12%' }}>{t('admin.users.colRole', 'Role')}</th>
+                <th className="text-center" style={{ width: '11%' }}>{t('admin.users.colActions', 'Actions')}</th>
               </tr>
             </thead>
             <tbody>
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: 'center', padding: '48px', color: '#64748B' }}>
+                  <td colSpan="6" className="admin-empty">
                     {t('common.noResults', 'No users found matching your criteria.')}
                   </td>
                 </tr>
@@ -279,7 +307,7 @@ export default function AdminUsers() {
                   return (
                     <tr key={u.id}>
                       <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                           <div style={{
                             width: '32px',
                             height: '32px',
@@ -291,29 +319,26 @@ export default function AdminUsers() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             fontSize: '0.75rem',
-                            fontWeight: 700
+                            fontWeight: 700,
+                            flexShrink: 0
                           }}>
                             {(u.name || 'U').charAt(0).toUpperCase()}
                           </div>
-                          <div>
-                            <strong style={{ color: '#2C2117', display: 'block' }}>
-                              {u.name} {isCurrent && <span style={{ fontSize: '0.72rem', color: '#775B3F', fontWeight: 600 }}>(You)</span>}
+                          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                            <strong style={{ color: '#2C2117', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {u.name} {isCurrent && <span style={{ fontSize: '0.72rem', color: '#775B3F', fontWeight: 600 }}>({t('admin.users.you', 'You')})</span>}
                             </strong>
-                            <span style={{ fontSize: '0.78rem', color: '#64748B' }}>@{u.username || 'client'}</span>
+                            <span style={{ fontSize: '0.78rem', color: '#8F7965', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>@{u.username || 'client'}</span>
                           </div>
                         </div>
                       </td>
-                      <td style={{ color: '#5C4A3A' }}>{u.email}</td>
-                      <td style={{ color: '#5C4A3A' }}>{u.phone || '—'}</td>
-                      <td style={{ maxWidth: '240px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#5C4A3A' }}>
+                      <td style={{ color: '#2C2117', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={u.email}>{u.email}</td>
+                      <td className="text-center" style={{ color: '#2C2117', whiteSpace: 'nowrap' }}>{u.phone || '—'}</td>
+                      <td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#2C2117' }} title={u.address}>
                         {u.address || '—'}
                       </td>
-                      <td>
-                        <span style={{
-                          padding: '4px 10px',
-                          borderRadius: '12px',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
+                      <td className="text-center">
+                        <span className="admin-role-badge" style={{
                           backgroundColor: u.role === 'admin' ? '#F9F2E7' : '#F5EFEB',
                           color: u.role === 'admin' ? '#775B3F' : '#5C4A3A',
                           border: u.role === 'admin' ? '1px solid #C8AE84' : 'none'
@@ -321,23 +346,17 @@ export default function AdminUsers() {
                           {u.role === 'admin' ? `🛡️ ${t('admin.users.roleAdmin', 'Admin')}` : `👤 ${t('admin.users.roleCustomer', 'Customer')}`}
                         </span>
                       </td>
-                      <td style={{ textAlign: 'right' }}>
-                        <div style={{ display: 'inline-flex', gap: '8px' }}>
+                      <td className="text-center">
+                        <div className="admin-actions">
                           {/* Edit User */}
                           <button
                             type="button"
                             onClick={() => handleOpenEdit(u)}
-                            style={{
-                              padding: '6px',
-                              background: '#FAF7F2',
-                              border: '1px solid #E7DDCE',
-                              borderRadius: '4px',
-                              cursor: 'pointer',
-                              color: '#2C2117'
-                            }}
-                            title="Edit User Info & Role"
+                            className="admin-icon-btn edit"
+                            style={{ padding: '5px' }}
+                            title={t('admin.users.editUser', 'Edit User Info & Role')}
                           >
-                            <Edit3 size={15} />
+                            <Edit3 size={14} />
                           </button>
 
                           {/* Delete User */}
@@ -345,18 +364,11 @@ export default function AdminUsers() {
                             type="button"
                             onClick={() => handleOpenDelete(u)}
                             disabled={isCurrent || isMasterAdmin}
-                            style={{
-                              padding: '6px',
-                              background: (isCurrent || isMasterAdmin) ? '#F1F5F9' : '#FEF2F2',
-                              border: (isCurrent || isMasterAdmin) ? '1px solid #E2E8F0' : '1px solid #FECACA',
-                              borderRadius: '4px',
-                              cursor: (isCurrent || isMasterAdmin) ? 'not-allowed' : 'pointer',
-                              color: (isCurrent || isMasterAdmin) ? '#94A3B8' : '#DC2626',
-                              opacity: (isCurrent || isMasterAdmin) ? 0.6 : 1
-                            }}
-                            title={isCurrent ? "Cannot delete self" : isMasterAdmin ? "Root admin protected" : "Delete User"}
+                            className={`admin-icon-btn ${isCurrent || isMasterAdmin ? '' : 'danger'}`}
+                            style={{ padding: '5px', ...(isCurrent || isMasterAdmin ? { cursor: 'not-allowed', opacity: 0.35 } : {}) }}
+                            title={isCurrent ? t('admin.users.cannotDeleteSelf', "Cannot delete self") : isMasterAdmin ? t('admin.users.rootProtected', "Root admin protected") : t('admin.users.deleteUser', "Delete User")}
                           >
-                            <Trash2 size={15} />
+                            <Trash2 size={14} />
                           </button>
                         </div>
                       </td>
@@ -374,21 +386,21 @@ export default function AdminUsers() {
         <div className="admin-modal-overlay" onClick={() => setShowCreateModal(false)}>
           <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '540px' }}>
             <div className="admin-modal-header">
-              <h3>CREATE NEW ACCOUNT</h3>
+              <h3>{t('admin.users.modalCreateTitle', 'CREATE NEW USER ACCOUNT')}</h3>
               <button type="button" className="admin-modal-close" onClick={() => setShowCreateModal(false)}>
                 <X size={20} />
               </button>
             </div>
 
             {createError && (
-              <div style={{ padding: '10px 14px', backgroundColor: '#FEE2E2', color: '#991B1B', borderRadius: '4px', marginBottom: '16px', fontSize: '0.85rem' }}>
+              <div style={{ padding: '10px 14px', backgroundColor: '#FAF5F2', border: '1px solid #E8D3C8', color: '#8F534F', borderRadius: '4px', marginBottom: '16px', fontSize: '0.85rem' }}>
                 {createError}
               </div>
             )}
 
             <form onSubmit={handleCreateSubmit}>
               <div className="admin-field">
-                <label>Full Name *</label>
+                <label>{t('admin.users.labelFullName', 'Full Name *')}</label>
                 <input
                   type="text"
                   className="admin-input"
@@ -401,7 +413,7 @@ export default function AdminUsers() {
 
               <div className="admin-field-row">
                 <div className="admin-field">
-                  <label>Email Address *</label>
+                  <label>{t('admin.users.labelEmail', 'Email Address *')}</label>
                   <input
                     type="email"
                     className="admin-input"
@@ -412,7 +424,7 @@ export default function AdminUsers() {
                   />
                 </div>
                 <div className="admin-field">
-                  <label>Password *</label>
+                  <label>{t('admin.users.labelPassword', 'Password *')}</label>
                   <input
                     type="password"
                     className="admin-input"
@@ -426,7 +438,7 @@ export default function AdminUsers() {
 
               <div className="admin-field-row">
                 <div className="admin-field">
-                  <label>Phone Number</label>
+                  <label>{t('admin.users.labelPhone', 'Phone Number')}</label>
                   <input
                     type="tel"
                     className="admin-input"
@@ -437,20 +449,20 @@ export default function AdminUsers() {
                 </div>
 
                 <div className="admin-field">
-                  <label>System Role *</label>
+                  <label>{t('admin.users.labelRole', 'System Role *')}</label>
                   <select
                     className="admin-input"
                     value={newUserForm.role}
                     onChange={e => setNewUserForm({ ...newUserForm, role: e.target.value })}
                   >
-                    <option value="user">👤 Customer (Client)</option>
-                    <option value="admin">🛡️ Administrator</option>
+                    <option value="user">{t('admin.users.roleCustomerOption', '👤 Customer (Client)')}</option>
+                    <option value="admin">{t('admin.users.roleAdminOption', '🛡️ Administrator')}</option>
                   </select>
                 </div>
               </div>
 
               <div className="admin-field">
-                <label>Default Address</label>
+                <label>{t('admin.users.labelAddress', 'Default Address')}</label>
                 <input
                   type="text"
                   className="admin-input"
@@ -466,10 +478,10 @@ export default function AdminUsers() {
                   className="admin-secondary-btn"
                   onClick={() => setShowCreateModal(false)}
                 >
-                  Cancel
+                  {t('admin.users.btnCancel', 'Cancel')}
                 </button>
                 <button type="submit" className="admin-primary-btn">
-                  Create User
+                  {t('admin.users.btnCreate', 'Create User')}
                 </button>
               </div>
             </form>
@@ -482,21 +494,21 @@ export default function AdminUsers() {
         <div className="admin-modal-overlay" onClick={() => setShowEditModal(false)}>
           <div className="admin-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '540px' }}>
             <div className="admin-modal-header">
-              <h3>EDIT USER: {selectedUser.email}</h3>
+              <h3>{t('admin.users.modalEditTitle', 'EDIT USER ACCOUNT')}: {selectedUser.email}</h3>
               <button type="button" className="admin-modal-close" onClick={() => setShowEditModal(false)}>
                 <X size={20} />
               </button>
             </div>
 
             {editError && (
-              <div style={{ padding: '10px 14px', backgroundColor: '#FEE2E2', color: '#991B1B', borderRadius: '4px', marginBottom: '16px', fontSize: '0.85rem' }}>
+              <div style={{ padding: '10px 14px', backgroundColor: '#FAF5F2', border: '1px solid #E8D3C8', color: '#8F534F', borderRadius: '4px', marginBottom: '16px', fontSize: '0.85rem' }}>
                 {editError}
               </div>
             )}
 
             <form onSubmit={handleEditSubmit}>
               <div className="admin-field">
-                <label>Full Name *</label>
+                <label>{t('admin.users.labelFullName', 'Full Name *')}</label>
                 <input
                   type="text"
                   className="admin-input"
@@ -508,7 +520,7 @@ export default function AdminUsers() {
 
               <div className="admin-field-row">
                 <div className="admin-field">
-                  <label>Phone Number</label>
+                  <label>{t('admin.users.labelPhone', 'Phone Number')}</label>
                   <input
                     type="tel"
                     className="admin-input"
@@ -518,21 +530,21 @@ export default function AdminUsers() {
                 </div>
 
                 <div className="admin-field">
-                  <label>System Role *</label>
+                  <label>{t('admin.users.labelRole', 'System Role *')}</label>
                   <select
                     className="admin-input"
                     value={editUserForm.role}
                     onChange={e => setEditUserForm({ ...editUserForm, role: e.target.value })}
                     disabled={selectedUser.email === 'admin@lune.com'}
                   >
-                    <option value="user">👤 Customer (Client)</option>
-                    <option value="admin">🛡️ Administrator</option>
+                    <option value="user">{t('admin.users.roleCustomerOption', '👤 Customer (Client)')}</option>
+                    <option value="admin">{t('admin.users.roleAdminOption', '🛡️ Administrator')}</option>
                   </select>
                 </div>
               </div>
 
               <div className="admin-field">
-                <label>Delivery Address</label>
+                <label>{t('admin.users.labelAddress', 'Delivery Address')}</label>
                 <input
                   type="text"
                   className="admin-input"
@@ -542,7 +554,7 @@ export default function AdminUsers() {
               </div>
 
               <div className="admin-field">
-                <label>Reset Password (leave empty to keep current password)</label>
+                <label>{t('admin.users.labelNewPassword', 'Reset Password (leave empty to keep current password)')}</label>
                 <input
                   type="password"
                   className="admin-input"
@@ -558,10 +570,10 @@ export default function AdminUsers() {
                   className="admin-secondary-btn"
                   onClick={() => setShowEditModal(false)}
                 >
-                  Cancel
+                  {t('admin.users.btnCancel', 'Cancel')}
                 </button>
                 <button type="submit" className="admin-primary-btn">
-                  Save Changes
+                  {t('admin.users.btnSave', 'Save Changes')}
                 </button>
               </div>
             </form>
@@ -576,7 +588,7 @@ export default function AdminUsers() {
             <div className="admin-modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#DC2626' }}>
                 <AlertTriangle size={22} />
-                <h3 style={{ margin: 0, color: '#DC2626' }}>Delete Account</h3>
+                <h3 style={{ margin: 0, color: '#DC2626' }}>{t('admin.users.modalDeleteTitle', 'Delete Account')}</h3>
               </div>
               <button type="button" className="admin-modal-close" onClick={() => setShowDeleteModal(false)}>
                 <X size={20} />
@@ -584,8 +596,7 @@ export default function AdminUsers() {
             </div>
 
             <p style={{ fontSize: '0.92rem', color: '#5C4A3A', margin: '0 0 20px' }}>
-              Are you sure you want to permanently delete the account of <strong>{selectedUser.name}</strong> ({selectedUser.email})?
-              This action cannot be undone.
+              {t('admin.users.deleteConfirmText', 'Are you sure you want to permanently delete this user account?')} (<strong>{selectedUser.name}</strong> - {selectedUser.email})
             </p>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
@@ -594,7 +605,7 @@ export default function AdminUsers() {
                 className="admin-secondary-btn"
                 onClick={() => setShowDeleteModal(false)}
               >
-                Cancel
+                {t('admin.users.btnCancel', 'Cancel')}
               </button>
               <button
                 type="button"
@@ -610,7 +621,7 @@ export default function AdminUsers() {
                   cursor: 'pointer'
                 }}
               >
-                Confirm Delete
+                {t('admin.users.btnConfirmDelete', 'Confirm Delete')}
               </button>
             </div>
           </div>

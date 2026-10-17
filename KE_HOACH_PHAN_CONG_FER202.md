@@ -17,6 +17,7 @@
   price: 145,                     // Số nguyên (KHÔNG kèm ký tự '$' để tiện tính toán)
   category: "women",              // "women" | "men" | "accessories"
   stock: 18,                      // Số lượng tồn kho khả dụng (Mới bổ sung bởi TV1)
+  isActive: true,                 // Trạng thái khả dụng (true: hiển thị ngoài Storefront, false: ẩn lưu trữ)
   image: "https://...",           // Link ảnh chính
   images: ["url1", "url2"],       // Mảng các link ảnh phụ (thumbnail)
   sizes: ["XS", "S", "M", "L"],   // Mảng kích cỡ
@@ -56,11 +57,26 @@
 }
 ```
 
-### 4. Danh sách Khóa LocalStorage cố định (Keys)
+### 4. Cấu trúc Đối tượng Mã Giảm Giá (`Voucher`)
+```javascript
+{
+  id: "voucher-1729123456789",    // Mã định danh duy nhất
+  code: "LUNE10",                 // Mã code viết hoa chuẩn nhận diện thương hiệu
+  discountType: "percent",        // "percent" | "fixed"
+  discountValue: 10,              // Giá trị giảm: 10 (% hoặc USD)
+  minSubtotal: 100,               // Mức chi tiêu tối thiểu để áp dụng
+  startsAt: "2026-01-01T00:00",   // Ngày & giờ bắt đầu hiệu lực (YYYY-MM-DDTHH:mm)
+  expiresAt: "2026-12-31T23:59",  // Ngày & giờ kết thúc hiệu lực (YYYY-MM-DDTHH:mm)
+  isActive: true                  // Trạng thái kích hoạt khả dụng
+}
+```
+
+### 5. Danh sách Khóa LocalStorage cố định (Keys)
 * Sản phẩm: `'lune_products'`
 * Giỏ hàng: `'lune_cart'`
 * Yêu thích: `'lune_wishlist'`
 * Đơn hàng: `'lune_orders'`
+* Mã giảm giá: `'lune_vouchers'`
 * Danh sách User: `'lune_users'`
 * Tài khoản hiện tại: `'lune_current_user'`
 
@@ -72,20 +88,20 @@
 * **Vai trò:** Quản trị Kiến trúc Hệ thống, Điều phối Git, Trang Cửa Hàng Tổng Hợp & **Luồng Số Lượng Tồn Kho Sản Phẩm (Inventory & Stock Flow)**.
 * **Nhiệm vụ cụ thể:**
   1. **Khởi tạo Lõi State toàn cục (`src/context/ShopContext.jsx`):**
-     * Quản lý State: `products`, `cart`, `wishlist`, `orders`, `currentUser`.
-     * Cung cấp các hàm dùng chung: `addToCart()`, `removeFromCart()`, `updateQuantity()`, `toggleWishlist()`, `addProduct()`, `updateProduct()`, `deleteProduct()`, `addOrder()`, `updateOrderStatus()`.
+     * Quản lý State: `products`, `cart`, `wishlist`, `orders`, `currentUser`, `vouchers`.
+     * Cung cấp các hàm dùng chung: `addToCart()`, `removeFromCart()`, `updateQuantity()`, `toggleWishlist()`, `addProduct()`, `updateProduct()`, `deleteProduct()`, `toggleProductActive()`, `addOrder()`, `updateOrderStatus()`.
      * Tự động đồng bộ đọc/ghi với `localStorage`.
   2. **Quản lý Định tuyến tổng, Điều hướng Hash & Git (`src/App.jsx` & `src/index.css`):**
      * Khai báo Router cấp cao nhất, bọc `ShopProvider` và `LanguageProvider`.
      * Quản lý nhánh `main` và nhánh làm việc `linh`, duyệt Code Review, giải quyết xung đột khi merge.
      * **Điều hướng Anchor Hash xuyên trang (Cross-Route Smooth Hash Navigation):** Component `ScrollToTop` tự động phân tích cả `pathname` và `hash`; khi nhấp link anchor từ trang khác (ví dụ từ `/shop` hay `/product/1` nhấp vào "Categories" `#categories` hay "About" `#about`), hệ thống tự động định tuyến về trang chủ và kích hoạt cuộn mượt mà (`smooth scroll`) có độ trễ an toàn 100ms tới đúng mục đích.
      * **Bù trừ khoảng cách thanh điều hướng (`scroll-margin-top: 90px`):** Khai báo trong `index.css` cho các section `#categories, #new-arrivals, #about, #philosophy` đảm bảo phần tiêu đề không bao giờ bị thanh Navbar che khuất.
-  3. **Xây dựng Trang Cửa Hàng Toàn Diện (`src/pages/ShopPage.jsx` & `ShopPage.css`):**
+   3. **Xây dựng Trang Cửa Hàng Toàn Diện (`src/pages/ShopPage.jsx` & `ShopPage.css`):**
      * Lưới hiển thị danh sách toàn bộ sản phẩm.
      * **Bộ lọc đa chiều (Filter Sidebar):** Lọc theo khoảng giá ($0-$100, $100-$250, $250+), theo danh mục, theo Size và Màu sắc.
      * **Sắp xếp (Sorting):** Giá tăng dần, giá giảm dần, hàng mới nhất.
      * **Phân trang Thông minh & Tự động Đặt lại (Smart Pagination & Auto-Reset):** Chia số trang (1, 2, 3...); tự động kích hoạt `setCurrentPage(1)` mỗi khi người dùng thay đổi bất kỳ tiêu chí nào (từ khóa tìm kiếm, danh mục, loại trang phục, kích cỡ, màu sắc, khoảng giá hoặc thứ tự sắp xếp). Đồng thời tích hợp cơ chế bảo vệ biên giới hạn (`currentPage > totalPages`), ngăn ngừa tuyệt đối tình trạng người dùng kẹt tại trang rỗng khi kết quả lọc thu hẹp.
-  4. **Triển khai Trọn vẹn Luồng Tồn Kho Sản Phẩm (Inventory & Stock Management Flow):**
+   4. **Triển khai Trọn vẹn Luồng Tồn Kho Sản Phẩm (Inventory & Stock Management Flow):**
      * **Tự động trừ tồn kho:** Khi khách hàng đặt đơn (`addOrder`), hệ thống tự động trừ số lượng tồn kho tương ứng của từng sản phẩm trong kho (`stock = currentStock - quantity`).
      * **Tự động hoàn kho khi hủy đơn:** Khi Admin hoặc khách hủy đơn hàng (`updateOrderStatus` thành `"Cancelled"`), hệ thống tự động hoàn trả lại đúng số lượng vào kho sản phẩm.
      * **Quản trị Tồn kho Admin (`AdminProducts.jsx`):** Thêm cột hiển thị tồn kho, gắn thẻ trạng thái màu (Còn hàng: xanh lá >10, Sắp hết: cam vàng 1-10, Hết hàng: đỏ =0), cho phép nhập và chỉnh sửa số lượng tồn kho trong Modal Thêm/Sửa sản phẩm.
@@ -117,7 +133,10 @@
       * **Quy chuẩn 9 Nấc Kích Thước Chữ (Modular Type Scale Tokens):** Khởi tạo hệ biến `--text-hero (3.5rem)`, `--text-h1 (2.4rem)`, `--text-h2 (2.0rem)`, `--text-h3 (1.35rem)`, `--text-h4 (1.15rem)`, `--text-body (0.95rem)`, `--text-ui (0.85rem)`, `--text-badge (0.75rem)`, `--text-caption (0.7rem)` trong `src/index.css`. Đồng nhất 100% tiêu đề chính của mọi trang (Shop, Wishlist, Profile, Checkout, Order Success) về đúng chuẩn `2.4rem` (`var(--text-h1)`), tiêu đề section về `2.0rem`, thẻ KPI Admin về `1.6rem`, triệt tiêu hoàn toàn hiện tượng kích thước chữ co giật, không đều.
       * **Triệt tiêu 100% Font Lạc lõng (Zero Rogue Fonts):** Loại bỏ hoàn toàn các chuỗi font hardcoded rời rạc, font chưa nhúng (`Inter`) và đặc biệt là lỗi khai báo chung chung `fontFamily: 'serif'` (gây vỡ sang font Times New Roman trên Windows) tại `ProductDetailPage`, `QuickViewModal`, `WishlistPage`, `CheckoutPage`, `OrderSuccessPage`, `AdminLayout`, `AdminDashboard`, `AdminOrders`, `AdminUsers`.
       * **Thống nhất Toàn diện Storefront & Admin Portal:** Đảm bảo toàn bộ tiêu đề mang tinh thần biên tập Haute Couture sang trọng và toàn bộ văn bản/chỉ số dữ liệu đạt độ sắc nét, dễ đọc tối đa.
-* **Files phụ trách:** `src/context/ShopContext.jsx`, `src/context/LanguageContext.jsx`, `src/data/translations.js`, `src/components/LanguageSwitcher.jsx`, `src/components/LanguageSwitcher.css`, `src/App.jsx`, `src/index.css`, `src/pages/ShopPage.jsx`, `src/pages/ShopPage.css`, `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminOrders.jsx`, `src/pages/admin/AdminUsers.jsx`, `src/pages/ProductDetailPage.jsx`, `src/components/QuickViewModal.jsx`, `src/components/ProductCard.jsx`, `src/pages/ProfilePage.jsx`, `src/pages/ProfilePage.css`, `src/pages/LoginPage.jsx`, `src/pages/RegisterPage.jsx`, `src/pages/OrderSuccessPage.jsx`, `src/components/StarRating.jsx`, `src/components/ReviewModal.jsx`, `src/components/ReviewModal.css`, `src/components/InvoiceModal.jsx`, `src/components/InvoiceModal.css`, `src/components/OrderTimeline.jsx`, `src/components/OrderTimeline.css`.
+   9. **Lá Chắn Bắt Lỗi Toàn Cục (`ErrorBoundary.jsx`) & Khử Khuẩn Điều Hướng Tránh Kẹt Loop (`LoginPage.jsx`):**
+      * **Lớp Bảo Vệ Toàn Cục (`src/components/ErrorBoundary.jsx`):** Thiết lập React Error Boundary bao bọc toàn bộ cây Route cấp cao nhất trong `App.jsx`, chặn đứng mọi sự cố crash đột ngột do lỗi runtime JavaScript; hiển thị giao diện phục hồi Warm Luxury sang trọng kèm nút thử lại an toàn.
+      * **Bộ Lọc Khử Khuẩn Vòng Lặp Điều Hướng (`src/pages/LoginPage.jsx`):** Xử lý và làm sạch trạng thái chuyển hướng `location.state?.from.pathname`; ngăn chặn triệt để tình trạng tài khoản thông thường bị chuyển hướng sai vào phân hệ Quản trị viên dẫn đến vòng lặp điều hướng vô hạn (Infinite Loop) gây sập màn hình trắng.
+* **Files phụ trách:** `src/context/ShopContext.jsx`, `src/context/LanguageContext.jsx`, `src/data/translations.js`, `src/components/ErrorBoundary.jsx`, `src/components/LanguageSwitcher.jsx`, `src/components/LanguageSwitcher.css`, `src/App.jsx`, `src/index.css`, `src/pages/ShopPage.jsx`, `src/pages/ShopPage.css`, `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminOrders.jsx`, `src/pages/admin/AdminUsers.jsx`, `src/pages/ProductDetailPage.jsx`, `src/components/QuickViewModal.jsx`, `src/components/ProductCard.jsx`, `src/pages/ProfilePage.jsx`, `src/pages/ProfilePage.css`, `src/pages/LoginPage.jsx`, `src/pages/RegisterPage.jsx`, `src/pages/OrderSuccessPage.jsx`, `src/components/StarRating.jsx`, `src/components/ReviewModal.jsx`, `src/components/ReviewModal.css`, `src/components/InvoiceModal.jsx`, `src/components/InvoiceModal.css`, `src/components/OrderTimeline.jsx`, `src/components/OrderTimeline.css`.
 
 ---
 
@@ -174,7 +193,7 @@
      * Nút bấm dẫn sang trang Thanh toán.
   2. **Trang Thanh Toán (`src/pages/CheckoutPage.jsx` & `CheckoutPage.css`):**
      * Form nhập thông tin giao hàng: Họ tên, Số điện thoại, Địa chỉ nhận hàng (Validate không để trống, kiểm tra định dạng SĐT).
-     * Ô nhập mã giảm giá (*Promo Code*: ví dụ nhập `LUNE10` được giảm 10% tổng hóa đơn).
+     * **Tích hợp Voucher Thông minh:** Cung cấp bộ chọn Dropdown voucher khả dụng lấy từ `ShopContext` (`vouchers`), lọc theo điều kiện kích hoạt, thời hạn và mức chi tiêu tối thiểu `minSpend`. Đồng thời hỗ trợ nhập mã thủ công, tự động tính toán số tiền giảm theo thời gian thực (giảm theo % hoặc cố định USD), và ghi nhận `voucherCode` vào chi tiết đơn hàng `addOrder()`.
      * Chọn phương thức thanh toán: COD (Thanh toán khi nhận hàng) hoặc Thẻ ngân hàng giả lập.
      * Cột tóm tắt đơn hàng: Tạm tính, phí vận chuyển, số tiền được giảm, tổng thanh toán cuối cùng.
   3. **Trang Đặt Hàng Thành Công (`src/pages/OrderSuccessPage.jsx` & `OrderSuccess.css`):**
@@ -203,24 +222,37 @@
 
 ---
 
-### 👤 THÀNH VIÊN 6: PHÂN HỆ QUẢN TRỊ VIÊN & CRUD SẢN PHẨM (ADMIN PORTAL & CRUD)
-* **Vai trò:** Xây dựng cổng Quản trị viên cửa hàng, chức năng trọng tâm môn học CRUD Sản Phẩm & **Chuẩn Hóa Song Ngữ Toàn Diện Toàn Bộ Phân Hệ Quản Trị (Full Admin Bilingual i18n)**.
+### 👤 THÀNH VIÊN 6: PHÂN HỆ QUẢN TRỊ VIÊN, BIỂU ĐỒ DASHBOARD & CRUD SẢN PHẨM (ADMIN PORTAL & CRUD)
+* **Vai trò:** Xây dựng cổng Quản trị viên cửa hàng, chức năng trọng tâm môn học CRUD Sản Phẩm, **Bộ đôi Biểu đồ Trực quan SVG Native (`AdminDashboard`)**, **Cơ chế Ẩn/Hiện Sản Phẩm Tức Thời** & **Chuẩn Hóa Song Ngữ Toàn Diện Toàn Bộ Phân Hệ Quản Trị (Full Admin Bilingual i18n)**.
 * **Nhiệm vụ cụ thể:**
-  1. **Bố cục khung Quản Trị (`src/layouts/AdminLayout.jsx` & `Admin.css`):**
-     * Thanh điều hướng Sidebar bên trái (Dashboard, Sản phẩm, Đơn hàng, Khách hàng) và Topbar quản trị viên (có avatar admin, nút Đăng xuất an toàn và **Bộ chuyển đổi ngôn ngữ độc lập `LanguageSwitcher` VI \| EN**).
+  1. **Bố cục khung Quản Trị & Tinh Gọn Topbar (`src/layouts/AdminLayout.jsx` & `Admin.css`):**
+     * Thanh điều hướng Sidebar bên trái (Dashboard, Sản phẩm, Đơn hàng, Khách hàng, Voucher) và Topbar quản trị viên tinh tế (loại bỏ huy hiệu `[Administrator]` thừa thãi, tối giản bộ chuyển đổi ngôn ngữ sang dạng pill sang trọng `VI | EN`, tích hợp nút Đăng xuất an toàn).
      * Dùng `<Outlet />` để nhúng các trang con bên trong.
      * Tự động phản hồi thay đổi ngôn ngữ ngay tức thì, đồng bộ trạng thái với `localStorage`.
-  2. **Bảng Thống Kê Tổng Quan (`src/pages/admin/AdminDashboard.jsx`):**
-     * 4 thẻ KPI số liệu trực quan: **Tổng doanh thu**, **Tổng đơn hàng**, **Tổng sản phẩm trong kho**, **Tổng thành viên** (Bản địa hóa 100% nhãn tiêu đề, chú thích và định dạng đơn vị).
+  2. **Bảng Thống Kê Tổng Quan & Bộ Đôi Biểu Đồ Trực Quan SVG Native (`src/pages/admin/AdminDashboard.jsx`):**
+     * **4 thẻ KPI số liệu trực quan:** Tổng doanh thu, Tổng đơn hàng, Tổng sản phẩm trong kho, Tổng thành viên (Bản địa hóa 100% nhãn tiêu đề, chú thích và định dạng đơn vị).
+     * **Biểu đồ Xu hướng Doanh thu 7 ngày (7-Day Revenue Trajectory Area Chart):** Biểu đồ diện tích vẽ bằng SVG thuần túy với đường cong Bezier mềm mại, tính toán doanh thu thực tế từ các đơn hàng không bị hủy, tích hợp tooltip rê chuột hiển thị ngày và doanh thu chính xác.
+     * **Biểu đồ Phân bổ Doanh số theo Danh mục (Category Sales Donut Chart):** Biểu đồ tròn dạng Donut phân chia tỷ trọng doanh thu giữa Đồ Nữ, Đồ Nam và Phụ Kiện; hỗ trợ tương tác hover làm nổi bật phân đoạn và hiển thị thông tin trực quan tại tâm vòng tròn.
      * Bảng hiển thị 5 đơn hàng mới nhất cần duyệt gấp kèm các badge trạng thái song ngữ.
-  3. **Quản Lý Sản Phẩm - CRUD TOÀN DIỆN & SONG NGỮ (`src/pages/admin/AdminProducts.jsx`) - [TRỌNG TÂM ĐIỂM SỐ]:**
+  3. **Quản Lý Sản Phẩm - CRUD TOÀN DIỆN & CƠ CHẾ ẨN/HIỆN 1-CLICK (`src/pages/admin/AdminProducts.jsx`) - [TRỌNG TÂM ĐIỂM SỐ]:**
      * **Read:** Bảng danh sách toàn bộ sản phẩm (ảnh thu nhỏ, tên, giá, danh mục, tồn kho, trạng thái). Thanh tìm kiếm và bộ lọc danh mục nội bộ song ngữ.
      * **Create:** Modal/Form thêm sản phẩm mới (Nhập tên, giá, tồn kho, link ảnh, chọn danh mục, mô tả) $\rightarrow$ Validate form không được để trống $\rightarrow$ Bấm lưu là sản phẩm lập tức hiển thị ra ngoài Trang Chủ và Trang Shop.
      * **Update:** Nút Sửa trên từng dòng sản phẩm $\rightarrow$ Mở form điền sẵn dữ liệu cũ $\rightarrow$ Cập nhật giá, đổi tên, cập nhật tồn kho, đổi ảnh.
      * **Delete:** Nút Xóa sản phẩm kèm hộp thoại xác nhận an toàn song ngữ (*"Bạn có chắc muốn xóa vĩnh viễn sản phẩm này?"*) $\rightarrow$ Xóa xong sản phẩm biến mất khỏi kho, hiển thị thông báo toast thành công chuẩn ngôn ngữ đang chọn.
+     * **1-Click Visibility Toggle (`Eye / EyeOff`):** Bộ nút biểu tượng con mắt mở (`Eye`) và con mắt gạch chéo (`EyeOff`) đồng bộ kích thước chuẩn `36x36px`, cho phép Quản trị viên bật/tắt khả dụng của sản phẩm tức thời (`isActive`). Sản phẩm bị ẩn sẽ tự động biến mất khỏi Trang chủ, Cửa hàng và Live Search nhưng vẫn lưu an toàn trong kho.
+     * **Chế Độ Xem Trước Quản Trị (Admin Preview Mode):** Phối hợp với `ProductDetailPage.jsx` hiển thị biểu ngữ cảnh báo màu hổ phách sang trọng kèm nút quay lại kho khi Quản trị viên truy cập sản phẩm đang bị ẩn.
   4. **Bản địa hóa Quản trị Đơn hàng & Quản trị Thành viên (`AdminOrders.jsx` & `AdminUsers.jsx`):**
      * Đồng bộ từ điển đa ngôn ngữ cho toàn bộ bảng biểu, bộ lọc trạng thái đơn, nhãn phân quyền và các hộp thoại cảnh báo của TV5.
-* **Files phụ trách:** `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminOrders.jsx`, `src/pages/admin/AdminUsers.jsx`, `src/pages/admin/Admin.css`.
+  5. **Quản Lý Voucher Ưu Đãi Đặc Quyền - CRUD BẰNG MODAL POPUP (`src/pages/admin/AdminVouchers.jsx` & `AdminVouchers.css`):**
+     * **Bảng điều khiển & 4 KPI:** Thống kê Tổng số voucher, Số voucher đang kích hoạt, Số voucher % và Số voucher cố định. Thanh tìm kiếm mã voucher nội bộ.
+     * **Khởi tạo Voucher qua Modal (`Create Voucher Modal`):** Nhấp nút `+ Create Voucher` trên header mở Modal Popup tinh tế với backdrop mờ, hỗ trợ nhập Mã Code, Chọn loại (% / Fixed), Giá trị giảm, Đơn tối thiểu, Ngày & Giờ Bắt đầu và Kết thúc (`startsAt` & `expiresAt`). Xác thực form chặt chẽ.
+     * **Chỉnh sửa Voucher qua Modal (`Edit Voucher Modal`):** Nút Sửa mở Modal nạp sẵn dữ liệu cũ, cho phép quản trị viên điều chỉnh nhanh chóng và lưu đồng bộ.
+     * **Bộ 3 Icon thao tác đồng bộ (`Eye / EyeOff`, `Edit`, `Delete`):** Icon con mắt mở (`Eye`) và con mắt gạch chéo (`EyeOff`) đồng bộ kích thước chuẩn `36x36px` với nút Sửa và Xóa, cho phép bật/tắt hiển thị voucher tức thì mà không gây lệch giao diện.
+     * **Xóa Voucher (Delete):** Hộp thoại xác nhận an toàn song ngữ trước khi xóa vĩnh viễn voucher.
+  6. **Chuẩn Hóa 100% Brand Luxury Palette & Hệ Typography 3 Tầng Admin:**
+     * Áp dụng thống nhất màu `#2C2117` cho tiêu đề bảng, số tiền, mã đơn và KPI; `#5C4A3A` cho tiêu đề cột và nhãn phân loại; `#8F7965` cho metadata phụ.
+     * Triệt tiêu hoàn toàn các màu bootstrap sặc sỡ trên toàn bộ 5 màn hình quản trị, chống vỡ dòng cho các thẻ pill phân loại bằng `whitespace-nowrap flex-shrink-0`.
+* **Files phụ trách:** `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminOrders.jsx`, `src/pages/admin/AdminUsers.jsx`, `src/pages/admin/AdminVouchers.jsx`, `src/pages/admin/AdminVouchers.css`, `src/pages/admin/Admin.css`.
 
 ---
 

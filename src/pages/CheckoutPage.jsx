@@ -11,7 +11,7 @@ import { ShieldCheck, ArrowLeft, CheckCircle2 } from 'lucide-react';
  * Harmonized with LUNE Warm Luxury Brand Guidelines
  */
 export default function CheckoutPage() {
-  const { cart, cartTotal, addOrder, currentUser } = useShop();
+  const { cart, cartTotal, addOrder, currentUser, vouchers } = useShop();
   const { t, tp } = useLanguage();
   const navigate = useNavigate();
 
@@ -25,9 +25,25 @@ export default function CheckoutPage() {
     promoCode: ''
   });
 
+  const [selectedVoucherId, setSelectedVoucherId] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [promoMessage, setPromoMessage] = useState('');
   const [errors, setErrors] = useState({});
+
+  const now = new Date();
+  const eligibleVouchers = (vouchers || []).filter(voucher => {
+    if (!voucher.isActive) return false;
+    if (voucher.startsAt && new Date(voucher.startsAt) > now) return false;
+    if (voucher.expiresAt && new Date(voucher.expiresAt) < now) return false;
+    return cartTotal >= (Number(voucher.minSubtotal) || 0);
+  });
+  const lockedVouchers = (vouchers || []).filter(voucher => {
+    if (!voucher.isActive) return false;
+    if (voucher.startsAt && new Date(voucher.startsAt) > now) return false;
+    if (voucher.expiresAt && new Date(voucher.expiresAt) < now) return false;
+    return cartTotal < (Number(voucher.minSubtotal) || 0);
+  });
+  const selectedVoucher = eligibleVouchers.find(voucher => voucher.id === selectedVoucherId);
 
   if (cart.length === 0) {
     return (
@@ -39,14 +55,71 @@ export default function CheckoutPage() {
     );
   }
 
+  const handleVoucherSelect = (voucherId) => {
+    setSelectedVoucherId(voucherId);
+    if (!voucherId) {
+      setAppliedDiscount(0);
+      setPromoMessage('');
+      return;
+    }
+    const v = eligibleVouchers.find(item => item.id === voucherId);
+    if (v) {
+      const discount = v.discountType === 'percent'
+        ? Math.round(cartTotal * Number(v.discountValue) / 100)
+        : Math.min(cartTotal, Number(v.discountValue));
+      setAppliedDiscount(discount);
+      setFormData(prev => ({ ...prev, promoCode: v.code }));
+      setPromoMessage(t('checkout.voucherAppliedMsg', `Voucher ${v.code} applied: -${v.discountType === 'percent' ? `${v.discountValue}%` : `$${v.discountValue}`}!`));
+    }
+  };
+
   const handleApplyPromo = () => {
-    if (formData.promoCode.trim().toUpperCase() === 'LUNE10') {
+    const code = formData.promoCode.trim().toUpperCase();
+    if (!code) return;
+
+    // Check in vouchers list
+    const matchedVoucher = (vouchers || []).find(v => v.code.toUpperCase() === code);
+    if (matchedVoucher) {
+      if (!matchedVoucher.isActive) {
+        setAppliedDiscount(0);
+        setSelectedVoucherId('');
+        setPromoMessage(t('checkout.invalidPromoMsg', 'This voucher is currently inactive.'));
+        return;
+      }
+      const curTime = new Date();
+      if (matchedVoucher.startsAt && new Date(matchedVoucher.startsAt) > curTime) {
+        setAppliedDiscount(0);
+        setSelectedVoucherId('');
+        setPromoMessage(t('checkout.upcomingVoucherMsg', 'This voucher is not active yet.'));
+        return;
+      }
+      if (matchedVoucher.expiresAt && new Date(matchedVoucher.expiresAt) < curTime) {
+        setAppliedDiscount(0);
+        setSelectedVoucherId('');
+        setPromoMessage(t('checkout.expiredVoucherMsg', 'This voucher has expired.'));
+        return;
+      }
+      if (cartTotal < (Number(matchedVoucher.minSubtotal) || 0)) {
+        setAppliedDiscount(0);
+        setSelectedVoucherId('');
+        const diff = Number(matchedVoucher.minSubtotal) - cartTotal;
+        setPromoMessage(`${t('checkout.minSubtotalMsg', `Minimum order for this voucher is $${matchedVoucher.minSubtotal}.`)} ${t('checkout.upsellMsg', `Add $${diff} more to unlock this voucher!`).replace('${amount}', diff)}`);
+        return;
+      }
+      setSelectedVoucherId(matchedVoucher.id);
+      const discount = matchedVoucher.discountType === 'percent'
+        ? Math.round(cartTotal * Number(matchedVoucher.discountValue) / 100)
+        : Math.min(cartTotal, Number(matchedVoucher.discountValue));
+      setAppliedDiscount(discount);
+      setPromoMessage(t('checkout.voucherAppliedMsg', `Voucher ${matchedVoucher.code} applied: -${matchedVoucher.discountType === 'percent' ? `${matchedVoucher.discountValue}%` : `$${matchedVoucher.discountValue}`}!`));
+    } else if (code === 'LUNE10') {
       const discount = Math.round(cartTotal * 0.1);
       setAppliedDiscount(discount);
       setPromoMessage(t('checkout.appliedPromoMsg', 'Promo code LUNE10 applied: 10% OFF!'));
     } else {
       setAppliedDiscount(0);
-      setPromoMessage(t('checkout.invalidPromoMsg', 'Invalid promo code. Try LUNE10'));
+      setSelectedVoucherId('');
+      setPromoMessage(t('checkout.invalidPromoMsg', 'Invalid promo code.'));
     }
   };
 
@@ -77,6 +150,7 @@ export default function CheckoutPage() {
       items: cart,
       totalAmount: finalTotal,
       discount: appliedDiscount,
+      voucherCode: selectedVoucher?.code || (appliedDiscount > 0 ? formData.promoCode.trim().toUpperCase() : ''),
       shippingFee: shippingFee,
       paymentMethod: formData.paymentMethod === 'COD' ? 'Cash on Delivery' : 'Credit Card (Simulated)'
     });
@@ -214,8 +288,49 @@ export default function CheckoutPage() {
             ))}
           </div>
 
-          {/* Promo code */}
+          {/* Voucher selection & Promo code */}
           <div style={{ marginBottom: '20px' }}>
+            {eligibleVouchers.length > 0 && (
+              <div style={{ marginBottom: '12px' }}>
+                <label 
+                  htmlFor="checkout-voucher" 
+                  style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#5C4A3A', textTransform: 'uppercase', letterSpacing: '0.04em' }}
+                >
+                  {t('checkout.selectVoucherLabel', 'Available Boutique Vouchers')}
+                </label>
+                <select
+                  id="checkout-voucher"
+                  value={selectedVoucherId}
+                  onChange={e => handleVoucherSelect(e.target.value)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '9px 12px', 
+                    border: '1px solid #C8AE84', 
+                    borderRadius: '2px', 
+                    backgroundColor: '#FFFFFF', 
+                    fontSize: '0.85rem', 
+                    color: '#2C2117',
+                    outline: 'none',
+                    cursor: 'pointer' 
+                  }}
+                >
+                  <option value="">{t('checkout.noVoucher', '-- Select a Voucher --')}</option>
+                  {eligibleVouchers.map(voucher => (
+                    <option key={voucher.id} value={voucher.id}>
+                      {voucher.code} - {voucher.discountType === 'percent' ? `${voucher.discountValue}% OFF` : `$${voucher.discountValue} OFF`}
+                      {Number(voucher.minSubtotal) > 0 ? ` (Min. $${voucher.minSubtotal})` : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {lockedVouchers.length > 0 && (
+              <div style={{ marginBottom: '12px', padding: '8px 10px', backgroundColor: '#FDFBF7', border: '1px dashed #D5C3A5', borderRadius: '3px', fontSize: '0.78rem', color: '#775B3F' }}>
+                ✨ {lockedVouchers.slice(0, 2).map(v => `${v.code} (${v.discountType === 'percent' ? `${v.discountValue}%` : `$${v.discountValue}`} OFF - Min. $${v.minSubtotal})`).join(' • ')}
+              </div>
+            )}
+
             <div style={{ display: 'flex', gap: '8px' }}>
               <input 
                 type="text" 
