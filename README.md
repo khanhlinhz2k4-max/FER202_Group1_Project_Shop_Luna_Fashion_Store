@@ -122,12 +122,24 @@ FER202_Group1_Project_Shop_Lune_Fashion_Store/
 │   ├── App.jsx                 # Cấu hình Route chính, Error Boundary & Bọc Providers
 │   ├── index.css               # Hệ thống Token CSS Warm Luxury
 │   └── main.jsx                # Điểm khởi chạy ứng dụng React
-├── KE_HOACH_PHAN_CONG_FER202.md# Phân chia nhiệm vụ 6 thành viên chi tiết
-├── KICH_BAN_KIEM_THU_TEST_CASES.md# 60+ Kịch bản kiểm thử tính năng (100% PASS)
-├── PHAN_TICH_HE_THONG_LUNE_STORE.md# Tài liệu đặc tả yêu cầu & phân tích hệ thống
-├── THIET_KE_GIAO_DIEN_UI_UX.md # Đặc tả thiết kế giao diện & bảng màu
+├── docs/                       # Thư mục tài liệu báo cáo & đặc tả hệ thống
+│   ├── KE_HOACH_PHAN_CONG_FER202.md     # Phân chia nhiệm vụ 6 thành viên chi tiết
+│   ├── KICH_BAN_KIEM_THU_TEST_CASES.md  # 60+ Kịch bản kiểm thử tính năng (100% PASS)
+│   ├── PHAN_TICH_HE_THONG_LUNE_STORE.md # Tài liệu đặc tả yêu cầu & phân tích hệ thống
+│   └── THIET_KE_GIAO_DIEN_UI_UX.md      # Đặc tả thiết kế giao diện & bảng màu
 └── package.json
 ```
+
+---
+
+## 📚 TÀI LIỆU DỰ ÁN CHI TIẾT (PROJECT DOCUMENTATION)
+
+Toàn bộ tài liệu báo cáo, thiết kế và kiểm thử chuyên sâu được lưu trữ tại thư mục [`docs/`](docs/):
+
+1. 📋 **[Kế Hoạch Phân Công Nhiệm Vụ FER202](docs/KE_HOACH_PHAN_CONG_FER202.md)**: Ma trận trách nhiệm & nhiệm vụ của 6 thành viên nhóm 1.
+2. 🧪 **[Kịch Bản Kiểm Thử & Test Cases](docs/KICH_BAN_KIEM_THU_TEST_CASES.md)**: 60+ kịch bản kiểm thử chi tiết phân hệ Storefront & Admin Portal.
+3. 📐 **[Phân Tích Hệ Thống & Đặc Tả Nghiệp Vụ](docs/PHAN_TICH_HE_THONG_LUNE_STORE.md)**: Yêu cầu chức năng, phi chức năng & luồng dữ liệu ứng dụng.
+4. 🎨 **[Đặc Tả Thiết Kế Giao Diện UI/UX](docs/THIET_KE_GIAO_DIEN_UI_UX.md)**: Hệ thống bảng màu Warm Luxury, typography, component tokens & responsive specs.
 
 ---
 
