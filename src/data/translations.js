@@ -487,6 +487,7 @@ export const translations = {
       qty: 'Số lượng:',
       size: 'Kích cỡ:',
       discount10: 'Ưu đãi đặc quyền LUNE10 (10%)',
+      privilegeDiscount: 'Ưu đãi đặc quyền',
       shippingFeeLabel: 'Phí vận chuyển',
       totalLabel: 'Tổng cộng'
     },
@@ -1500,6 +1501,7 @@ export const translations = {
       qty: 'Qty:',
       size: 'Size:',
       discount10: 'Privilege Discount LUNE10 (10%)',
+      privilegeDiscount: 'Privilege Discount',
       shippingFeeLabel: 'Shipping',
       totalLabel: 'Total'
     },

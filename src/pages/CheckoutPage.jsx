@@ -45,6 +45,27 @@ export default function CheckoutPage() {
   });
   const selectedVoucher = eligibleVouchers.find(voucher => voucher.id === selectedVoucherId);
 
+  const getDiscountLabel = () => {
+    const prefix = t('checkout.privilegeDiscount', 'Ưu đãi đặc quyền');
+    const matchedV = selectedVoucher || (vouchers || []).find(v => v.id === selectedVoucherId || (formData.promoCode && v.code.toUpperCase() === formData.promoCode.trim().toUpperCase()));
+    
+    if (matchedV) {
+      const discountText = matchedV.discountType === 'percent'
+        ? `${matchedV.discountValue}%`
+        : `-$${matchedV.discountValue}`;
+      return `${prefix} ${matchedV.code} (${discountText})`;
+    }
+    
+    const code = formData.promoCode ? formData.promoCode.trim().toUpperCase() : '';
+    if (code === 'LUNE10') {
+      return `${prefix} LUNE10 (10%)`;
+    }
+    if (code) {
+      return `${prefix} ${code}`;
+    }
+    return t('checkout.discount10', 'Ưu đãi đặc quyền');
+  };
+
   if (cart.length === 0) {
     return (
       <div style={{ padding: '80px 20px', textAlign: 'center' }}>
@@ -362,7 +383,7 @@ export default function CheckoutPage() {
             </div>
             {appliedDiscount > 0 && (
               <div style={{ display: 'flex', justifyContent: 'space-between', color: '#16A34A' }}>
-                <span>{t('checkout.discount10')}</span>
+                <span>{getDiscountLabel()}</span>
                 <span>-${appliedDiscount}</span>
               </div>
             )}
