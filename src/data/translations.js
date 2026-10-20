@@ -6,6 +6,16 @@
 
 export const translations = {
   vi: {
+    // Common Actions
+    common: {
+      quickView: 'Xem nhanh',
+      quickAdd: '+ Thêm nhanh',
+      soldOut: 'Hết hàng',
+      addToBag: 'Thêm vào túi mua sắm',
+      viewDetails: 'Xem chi tiết trang phục →',
+      close: 'Đóng'
+    },
+
     // Navigation & Announcements
     nav: {
       home: 'Trang Chủ',
@@ -450,6 +460,13 @@ export const translations = {
       emptyCartDesc: 'Vui lòng thêm sản phẩm vào giỏ trước khi tiến hành thanh toán.',
       returnToShop: 'Quay lại Cửa Hàng',
       deliveryInfoTitle: 'THÔNG TIN GIAO HÀNG',
+      savedAddressesTitle: 'SỔ ĐỊA CHỈ ĐÃ LƯU TRONG PROFILE',
+      savedAddressesDesc: 'Chọn nhanh địa chỉ nhận hàng từ tài khoản của bạn để thanh toán 1 chạm:',
+      addNewAddressBtn: '+ Giao đến địa chỉ mới',
+      useSavedAddressBtn: '← Chọn lại từ Sổ địa chỉ đã lưu',
+      defaultBadge: 'Mặc định',
+      saveAddressToProfile: 'Lưu địa chỉ này vào Sổ địa chỉ Profile cho các đơn hàng sau',
+      manageAddressBookLink: 'Quản lý sổ địa chỉ',
       fullNameLabel: 'Họ và tên người nhận',
       phoneLabel: 'Số điện thoại liên hệ',
       emailLabel: 'Địa chỉ Email (Nhận hóa đơn điện tử)',
@@ -483,7 +500,24 @@ export const translations = {
       cardExpiryLabel: 'Hạn thẻ (MM/YY)',
       secureNotice: 'Giao dịch được mã hóa và bảo vệ an toàn 100%',
       codDesc: 'Thanh toán tiền mặt khi đơn hàng được giao đến tận nơi',
-      cardDesc: 'Xác nhận tức thì qua Visa, MasterCard, JCB',
+      cardOption: 'Thẻ tín dụng / Ghi nợ Quốc tế (Visa, Mastercard, AMEX)',
+      cardDesc: 'Thanh toán tức thì bằng USD qua cổng bảo mật chuẩn quốc tế 256-bit SSL (Khuyên dùng)',
+      vietqrOption: 'Chuyển khoản Ngân hàng Việt Nam (VietQR - VND)',
+      vietqrDesc: 'Dành riêng cho khách hàng nội địa sử dụng App Ngân hàng Việt Nam (Quy đổi tự động theo tỷ giá)',
+      vietqrScanTitle: 'CHUYỂN KHOẢN NGÂN HÀNG NỘI ĐỊA (VIETQR - VND)',
+      vietqrScanDesc: 'Mở ứng dụng Ngân hàng Việt Nam (VCB, MB, Techcombank...) để quét mã chuyển tiền theo tỷ giá:',
+      vietqrRateNotice: 'Tỷ giá quy đổi: $1.00 USD ≈ 25.400 ₫ (Tổng tiền thanh toán:',
+      cardHolderLabel: 'Tên in trên thẻ (Cardholder Name)',
+      cardCvvLabel: 'Mã bảo mật (CVV)',
+      cardSecurityNotice: 'Giao dịch được bảo mật và mã hóa đa lớp tiêu chuẩn PCI-DSS Level 1.',
+      bankLabel: 'Ngân hàng thụ hưởng:',
+      accountNoLabel: 'Số tài khoản:',
+      accountNameLabel: 'Chủ tài khoản:',
+      amountLabel: 'Số tiền chính xác (VND):',
+      memoLabel: 'Nội dung chuyển khoản:',
+      copySuccess: 'Đã sao chép!',
+      copyTooltip: 'Sao chép',
+      vietqrAutoNotice: 'Hệ thống tự động đồng bộ và xác nhận đơn hàng ngay khi tiền vào tài khoản.',
       qty: 'Số lượng:',
       size: 'Kích cỡ:',
       discount10: 'Ưu đãi đặc quyền LUNE10 (10%)',
@@ -1020,6 +1054,16 @@ export const translations = {
   },
 
   en: {
+    // Common Actions
+    common: {
+      quickView: 'Quick View',
+      quickAdd: '+ Quick Add',
+      soldOut: 'Sold Out',
+      addToBag: 'Add to Shopping Bag',
+      viewDetails: 'View Full Details →',
+      close: 'Close'
+    },
+
     // Navigation & Announcements
     nav: {
       home: 'Home',
@@ -1464,6 +1508,13 @@ export const translations = {
       emptyCartDesc: 'Add items to your bag before proceeding to checkout.',
       returnToShop: 'Return to Shop',
       deliveryInfoTitle: 'DELIVERY INFORMATION',
+      savedAddressesTitle: 'SAVED PROFILE DESTINATIONS',
+      savedAddressesDesc: 'Select a saved destination from your account for 1-click checkout:',
+      addNewAddressBtn: '+ Ship to a new address',
+      useSavedAddressBtn: '← Select from saved addresses',
+      defaultBadge: 'Default',
+      saveAddressToProfile: 'Save this address to your Profile Address Book for future orders',
+      manageAddressBookLink: 'Manage Address Book',
       fullNameLabel: 'Full Name',
       phoneLabel: 'Phone Number',
       emailLabel: 'Email Address (For receipt)',
@@ -1496,8 +1547,25 @@ export const translations = {
       cardNumberLabel: 'Card Number',
       cardExpiryLabel: 'Expires (MM/YY)',
       secureNotice: 'Transactions are 100% encrypted and secured',
-      codDesc: 'Pay cash when your order is delivered',
-      cardDesc: 'Visa, MasterCard, JCB instant confirmation',
+      codDesc: 'Pay cash when your order is delivered to your address',
+      cardOption: 'Credit / Debit Card (Visa, Mastercard, AMEX)',
+      cardDesc: 'Instant global USD settlement via 256-bit encrypted gateway (Recommended)',
+      vietqrOption: 'Vietnam Domestic Bank Transfer (VietQR - VND)',
+      vietqrDesc: 'For local customers in Vietnam using domestic banking apps (Converted at live rate)',
+      vietqrScanTitle: 'VIETNAM DOMESTIC BANK TRANSFER (VIETQR - VND)',
+      vietqrScanDesc: 'Open your Vietnamese Mobile Banking app (VCB, MB, Techcombank...) to scan and pay:',
+      vietqrRateNotice: 'Guaranteed Exchange Rate: $1.00 USD ≈ 25,400 VND (Converted total:',
+      cardHolderLabel: 'Cardholder Name',
+      cardCvvLabel: 'CVV / CVC',
+      cardSecurityNotice: 'Transactions are secured with PCI-DSS Level 1 compliance and 256-bit SSL encryption.',
+      bankLabel: 'Beneficiary Bank:',
+      accountNoLabel: 'Account Number:',
+      accountNameLabel: 'Account Holder:',
+      amountLabel: 'Exact Amount (VND):',
+      memoLabel: 'Transfer Memo:',
+      copySuccess: 'Copied!',
+      copyTooltip: 'Copy',
+      vietqrAutoNotice: 'The system will automatically reconcile and confirm your order as soon as payment arrives.',
       qty: 'Qty:',
       size: 'Size:',
       discount10: 'Privilege Discount LUNE10 (10%)',

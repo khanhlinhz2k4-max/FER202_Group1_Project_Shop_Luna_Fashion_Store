@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { useLanguage } from '../context/LanguageContext';
 import StarRating from './StarRating';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 export default function QuickViewModal({
   product,
@@ -41,6 +43,25 @@ export default function QuickViewModal({
 
     setQuantity(1);
   }, [product, isOpen]);
+
+  // Lock body scroll and listen for Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen || !product) {
     return null;
@@ -82,35 +103,39 @@ export default function QuickViewModal({
   return (
     <div
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={tp(product, 'name') || product.name}
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.55)',
+        backgroundColor: 'rgba(28, 25, 23, 0.65)',
+        backdropFilter: 'blur(5px)',
+        WebkitBackdropFilter: 'blur(5px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '20px',
-        zIndex: 9999
+        zIndex: 99999
       }}
     >
       <div
-        onClick={(event) =>
-          event.stopPropagation()
-        }
+        onClick={(event) => event.stopPropagation()}
         style={{
           width: '100%',
           maxWidth: '850px',
           maxHeight: '90vh',
           overflowY: 'auto',
-          backgroundColor: '#fff',
+          backgroundColor: '#FFFFFF',
           position: 'relative',
           display: 'grid',
-          gridTemplateColumns:
-            'minmax(0, 0.9fr) minmax(0, 1fr)'
+          gridTemplateColumns: 'minmax(0, 0.9fr) minmax(0, 1fr)',
+          borderRadius: '4px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
+          border: '1px solid #E7DDCE'
         }}
       >
-
-        {/* ================= CLOSE ================= */}
+        {/* ================= CLOSE BUTTON ================= */}
         <button
           type="button"
           onClick={onClose}
@@ -119,28 +144,27 @@ export default function QuickViewModal({
             position: 'absolute',
             top: '12px',
             right: '12px',
-            zIndex: 5,
+            zIndex: 10,
             width: '36px',
             height: '36px',
             borderRadius: '50%',
-            border: 'none',
-            backgroundColor:
-              'rgba(255,255,255,0.95)',
+            border: '1px solid #E7DDCE',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
           }}
         >
-          <X size={18} />
+          <X size={18} color="#2C2117" />
         </button>
-
 
         {/* ================= PRODUCT IMAGE ================= */}
         <div
           style={{
             backgroundColor: '#EDE8E1',
-            minHeight: '500px'
+            minHeight: '480px'
           }}
         >
           <img
@@ -149,23 +173,21 @@ export default function QuickViewModal({
             style={{
               width: '100%',
               height: '100%',
-              minHeight: '500px',
+              minHeight: '480px',
               objectFit: 'cover',
               display: 'block'
             }}
           />
         </div>
 
-
         {/* ================= PRODUCT INFO ================= */}
         <div
           style={{
-            padding: '42px 36px',
+            padding: '40px 36px',
             display: 'flex',
             flexDirection: 'column'
           }}
         >
-
           {/* Category */}
           <div
             style={{
@@ -178,7 +200,6 @@ export default function QuickViewModal({
           >
             {tp(product, 'garmentType') || product.category}
           </div>
-
 
           {/* Product Name */}
           <h2
@@ -204,7 +225,6 @@ export default function QuickViewModal({
             />
           </div>
 
-
           {/* Price */}
           <div
             style={{
@@ -217,7 +237,8 @@ export default function QuickViewModal({
             <span
               style={{
                 fontWeight: 600,
-                fontSize: '1.05rem'
+                fontSize: '1.05rem',
+                color: '#2C2117'
               }}
             >
               ${Number(product.price).toFixed(2)}
@@ -231,14 +252,10 @@ export default function QuickViewModal({
                   fontSize: '0.9rem'
                 }}
               >
-                $
-                {Number(
-                  product.originalPrice
-                ).toFixed(2)}
+                ${Number(product.originalPrice).toFixed(2)}
               </span>
             )}
           </div>
-
 
           {/* Description */}
           <p
@@ -246,41 +263,39 @@ export default function QuickViewModal({
               color: '#57534E',
               fontSize: '0.88rem',
               lineHeight: 1.7,
-              margin: '0 0 24px'
+              margin: '0 0 20px'
             }}
           >
             {tp(product, 'description')}
           </p>
 
-
           <div
             style={{
               height: '1px',
               backgroundColor: '#E7E5E4',
-              marginBottom: '22px'
+              marginBottom: '20px'
             }}
           />
 
-
           {/* ================= COLOR ================= */}
           {product.colors?.length > 0 && (
-            <div style={{ marginBottom: '22px' }}>
-
+            <div style={{ marginBottom: '20px' }}>
               <div
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   letterSpacing: '0.08em',
-                  marginBottom: '11px'
+                  marginBottom: '10px',
+                  color: '#2C2117'
                 }}
               >
-                {t('productDetail.colorLabel')}
+                {t('productDetail.colorLabel', 'COLOR')}
               </div>
 
               <div
                 style={{
                   display: 'flex',
-                  gap: '11px',
+                  gap: '10px',
                   flexWrap: 'wrap'
                 }}
               >
@@ -289,13 +304,11 @@ export default function QuickViewModal({
                     <button
                       key={`${color}-${index}`}
                       type="button"
-                      onClick={() =>
-                        setSelectedColor(color)
-                      }
+                      onClick={() => setSelectedColor(color)}
                       aria-label={`Color ${index + 1}`}
                       style={{
-                        width: '30px',
-                        height: '30px',
+                        width: '28px',
+                        height: '28px',
                         borderRadius: '50%',
                         backgroundColor: color,
                         border:
@@ -315,20 +328,19 @@ export default function QuickViewModal({
             </div>
           )}
 
-
           {/* ================= SIZE ================= */}
           {product.sizes?.length > 0 && (
-            <div style={{ marginBottom: '22px' }}>
-
+            <div style={{ marginBottom: '20px' }}>
               <div
                 style={{
                   fontSize: '0.75rem',
                   fontWeight: 600,
                   letterSpacing: '0.08em',
-                  marginBottom: '11px'
+                  marginBottom: '10px',
+                  color: '#2C2117'
                 }}
               >
-                {t('productDetail.sizeLabel')}
+                {t('productDetail.sizeLabel', 'SIZE')}
               </div>
 
               <div
@@ -342,12 +354,10 @@ export default function QuickViewModal({
                   <button
                     key={size}
                     type="button"
-                    onClick={() =>
-                      setSelectedSize(size)
-                    }
+                    onClick={() => setSelectedSize(size)}
                     style={{
-                      minWidth: '44px',
-                      padding: '9px 12px',
+                      minWidth: '42px',
+                      padding: '8px 12px',
                       backgroundColor:
                         selectedSize === size
                           ? '#775B3F'
@@ -362,6 +372,8 @@ export default function QuickViewModal({
                           : '1px solid #D6D3D1',
                       cursor: 'pointer',
                       fontSize: '0.75rem',
+                      fontWeight: 600,
+                      borderRadius: '2px',
                       transition: 'all 0.2s ease'
                     }}
                   >
@@ -372,75 +384,35 @@ export default function QuickViewModal({
             </div>
           )}
 
-
-          {/* ================= STOCK STATUS ================= */}
+          {/* ================= STOCK STATUS (shadcn/ui Badge) ================= */}
           <div style={{ marginBottom: '18px' }}>
             {stock === 0 ? (
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '5px 10px',
-                  backgroundColor: '#FEE2E2',
-                  color: '#991B1B',
-                  borderRadius: '4px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600
-                }}
-              >
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#DC2626' }} />
-                {t('productDetail.outOfStock')}
-              </div>
+              <Badge variant="destructive" style={{ borderRadius: '2px', fontWeight: 600, fontSize: '0.72rem', padding: '4px 8px' }}>
+                {t('productDetail.outOfStock', 'Hết hàng')}
+              </Badge>
             ) : stock <= 5 ? (
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '5px 10px',
-                  backgroundColor: '#FEF3C7',
-                  color: '#92400E',
-                  borderRadius: '4px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600
-                }}
-              >
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#D97706' }} />
-                {t('productDetail.lowStock')} {stock} {t('productDetail.unitsLeft')}
-              </div>
+              <Badge variant="outline" style={{ borderColor: '#D97706', color: '#92400E', backgroundColor: '#FEF3C7', borderRadius: '2px', fontWeight: 600, fontSize: '0.72rem', padding: '4px 8px' }}>
+                {t('productDetail.lowStock', 'Còn ít')} {stock} {t('productDetail.unitsLeft', 'chiếc')}
+              </Badge>
             ) : (
-              <div
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '5px 10px',
-                  backgroundColor: '#ECFDF5',
-                  color: '#065F46',
-                  borderRadius: '4px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600
-                }}
-              >
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#10B981' }} />
-                {t('productDetail.stockAvailable')} ({stock})
-              </div>
+              <Badge variant="secondary" style={{ backgroundColor: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', borderRadius: '2px', fontWeight: 600, fontSize: '0.72rem', padding: '4px 8px' }}>
+                {t('productDetail.stockAvailable', 'Sẵn hàng')} ({stock})
+              </Badge>
             )}
           </div>
 
           {/* ================= QUANTITY ================= */}
-          <div style={{ marginBottom: '24px' }}>
-
+          <div style={{ marginBottom: '22px' }}>
             <div
               style={{
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 letterSpacing: '0.08em',
-                marginBottom: '11px'
+                marginBottom: '10px',
+                color: '#2C2117'
               }}
             >
-              {t('productDetail.quantityLabel')}
+              {t('productDetail.quantityLabel', 'QUANTITY')}
             </div>
 
             <div
@@ -448,10 +420,10 @@ export default function QuickViewModal({
                 display: 'inline-flex',
                 alignItems: 'center',
                 border: '1px solid #D6D3D1',
+                borderRadius: '2px',
                 opacity: stock === 0 ? 0.5 : 1
               }}
             >
-
               <button
                 type="button"
                 onClick={decreaseQuantity}
@@ -480,7 +452,8 @@ export default function QuickViewModal({
                 style={{
                   width: '38px',
                   textAlign: 'center',
-                  fontSize: '0.85rem'
+                  fontSize: '0.85rem',
+                  fontWeight: 600
                 }}
               >
                 {stock === 0 ? 0 : quantity}
@@ -509,12 +482,10 @@ export default function QuickViewModal({
               >
                 <Plus size={14} />
               </button>
-
             </div>
           </div>
 
-
-          {/* ================= ACTIONS ================= */}
+          {/* ================= ACTIONS (shadcn/ui Button) ================= */}
           <div
             style={{
               display: 'flex',
@@ -522,15 +493,14 @@ export default function QuickViewModal({
               marginBottom: '18px'
             }}
           >
-
-            <button
+            <Button
               type="button"
               onClick={handleAddToCart}
               disabled={stock === 0}
+              variant="default"
               style={{
                 flex: 1,
                 minHeight: '46px',
-                border: 'none',
                 backgroundColor: stock === 0 ? '#A8A29E' : '#775B3F',
                 color: '#fff',
                 cursor: stock === 0 ? 'not-allowed' : 'pointer',
@@ -540,20 +510,13 @@ export default function QuickViewModal({
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '7px',
-                transition: 'background-color 0.2s ease',
-                opacity: stock === 0 ? 0.7 : 1
-              }}
-              onMouseEnter={(e) => {
-                if (stock > 0) e.currentTarget.style.backgroundColor = '#5C4A3A';
-              }}
-              onMouseLeave={(e) => {
-                if (stock > 0) e.currentTarget.style.backgroundColor = '#775B3F';
+                borderRadius: '2px',
+                letterSpacing: '0.04em'
               }}
             >
               <ShoppingBag size={15} />
               {stock === 0 ? t('common.soldOut') : t('common.addToBag')}
-            </button>
-
+            </Button>
 
             <button
               type="button"
@@ -566,13 +529,13 @@ export default function QuickViewModal({
               style={{
                 width: '46px',
                 minHeight: '46px',
-                border:
-                  '1px solid #D6D3D1',
+                border: '1px solid #D6D3D1',
                 backgroundColor: '#fff',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                borderRadius: '2px'
               }}
             >
               <Heart
@@ -589,9 +552,7 @@ export default function QuickViewModal({
                 }
               />
             </button>
-
           </div>
-
 
           {/* ================= VIEW DETAILS ================= */}
           <Link
@@ -603,12 +564,11 @@ export default function QuickViewModal({
               fontSize: '0.78rem',
               fontWeight: 500,
               textDecoration: 'underline',
-              padding: '8px'
+              padding: '6px'
             }}
           >
             {t('common.viewDetails')}
           </Link>
-
         </div>
       </div>
     </div>

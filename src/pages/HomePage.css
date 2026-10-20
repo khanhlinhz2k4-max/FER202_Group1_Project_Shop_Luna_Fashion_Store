@@ -137,23 +137,16 @@
 }
 
 .hero-nav-arrow.prev {
-  left: 2rem;
+  left: 1.25rem;
 }
 
 .hero-nav-arrow.next {
-  right: 2rem;
+  right: 1.25rem;
 }
 
 @media (max-width: 768px) {
   .hero-nav-arrow {
-    width: 38px;
-    height: 38px;
-  }
-  .hero-nav-arrow.prev {
-    left: 0.75rem;
-  }
-  .hero-nav-arrow.next {
-    right: 0.75rem;
+    display: none;
   }
 }
 

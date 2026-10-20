@@ -11,6 +11,7 @@ import WishlistToast from './components/WishlistToast';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import AdminLayout from './layouts/AdminLayout';
+import ChatBot from './components/ChatBot';
 
 // Public & Client Pages
 import HomePage from './pages/HomePage';
@@ -67,6 +68,8 @@ function StorefrontLayout({ children }) {
         {children}
       </main>
       <Footer />
+      {/* 24/7 Atelier Stylist Chatbot */}
+      <ChatBot />
     </div>
   );
 }

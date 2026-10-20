@@ -53,8 +53,8 @@ Tất cả các thành viên khi xây dựng giao diện **bắt buộc dùng ch
 ## 🔤 III. HỆ THỐNG TYPOGRAPHY BIÊN TẬP (TYPOGRAPHY HIERARCHY)
 
 ### 1. Quy hoạch 2 Họ Phông Chữ Cốt Lõi (2-Font Warm Luxury System)
-1. **`--font-serif: 'Playfair Display', 'Cormorant Garamond', Georgia, serif;`**
-   - **Mục đích:** Font Serif cổ điển sang trọng, tương phản nét tinh tế, chuẩn bìa tạp chí thời trang Haute Couture.
+1. **`--font-serif: 'Playfair Display', 'Cormorant Garamond', 'Times New Roman', serif;`**
+   - **Mục đích:** Font Serif cổ điển sang trọng, tương phản nét tinh tế, chuẩn bìa tạp chí thời trang Haute Couture. Đồng thời loại bỏ hoàn toàn `Georgia` khỏi fallback để tránh lỗi số rơi thụt dòng (old-style descenders trên số 3, 5, 7, 9).
    - **Phạm vi áp dụng:** Toàn bộ Tiêu đề chính (`h1, h2, h3, h4`), Logo thương hiệu (`LUNE`), Hero Editorial Headlines, Tiêu đề Modal (`QuickViewModal`, `ReviewModal`, `InvoiceModal`), Khối chứng thực & Đánh giá (`Atelier Reviews & Ratings`), Điểm số đánh giá nổi bật, Chữ ký thương hiệu hóa đơn.
 2. **`--font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;`**
    - **Mục đích:** Font Sans-serif hiện đại, chuẩn hình học sắc nét, độ thoáng dòng hoàn hảo cho trải nghiệm đọc trên cả máy tính và di động.
@@ -433,4 +433,80 @@ Trước khi nộp bài cho Trưởng nhóm (Leader), từng thành viên phải
    * Chuẩn hóa nhãn biến thể `Cỡ` / `Size`, `Màu` / `Color` và số lượng trong giỏ hàng.
    * Bản địa hóa phương thức thanh toán (COD & Thẻ ngân hàng), chiết khấu ưu đãi, phí vận chuyển và tổng thanh toán.
 5. **Chứng nhận chất lượng kỹ thuật:** Build thành công 100% bằng Vite (`npm run build`, 0 cảnh báo lỗi module).
+
+---
+
+## 🤖 IX. QUY CHUẨN THIẾT KẾ TRỢ LÝ TƯ VẤN CHATBOT & SHADCN/UI (MỤC TIÊU ĐIỂM 9.5)
+
+### 1. Bản sắc Giao diện ChatBot (`ChatBot.jsx` & `ChatBot.css`)
+* **Định vị:** *Atelier Lune AI Stylist* — Trợ lý may đo và chăm sóc khách hàng trực tuyến 24/7.
+* **Bảng màu đồng bộ Warm Luxury:**
+  * **Nền khung chat:** Trắng ngọc `#FFFFFF` kết hợp viền mờ `#E7DDCE` và bóng đổ đa tầng sang trọng `0 16px 44px rgba(44, 33, 23, 0.16)`.
+  * **Dải ruy băng vương giả đỉnh header:** Dải gradient 3px kim loại vàng (`#775B3F` 0% $\rightarrow$ `#CAA072` 50% $\rightarrow$ `#E0B77C` 100%).
+  * **Bong bóng tin nhắn người dùng:** Nâu thương hiệu `#775B3F`, chữ kem sáng `#FAF7F2`, bo góc cong vát bất đối xứng thời thượng.
+  * **Bong bóng tin nhắn bot:** Thẻ trắng `#FFFFFF`, viền `#E7DDCE`, chữ than tối `#2C2117` chuẩn editorial.
+* **Tối ưu thanh Header tinh giản:**
+  * Chỉ giữ lại 2 nút điều khiển: **Làm mới (`RotateCcw`)** và **Đóng (`✕`)**.
+  * Loại bỏ hoàn toàn thanh dock thu nhỏ 62px để tránh cảm giác bị kẹt thanh ngang lơ lửng ở mép dưới; khi bấm `✕`, widget thu gọn hoàn toàn về nút tròn nổi (FAB) nhỏ gọn.
+* **Xử lý thanh trượt Quick Chips:**
+  * Ẩn thanh cuộn xám dày đặc trưng của Windows bằng `scrollbar-width: none` và `::-webkit-scrollbar { display: none }`.
+  * Cho phép người dùng vuốt trượt ngang êm ái, chạm chọn nhanh các chủ đề số đo và dịch vụ boutique.
+
+### 2. Trí thông minh Tư vấn Size May đo Cá nhân (Tailored Sizing Intelligence)
+* Nhận diện ngôn ngữ tự nhiên (NLP Parser): Tự động trích xuất các thông số chiều cao (`1m60`, `165cm`), cân nặng (`52kg`, `nặng 52`), hoặc số đo 3 vòng (`86-66-90`).
+* Đưa ra khuyến nghị chi tiết:
+  * Size chuẩn chính: `XS, S, M, L, XL`.
+  * Lời khuyên phom vừa vặn tôn dáng (*Tailored Fit*) đối với Đầm lụa & Quần xếp ly.
+  * Lời khuyên phom suông rộng cá tính (*Relaxed Fit*) đối với Áo khoác Blazer Linen & Áo len Cashmere.
+
+### 3. Tích hợp Thư viện Component shadcn/ui (`src/components/ui/`)
+* Dự án tích hợp chuẩn chỉ thư viện shadcn/ui với file cấu hình gốc `components.json`.
+* Thư mục `src/components/ui/` bao gồm:
+  * `button.jsx`: Quản lý các biến thể nút bấm (`default`, `outline`, `ghost`, `secondary`) sử dụng `class-variance-authority` (CVA).
+  * `badge.jsx`: Thẻ trạng thái và nhãn câu hỏi gợi ý.
+  * `dialog.jsx`: Cửa sổ modal tương tác chuẩn ARIA (@radix-ui/react-dialog).
+  * `avatar.jsx`: Khung tròn ảnh đại diện (@radix-ui/react-avatar).
+* **An toàn CSS tuyệt đối:** Cấu hình `corePlugins: { preflight: false }` trong `tailwind.config.js` ngăn chặn hoàn toàn việc Tailwind reset CSS đè lên các style Vanilla đã có của trang web.
+
+---
+
+## 🌌 X. TỐI ƯU TRẢI NGHIỆM HERO BANNER & BỐ CỤC KHÔNG GIAN (RESPONSIVE HERO UX)
+
+### 1. Triết lý Thiết kế Tối Giản Khoáng Đạt (Quiet Luxury & Editorial Simplicity)
+* **Tôn vinh nhiếp ảnh nghệ thuật:** Tập trung 100% thị giác người dùng vào những bức ảnh bộ sưu tập may đo sắc nét và typography Serif Playfair Display đẳng cấp; loại bỏ hoàn toàn các bảng thẻ thông số rườm rà lơ lửng gây phân tâm hoặc che khuất tầm nhìn.
+* **Không gian thở (Generous Whitespace):** Tạo cảm giác thoáng đãng, sang trọng chuẩn boutique Paris, giữ cho tỷ lệ giữa tiêu đề, mô tả và cụm nút CTA luôn hài hòa trên mọi kích cỡ màn hình.
+
+### 2. Tối Ưu Tương Tác & Điều Hướng (Navigation & Ergonomics)
+* **Chống đè chữ mô tả (No Visual Overlap):** Đẩy vị trí 2 nút mũi tên chuyển slide (`<` và `>`) ra sát mép màn hình (`left: 1.25rem`, `right: 1.25rem`), cách xa khối văn bản mô tả để giữ trải nghiệm đọc liền mạch trên Desktop.
+* **Ẩn an toàn trên Mobile:** Trên màn hình di động ($\le 768\text{px}$), ẩn hoàn toàn 2 nút mũi tên (`display: none`), người dùng lướt chuyển slide nhẹ nhàng qua pagination dots hoặc tự động đổi slide sau 5 giây, bảo vệ 100% diện tích cho thông điệp bộ sưu tập.
+
+---
+
+## 💳 XI. NÂNG CẤP ĐẶC QUYỀN MUA SẮM: QUICK VIEW SHADCN/UI & THANH TOÁN VIETQR ĐỘNG
+
+### 1. Trải nghiệm Xem Nhanh Sản Phẩm (Quick View Modal với shadcn/ui Dialog)
+* **Tích hợp đa tầng component shadcn/ui:**
+  * Component `Dialog`, `DialogContent`, `DialogTitle`, `DialogDescription` từ `@/components/ui/dialog` đảm bảo chuẩn Accessibility (ARIA compliant, focus trapping, phím `Esc` và click ngoài đóng mượt mà).
+  * Component `Badge` từ `@/components/ui/badge` phân cấp trực quan 3 trạng thái tồn kho: Đỏ cảnh báo (*Hết hàng*), Hổ phách (*Còn ít*), Ngọc lục bảo (*Sẵn hàng*).
+  * Component `Button` từ `@/components/ui/button` với hiệu ứng tương tác sang trọng khi Thêm vào túi mua sắm.
+* **Tối ưu trải nghiệm tại chỗ:** Khách hàng có thể chọn màu sắc, kích cỡ, số lượng và thêm vào giỏ hàng ngay trên trang chủ mà không cần tải lại hoặc chuyển trang.
+
+### 2. Thanh Toán Chuyển Khoản Ngân Hàng Tự Động (Instant VietQR Banking)
+* **Sinh mã VietQR động theo chuẩn Napas 24/7:**
+  * Tự động tính toán số tiền VNĐ chính xác theo tỷ giá thực tế từ tổng tiền đơn hàng.
+  * Tự động sinh cú pháp chuyển khoản định danh riêng biệt `LUNE-XXXXXX` cho từng đơn hàng.
+  * Hiển thị mã QR trực quan quét được qua 100% ứng dụng Mobile Banking (*Vietcombank, MB Bank, Techcombank, VPBank...*) và Ví điện tử (*MoMo, ZaloPay*).
+* **Tiện ích sao chép 1 chạm (One-click Copy):** Nút sao chép Số tài khoản và Nội dung chuyển khoản có hiệu ứng phản hồi tức thì (`Check` icon xanh lá), giảm thiểu 100% sai sót khi khách hàng nhập tay.
+
+### 3. Tích Hợp Sổ Địa Chỉ Profile Vào Thanh Toán 1 Chạm (Profile Address Book 1-Click Checkout)
+* **Đồng bộ dữ liệu liền mạch giữa Profile và Checkout:**
+  * Khi khách hàng đã đăng nhập, thay vì bắt nhập lại họ tên, số điện thoại, địa chỉ vào form thủ công, trang Checkout hiển thị danh sách các thẻ địa chỉ đã lưu trong Sổ địa chỉ (`lune_addresses_${email}`).
+  * Tự động chọn sẵn địa chỉ mặc định (*Default*) với viền vàng nâu sang trọng, rút ngắn thời gian đặt hàng từ 60 giây xuống còn 2 giây.
+* **Chuyển đổi linh hoạt & Lưu địa chỉ mới thông minh:**
+  * Khách hàng có thể bấm chọn nhanh giữa các địa chỉ đã lưu (Nhà riêng, Văn phòng...).
+  * Nút `+ Giao đến địa chỉ mới` cho phép nhập địa chỉ khác khi cần, kèm tùy chọn lưu tự động vào Profile cho những lần mua sắm tiếp theo.
+
+
+
+
 
