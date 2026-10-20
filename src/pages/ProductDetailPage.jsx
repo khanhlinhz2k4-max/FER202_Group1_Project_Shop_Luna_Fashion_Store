@@ -342,7 +342,8 @@ export default function ProductDetailPage() {
                 fontSize: 'var(--text-h1)',
                 fontWeight: 500,
                 lineHeight: 1.15,
-                margin: '0 0 14px'
+                margin: '0 0 14px',
+                textWrap: 'balance'
               }}
             >
               {tp(product, 'name')}

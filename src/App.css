@@ -1127,6 +1127,7 @@ button.mobile-nav-link {
   color: var(--text-primary);
   margin-bottom: 0.45rem;
   line-height: 1.3;
+  text-wrap: balance;
 }
 
 .product-title a:hover {

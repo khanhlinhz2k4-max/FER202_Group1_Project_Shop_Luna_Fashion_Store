@@ -2138,16 +2138,16 @@ export const productTranslations = {
   },
   8: {
     vi: {
-      name: "Áo Sơ Mi Lụa Cổ Trụ Éléonore",
-      garmentType: "Đầm Lụa Dạ Hội",
+      name: "Áo Sơ Mi Khoác Đũi Adrien",
+      garmentType: "Áo Blazer & May Đo",
       tag: "BST Mới",
-      description: "Thiết kế áo sơ mi lụa cổ trụ trang nhã với tay bồng nhẹ và hàng khuy ngọc trai tự nhiên. Đem đến phong thái đài các và tự tin."
+      description: "Phom dáng hiện đại tinh tế dệt từ chất liệu linen giặt cao cấp của Pháp. Dễ dàng mặc khoác ngoài áo thun hoặc cài khuy gọn gàng."
     },
     en: {
-      name: "Éléonore Band-Collar Silk Shirt",
-      garmentType: "Silk Dresses",
+      name: "Adrien Relaxed Linen Overshirt",
+      garmentType: "Blazers & Tailoring",
       tag: "New Season",
-      description: "Refined band collar silhouette with gentle balloon sleeves and genuine mother-of-pearl buttons. Exudes quiet luxury."
+      description: "Clean contemporary silhouette cut from heavyweight French washed linen. Layered seamlessly over tees or styled buttoned up."
     }
   }
 };
