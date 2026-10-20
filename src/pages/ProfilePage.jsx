@@ -370,18 +370,6 @@ export default function ProfilePage() {
               <span className="profile-nav-badge">{wishlist.length}</span>
             </button>
           </nav>
-
-          {/* Sidebar Footer Logout Action */}
-          <div className="profile-sidebar-footer">
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="profile-sidebar-logout-btn"
-            >
-              <LogOut size={16} />
-              <span>{t('profile.signOutBtn', 'Sign Out Account')}</span>
-            </button>
-          </div>
         </aside>
 
         {/* Content Area */}

@@ -178,35 +178,7 @@
   border: 1px solid #E7DDCE;
 }
 
-/* Sidebar Footer Logout */
-.profile-sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid #E7DDCE;
-  background-color: #FAF7F2;
-}
 
-.profile-sidebar-logout-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border: 1px solid #FECDD3;
-  background-color: #FFFFFF;
-  color: #BE123C;
-  border-radius: 4px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.profile-sidebar-logout-btn:hover {
-  background-color: #BE123C;
-  color: #FFFFFF;
-  border-color: #BE123C;
-}
 
 /* Main Content Card */
 .profile-main-card {
@@ -599,8 +571,9 @@
 }
 
 .order-badge-cancelled {
-  background-color: #FEE2E2;
-  color: #991B1B;
+  background-color: #F5ECE8;
+  color: #8C5D53;
+  border: 1px solid #E5D5CF;
 }
 
 .order-card-body {
@@ -666,20 +639,24 @@
 }
 
 .order-cancel-btn {
-  padding: 8px 16px;
-  background-color: #FFF1F2;
-  color: #BE123C;
-  border: 1px solid #FECDD3;
-  border-radius: 4px;
-  font-size: 0.82rem;
+  padding: 7px 14px;
+  background-color: #FAF7F2;
+  color: #775B3F;
+  border: 1px solid #C8AE84;
+  border-radius: 2px;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .order-cancel-btn:hover {
-  background-color: #BE123C;
+  background-color: #775B3F;
   color: #FFFFFF;
+  border-color: #775B3F;
 }
 
 .empty-orders-view {
@@ -800,16 +777,20 @@
 
 .address-delete-btn {
   padding: 6px 10px;
-  background-color: #FFFFFF;
-  border: 1px solid #FECDD3;
-  color: #BE123C;
+  background-color: #FAF7F2;
+  border: 1px solid #D5C3A5;
+  color: #775B3F;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .address-delete-btn:hover {
-  background-color: #BE123C;
+  background-color: #775B3F;
+  border-color: #775B3F;
   color: #FFFFFF;
 }
 
@@ -971,15 +952,19 @@
 .profile-wishlist-remove-btn {
   padding: 8px 10px;
   background-color: #FAF7F2;
-  border: 1px solid #FECDD3;
-  color: #BE123C;
+  border: 1px solid #D5C3A5;
+  color: #775B3F;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-wishlist-remove-btn:hover {
-  background-color: #BE123C;
+  background-color: #775B3F;
+  border-color: #775B3F;
   color: #FFFFFF;
 }
 

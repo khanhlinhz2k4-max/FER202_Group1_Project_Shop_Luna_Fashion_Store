@@ -133,7 +133,7 @@ export default function ProductCard({ product }) {
                 borderRight: '1px solid rgba(255,255,255,0.2)'
               }}
             >
-              <Eye size={14} /> {t('common.quickView')}
+              <Eye size={14} /> {t('common.quickView', 'Xem nhanh')}
             </button>
 
             <button
@@ -156,7 +156,7 @@ export default function ProductCard({ product }) {
                 gap: '6px'
               }}
             >
-              <ShoppingBag size={14} /> {isOutOfStock ? t('common.soldOut') : t('common.addToBag')}
+              <ShoppingBag size={14} /> {isOutOfStock ? t('common.soldOut', 'Hết hàng') : t('common.addToBag', 'Thêm nhanh')}
             </button>
           </div>
         </div>
