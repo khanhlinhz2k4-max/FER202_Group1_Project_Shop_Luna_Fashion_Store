@@ -2164,13 +2164,13 @@ export const productTranslations = {
   },
   5: {
     vi: {
-      name: "Áo Măng Tô Dạ Wool Solène",
+      name: "Áo Măng Tô Dạ Wool Solene",
       garmentType: "Áo Khoác & Măng Tô",
       tag: "Bản Giới Hạn",
       description: "Kiệt tác của tỷ lệ phom dáng hiện đại. Dạ lông cừu hai mặt khâu tay tỉ mỉ cùng đai thắt eo và chi tiết vạt chống gió sang trọng."
     },
     en: {
-      name: "Solène Wool Trench Overcoat",
+      name: "Solene Wool Trench Overcoat",
       garmentType: "Coats & Outerwear",
       tag: "Limited Edition",
       description: "A masterclass in modern proportion. Handcrafted double-faced wool with a belted waist and storm flap detailing."
@@ -2216,6 +2216,398 @@ export const productTranslations = {
       garmentType: "Blazers & Tailoring",
       tag: "New Season",
       description: "Clean contemporary silhouette cut from heavyweight French washed linen. Layered seamlessly over tees or styled buttoned up."
+    }
+  },
+  9: {
+    vi: {
+      name: "Đầm Dạ Hội Lụa Bias Eleonore",
+      garmentType: "Đầm Lụa Dạ Hội",
+      tag: "Haute Couture",
+      description: "Lụa tơ tằm Mulberry 22-momme mềm mại với kỹ thuật cắt vải chéo tạo độ rủ uyển chuyển. Thiết kế hở lưng khoét sâu đan dây tinh tế cùng đường may lộn Pháp thủ công."
+    },
+    en: {
+      name: "Eleonore Bias-Cut Silk Evening Gown",
+      garmentType: "Silk Dresses",
+      tag: "Haute Couture",
+      description: "Sensuous 22-momme pure mulberry silk with a cascading bias drape. Open scoop back with delicate criss-cross straps, finished with fine French seams."
+    }
+  },
+  10: {
+    vi: {
+      name: "Áo Khoác Cashmere Cocoon Celeste",
+      garmentType: "Áo Khoác & Măng Tô",
+      tag: "Bản Giới Hạn",
+      description: "Len cashmere hai mặt dệt thủ công tại Ý. Phom vai trễ điêu khắc cùng thiết kế không lót ôm trọn cơ thể trong cảm giác ấm áp và nhẹ tênh."
+    },
+    en: {
+      name: "Celeste Cashmere Cocoon Coat",
+      garmentType: "Coats & Outerwear",
+      tag: "Limited Release",
+      description: "Sculptural double-faced cashmere woven in Italy. Fluid drop shoulders and an unlined interior that envelops you in weightless warmth."
+    }
+  },
+  11: {
+    vi: {
+      name: "Áo Blazer Hai Hàng Khuy May Đo Julien",
+      garmentType: "Áo Blazer & May Đo",
+      tag: "BST Mới",
+      description: "Nghệ thuật may đo Milanese cổ điển tái hiện qua phom suông hiện đại. Chất dạ len nguyên chất hopsack với ve áo xếch khâu tay và hàng khuy sừng sang trọng."
+    },
+    en: {
+      name: "Julien Tailored Double-Breasted Blazer",
+      garmentType: "Blazers & Tailoring",
+      tag: "New Season",
+      description: "Classic Milanese tailoring reimagined with a relaxed silhouette. Premium virgin wool-hopsack with hand-sewn peak lapels and horn buttons."
+    }
+  },
+  12: {
+    vi: {
+      name: "Chân Váy Midi Linen Xếp Ly Margot",
+      garmentType: "Quần Âu Xếp Ly",
+      tag: "Yêu Thích",
+      description: "Chân váy chữ A bay bổng với đường dập ly sắc nét và lưng váy viền lụa bên trong. Cắt may từ sợi lanh vùng Normandy mang lại sự thoáng mát nhẹ nhàng cả ngày."
+    },
+    en: {
+      name: "Margot Pleated Linen Midi Skirt",
+      garmentType: "Pleated Trousers",
+      tag: "Popular",
+      description: "Airy A-line midi skirt with crisp knife pleats and an internal silk-trimmed waistband. Cut from Normandy flax for breezy all-day movement."
+    }
+  },
+  13: {
+    vi: {
+      name: "Túi Tote Da Bê Tối Giản Atelier",
+      garmentType: "Phụ Kiện Da Thật",
+      tag: "Bán Chạy",
+      description: "Chế tác thủ công tại Florence từ da bê thuộc thảo mộc Pháp. Không gian rộng rãi đi kèm túi zip rời và logo mạ vàng dập chìm tinh xảo."
+    },
+    en: {
+      name: "Atelier Minimalist Calfskin Tote",
+      garmentType: "Leather Goods",
+      tag: "Bestseller",
+      description: "Handcrafted in Florence using vegetable-tanned French calfskin. Roomy interior with a detachable zip pouch and discrete foil-embossed logo."
+    }
+  },
+  14: {
+    vi: {
+      name: "Áo Len Cổ Lọ Merino Gabriel",
+      garmentType: "Áo Len Cashmere",
+      tag: "Cơ Bản",
+      description: "Sợi len Merino Úc siêu mịn 19.5 micron dệt sườn 12-gauge thoáng khí. Cổ lọ ôm nhẹ thoải mái cùng thiết kế vai raglan liền mạch không đường may."
+    },
+    en: {
+      name: "Gabriel Merino Wool Roll-Neck Sweater",
+      garmentType: "Cashmere Knitwear",
+      tag: "Essential",
+      description: "Ultra-fine 19.5 micron Australian Merino wool spun into a breathable 12-gauge rib. Features a snug roll-neck and seamless raglan shoulders."
+    }
+  },
+  15: {
+    vi: {
+      name: "Áo Lụa Đắp Vạt Điêu Khắc Victoire",
+      garmentType: "Đầm Lụa Dạ Hội",
+      tag: "BST Mới",
+      description: "Thiết kế đắp vạt tôn dáng từ chất lụa cát mờ cao cấp. Ống tay loe phom kiến trúc, đai buộc eo trang nhã cùng cổ bẻ thanh lịch."
+    },
+    en: {
+      name: "Victoire Sculpted Silk Wrap Blouse",
+      garmentType: "Silk Dresses",
+      tag: "New Season",
+      description: "Tailored wrap silhouette in matte sandwashed silk. Architectural bell cuffs, side tie belt, and a demure crossover shawl collar."
+    }
+  },
+  16: {
+    vi: {
+      name: "Quần Âu Len Ý Xếp Ly Lucien",
+      garmentType: "Quần Âu Xếp Ly",
+      tag: "Đặc Trưng",
+      description: "May đo hoàn hảo từ len Biella dệt mỏng cho khí hậu nhiệt đới. Hai đường ly sâu gấp vào trong, khóa tăng giảm bên hông và ống đứng phủ gót giày lịch lãm."
+    },
+    en: {
+      name: "Lucien Italian Wool Pleated Trouser",
+      garmentType: "Pleated Trousers",
+      tag: "Signature",
+      description: "Impeccably tailored trousers in tropical-weight Biella wool. Deep inward double pleats, side adjusters, and a clean tapered break over dress shoes."
+    }
+  },
+  17: {
+    vi: {
+      name: "Áo Măng Tô Dạ Chesterfield Matthieu",
+      garmentType: "Áo Khoác & Măng Tô",
+      tag: "Haute Couture",
+      description: "Áo khoác đơn ngực may đo từ len lông cừu pha cashmere cao cấp với lớp lót satin lụa, ve áo cổ điển và hàng khuy sừng nguyên bản sang trọng."
+    },
+    en: {
+      name: "Matthieu Cashmere Chesterfield Coat",
+      garmentType: "Coats & Outerwear",
+      tag: "Haute Couture",
+      description: "Single-breasted overcoat tailored from luxurious wool-cashmere blend with satin lining, clean notch lapels, and horn buttons."
+    }
+  },
+  18: {
+    vi: {
+      name: "Thắt Lưng Da Bê Hai Mặt Palais",
+      garmentType: "Phụ Kiện Da Thật",
+      tag: "Cơ Bản",
+      description: "Thắt lưng da bê Ý thuộc mịn màng làm thủ công với mặt khóa kim loại mạ vàng sâm panh chải xước. Hai mặt linh hoạt màu nâu caramel và nâu đen đậm."
+    },
+    en: {
+      name: "Palais Reversible Calfskin Belt",
+      garmentType: "Leather Goods",
+      tag: "Essential",
+      description: "Handcrafted smooth Italian calfskin belt with a brushed champagne gold buckle. Reversible tan and dark espresso finishes."
+    }
+  },
+  19: {
+    vi: {
+      name: "Áo Sơ Mi Poplin Cotton Ai Cập Auguste",
+      garmentType: "Áo Blazer & May Đo",
+      tag: "BST Mới",
+      description: "May đo từ cotton Ai Cập poplin cao cấp với cúc áo xà cừ tự nhiên, nẹp áo Pháp tối giản và cổ bẻ đứng phom mềm mại."
+    },
+    en: {
+      name: "Auguste Relaxed Poplin Dress Shirt",
+      garmentType: "Blazers & Tailoring",
+      tag: "New Season",
+      description: "Tailored in crisp Egyptian cotton poplin with mother-of-pearl buttons, a French placket, and a soft structured spread collar."
+    }
+  },
+  20: {
+    vi: {
+      name: "Áo Len Cổ Lọ Cashmere Genevieve",
+      garmentType: "Áo Len Cashmere",
+      tag: "Bán Chạy",
+      description: "Len cashmere hai lớp siêu nhẹ êm ái với cổ phễu cuộn ấm áp, tay áo raglan và bo gấu dệt sườn tạo nét sang trọng mộc mạc mỗi ngày."
+    },
+    en: {
+      name: "Genevieve Cashmere Turtleneck Sweater",
+      garmentType: "Cashmere Knitwear",
+      tag: "Bestseller",
+      description: "Plush featherweight 2-ply cashmere knit with a cozy rolled funnel neck, raglan sleeves, and ribbed trim for everyday understated warmth."
+    }
+  },
+  21: {
+    vi: {
+      name: "Quần Short Linen Xếp Ly Phóng Khoáng Henri",
+      garmentType: "Quần Âu Xếp Ly",
+      tag: "Yêu Thích",
+      description: "May đo mùa hè nhẹ nhàng từ chất vải lanh thuần khiết đã qua xử lý giặt mềm. Điểm nhấn đường ly gấp phía trước, dây rút tiện lợi và cúc xà cừ."
+    },
+    en: {
+      name: "Henri Relaxed Pleated Linen Short",
+      garmentType: "Pleated Trousers",
+      tag: "Popular",
+      description: "Lightweight summer tailoring cut from pure washed linen. Features front inward pleats, drawstring waistband, and mother-of-pearl button detailing."
+    }
+  },
+  22: {
+    vi: {
+      name: "Áo Lụa Charmeuse Lệch Vai Clemence",
+      garmentType: "Đầm Lụa Dạ Hội",
+      tag: "BST Mới",
+      description: "Phom dáng lệch vai kiến trúc may từ chất lụa charmeuse bóng nhẹ với vạt rủ bất đối xứng và khóa kéo ẩn bên sườn tinh tế."
+    },
+    en: {
+      name: "Clemence Draped One-Shoulder Top",
+      garmentType: "Silk Dresses",
+      tag: "New Season",
+      description: "Architectural one-shoulder silhouette in lustrous silk-charmeuse with an asymmetrical draped hem and concealed side zipper."
+    }
+  },
+  23: {
+    vi: {
+      name: "Áo Len Dệt Tổ Ong Cashmere Louis",
+      garmentType: "Áo Len Cashmere",
+      tag: "Đặc Trưng",
+      description: "Áo len dệt vân tổ ong waffle thủ công từ len cashmere Mông Cổ thượng hạng. Bo cổ và gấu dệt gân tạo độ co giãn, mềm mại và thoáng khí tuyệt vời."
+    },
+    en: {
+      name: "Louis Cashmere Waffle Crewneck",
+      garmentType: "Cashmere Knitwear",
+      tag: "Signature",
+      description: "Artisan waffle-knit textured sweater crafted from Grade-A Mongolian cashmere with ribbed cuffs and hem. Soft, breathable, and deeply tactile."
+    }
+  },
+  24: {
+    vi: {
+      name: "Túi Hộp Đeo Chéo Dây Xích Mạ Vàng Atelier",
+      garmentType: "Phụ Kiện Da Thật",
+      tag: "Thủ Công",
+      description: "Dáng túi hộp gọn gàng chế tác từ da bê bóng mờ. Điểm nhấn dây xích kim loại đồng thau mạ vàng có thể điều chỉnh độ dài cùng khóa nam châm tiện lợi."
+    },
+    en: {
+      name: "Atelier Gilded Chain Crossbody Bag",
+      garmentType: "Leather Goods",
+      tag: "Artisan",
+      description: "Compact box silhouette crafted in semi-gloss box calf leather. Features an adjustable solid brass serpentine chain and magnetic clasp closure."
+    }
+  },
+  25: {
+    vi: {
+      name: "Áo Măng Tô Dạ Cashmere Dáng Choàng Sandrine",
+      garmentType: "Áo Khoác & Măng Tô",
+      tag: "Haute Couture",
+      description: "Thiết kế phom áo choàng phóng khoáng may từ len cashmere Ý hai mặt. Cổ bẻ shawl rộng quyền quý, đai thắt eo đồng điệu cùng túi may tay ẩn tinh xảo."
+    },
+    en: {
+      name: "Sandrine Double-Faced Cashmere Wrap Coat",
+      garmentType: "Coats & Outerwear",
+      tag: "Haute Couture",
+      description: "Unstructured robe silhouette in double-faced Italian cashmere. Features an oversized shawl collar, self-tie sash belt, and hidden hand-stitched pockets."
+    }
+  },
+  26: {
+    vi: {
+      name: "Áo Blazer Wool-Linen Phom Mềm Theodore",
+      garmentType: "Áo Blazer & May Đo",
+      tag: "BST Mới",
+      description: "May đo không lót siêu nhẹ từ chất len Biella pha linen vùng Normandy. Vai tự nhiên thoải mái, túi đắp phóng khoáng và hàng khuy xà cừ tự nhiên."
+    },
+    en: {
+      name: "Theodore Unstructured Wool-Linen Jacket",
+      garmentType: "Blazers & Tailoring",
+      tag: "New Season",
+      description: "Featherlight unlined tailoring crafted from Biella wool and Normandy linen. Natural shoulder line, patch pockets, and genuine mother-of-pearl buttons."
+    }
+  },
+  27: {
+    vi: {
+      name: "Ví Đựng Thẻ Da Bê Vân Hạt Montaigne",
+      garmentType: "Phụ Kiện Da Thật",
+      tag: "Cơ Bản",
+      description: "Ví đựng thẻ dáng mỏng làm từ da bê Pháp vân hạt cao cấp. Bốn ngăn thẻ ngoài, ngăn tiền gấp trung tâm và viền da sơn cạnh thủ công."
+    },
+    en: {
+      name: "Montaigne Grain Calfskin Cardholder",
+      garmentType: "Leather Goods",
+      tag: "Essential",
+      description: "Slim artisan card case in pebbled French calfskin. Four exterior card slots, a central notes compartment, and hand-painted edge burnishing."
+    }
+  },
+  28: {
+    vi: {
+      name: "Đầm Sơ Mi Lụa Georgette Xếp Ly Vivienne",
+      garmentType: "Đầm Lụa Dạ Hội",
+      tag: "Bán Chạy",
+      description: "Lụa georgette xuyên thấu nhẹ lót lớp lụa habotai kín đáo. Điểm nhấn dập ly tăm micro, đai thắt lưng đi kèm và hàng khuy vỏ sò tinh tế."
+    },
+    en: {
+      name: "Vivienne Silk Georgette Pleated Shirtdress",
+      garmentType: "Silk Dresses",
+      tag: "Bestseller",
+      description: "Semi-sheer silk georgette lined with opaque silk-habotai. Features micro-accordion pleating, a removable tie belt, and shell button fastenings."
+    }
+  },
+  29: {
+    vi: {
+      name: "Áo Polo Dệt Kim Cashmere-Lụa Benoit",
+      garmentType: "Áo Len Cashmere",
+      tag: "Cơ Bản",
+      description: "Áo polo dệt kim mềm mượt từ sợi lụa tơ tằm 70% pha 30% len cashmere. Thiết kế cổ chữ V mở Johnny, bo gấu dệt gân và tay áo set-in thoải mái."
+    },
+    en: {
+      name: "Benoit Cashmere-Silk Polo Shirt",
+      garmentType: "Cashmere Knitwear",
+      tag: "Essential",
+      description: "Knitted polo spun from a featherlight 70% silk and 30% cashmere blend. Features an open Johnny collar, ribbed hem, and relaxed set-in sleeves."
+    }
+  },
+  30: {
+    vi: {
+      name: "Quần Culotte Lụa Crepe Cạp Cao Colette",
+      garmentType: "Quần Âu Xếp Ly",
+      tag: "Đặc Trưng",
+      description: "Dáng quần ống lửng rộng cắt may từ chất lụa crepe de chine dày dặn. Ly trước ủi sắc nét, túi chéo bên hông và độ rủ bay bổng."
+    },
+    en: {
+      name: "Colette High-Waisted Silk Crepe Culotte",
+      garmentType: "Pleated Trousers",
+      tag: "Signature",
+      description: "Cropped wide-leg silhouette cut in heavyweight silk crepe de chine. Features crisp pressed front creases, slant side pockets, and a fluid drape."
+    }
+  },
+  31: {
+    vi: {
+      name: "Quần Âu Len Nhiệt Đới Gurkha Maxime",
+      garmentType: "Quần Âu Xếp Ly",
+      tag: "Đặc Trưng",
+      description: "Kỹ nghệ may đo quân đội cổ điển tái hiện trên nền len nhiệt đới se sợi cao cấp. Đai cạp cao tích hợp khóa kép cùng đường xếp ly sâu phía trước."
+    },
+    en: {
+      name: "Maxime Tropical Wool Gurkha Trouser",
+      garmentType: "Pleated Trousers",
+      tag: "Signature",
+      description: "Heritage military tailoring updated in high-twist tropical wool. Features an integrated double-buckle cummerbund waistband and forward deep pleats."
+    }
+  },
+  32: {
+    vi: {
+      name: "Túi Cầm Tay Portfolio Da Mịn Vendome",
+      garmentType: "Phụ Kiện Da Thật",
+      tag: "Thủ Công",
+      description: "Túi clutch đựng tài liệu và máy tính bảng thanh lịch. Da bò Tuscan thuộc sáp thủ công kết hợp phụ kiện đồng thau và lớp lót da lộn êm ái."
+    },
+    en: {
+      name: "Vendome Smooth Leather Portfolio Clutch",
+      garmentType: "Leather Goods",
+      tag: "Artisan",
+      description: "Sleek document clutch designed to hold tablets and notepads. Hand-waxed Tuscan bridle leather with brass hardware and soft suede lining."
+    }
+  },
+  33: {
+    vi: {
+      name: "Áo Cardigan Cashmere Dáng Cocoon Helene",
+      garmentType: "Áo Len Cashmere",
+      tag: "Yêu Thích",
+      description: "Cardigan len dệt dáng kén mở từ sợi cashmere Mông Cổ 4-ply loại A. Thiết kế vai trễ, cổ tay bo gân bản lớn tạo cảm giác ấm áp và bao bọc êm ái."
+    },
+    en: {
+      name: "Helene Cashmere Cocoon Cardigan",
+      garmentType: "Cashmere Knitwear",
+      tag: "Popular",
+      description: "Cocoon-shaped open knit cardigan spun from 4-ply Grade-A cashmere. Dropped shoulders, wide ribbed cuffs, and an effortlessly cozy enveloping drape."
+    }
+  },
+  34: {
+    vi: {
+      name: "Áo Sơ Mi Linen Pháp Cổ Tàu Emile",
+      garmentType: "Áo Blazer & May Đo",
+      tag: "BST Mới",
+      description: "Vẻ đẹp phong trần thanh lịch từ chất liệu linen hữu cơ đã qua giặt mềm. Cổ tàu mandarin, khuy xắn tay áo, vạt cong và hàng cúc từ hạt corozo tự nhiên."
+    },
+    en: {
+      name: "Emile French Linen Band-Collar Shirt",
+      garmentType: "Blazers & Tailoring",
+      tag: "New Season",
+      description: "Modern bohemian elegance in washed organic linen. Mandarin band collar, rolled tab cuffs, curved hem, and genuine corozo nut buttons."
+    }
+  },
+  35: {
+    vi: {
+      name: "Áo Măng Tô Kaki Cotton Chống Thấm Sebastien",
+      garmentType: "Áo Khoác & Măng Tô",
+      tag: "Bản Giới Hạn",
+      description: "Măng tô hai hàng khuy dệt từ vải gabardine cotton Anh quốc mật độ cao chống nước. Vạt chắn gió truyền thống, tay raglan và đai lưng khóa sừng cao cấp."
+    },
+    en: {
+      name: "Sebastien Water-Repellent Cotton Trench",
+      garmentType: "Coats & Outerwear",
+      tag: "Limited Edition",
+      description: "Double-breasted trench in tightly woven English cotton gabardine. Traditional storm shield, gun flap, raglan sleeves, and horn buckle belted waist."
+    }
+  },
+  36: {
+    vi: {
+      name: "Thắt Lưng Da Bê Đan Thủ Công Rivoli",
+      garmentType: "Phụ Kiện Da Thật",
+      tag: "Cơ Bản",
+      description: "Chế tác đan tay tỉ mỉ từ da yên ngựa Ý cao cấp với khóa kim loại mạ vàng satin. Dễ dàng điều chỉnh độ vừa vặn từng milimet cho phong cách lịch lãm trường tồn."
+    },
+    en: {
+      name: "Rivoli Braided Calfskin Loafer Belt",
+      garmentType: "Leather Goods",
+      tag: "Essential",
+      description: "Intricately hand-plaited Italian saddle leather finished with a satin gold prong buckle. Offers custom adjustable micro-sizing for timeless styling."
     }
   }
 };

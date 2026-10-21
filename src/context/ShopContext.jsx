@@ -264,13 +264,22 @@ export function ShopProvider({ children }) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Đồng bộ (merge) các trường mới thêm (như garmentType, stock) từ initialProducts vào localStorage
-          return parsed.map(localProd => {
-            const initialProd = initialProducts.find(p => p.id === localProd.id);
-            return initialProd 
-              ? { ...initialProd, ...localProd, stock: localProd.stock !== undefined ? Number(localProd.stock) : (initialProd.stock ?? 20) } 
-              : { stock: 20, ...localProd };
+          // Đồng bộ (merge) các trường và tự động thêm các sản phẩm mới từ initialProducts vào state
+          const localMap = new Map(parsed.map(p => [p.id, p]));
+          const merged = initialProducts.map(initProd => {
+            const localProd = localMap.get(initProd.id);
+            return localProd 
+              ? { 
+                  ...initProd, 
+                  ...localProd, 
+                  name: initProd.name, // Đồng bộ tên sản phẩm chuẩn không chứa ký tự dấu
+                  stock: localProd.stock !== undefined ? Number(localProd.stock) : (initProd.stock ?? 20) 
+                } 
+              : initProd;
           });
+          // Giữ lại các sản phẩm do Admin tự tạo mới không nằm trong initialProducts
+          const customAdminProducts = parsed.filter(p => !initialProducts.some(initProd => initProd.id === p.id));
+          return [...merged, ...customAdminProducts];
         }
       }
     } catch (e) {

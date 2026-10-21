@@ -12,6 +12,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import AdminLayout from './layouts/AdminLayout';
 import ChatBot from './components/ChatBot';
+import GoldenCursorTrail from './components/GoldenCursorTrail';
 
 // Public & Client Pages
 import HomePage from './pages/HomePage';
@@ -78,6 +79,8 @@ function AppContent() {
   return (
     <>
       <ScrollToTop />
+      {/* Luxury Golden Stardust Cursor Trail */}
+      <GoldenCursorTrail />
       {/* Global Slide-in Cart Drawer */}
       <CartDrawer />
       {/* Global Non-blocking Wishlist Toast */}
