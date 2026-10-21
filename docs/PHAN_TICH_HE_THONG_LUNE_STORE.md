@@ -484,8 +484,12 @@ Ký hiệu:
 ## 📐 VIII. YÊU CẦU PHI CHỨC NĂNG (NON-FUNCTIONAL REQUIREMENTS)
 
 ### 1. Tính Thẩm mỹ & Trải nghiệm Người dùng (Aesthetics & UX Excellence)
-* **Phong cách thiết kế:** Định hình theo ngôn ngữ thời trang cao cấp tối giản (Luxury Editorial / Minimalist).
-* **Màu sắc chủ đạo:** Sự phối hợp hài hòa giữa các gam màu trung tính tinh tế (Đen tuyền `#111111`, Trắng ngà `#FBFBFB`, Be `#F5F2EB`, Xám khói) kết hợp font chữ thanh lịch cho tiêu đề và font chữ hiện đại, rõ ràng cho nội dung.
+* **Phong cách thiết kế:** Định hình theo ngôn ngữ thời trang cao cấp tối giản (Luxury Editorial / Minimalist) kết hợp bảng màu Warm Luxury (`#775B3F`, `#FAF7F2`, `#C8AE84`, `#E0B77C`, `#FEE3AF`).
+* **Hiệu ứng 3D Chiều Sâu & Tương Tác Ánh Sáng Vàng Kim (3D Spatial Depth & Golden Stardust Trail):**
+  * Vệt bụi vàng champagne & tinh tú 4 cánh lấp lánh tương tác theo chuột (`GoldenCursorTrail.jsx`), tự động tan biến êm dịu, không che khuất trang phục và hỗ trợ chuẩn `prefers-reduced-motion`.
+  * Logo thương hiệu LUNE chạm nổi 3D (`perspective: 600px`, đa tầng `text-shadow` ánh kim).
+  * Thẻ sản phẩm & danh mục nâng bổng không gian 3D (`translateY(-8px)`), đổ bóng màu hổ phách nâu ấm mềm mịn (`--shadow-3d-hover`), tag kính mờ 3D lơ lửng.
+  * Nút bấm hành động có phản hồi xúc giác 3D (`translateY(1px)`) và vệt sáng lụa (*Silk Shimmer Sweep*) quét ngang khi hover.
 * **Hiệu ứng vi chuyển động (Micro-interactions):**
   * Hover đổi ảnh sản phẩm sang góc chụp khác để tạo cảm giác sống động.
   * Hiệu ứng trượt mượt mà (Smooth Slide-in) của giỏ hàng và các hộp thoại Modal.

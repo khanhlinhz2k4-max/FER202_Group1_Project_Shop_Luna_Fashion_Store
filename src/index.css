@@ -52,6 +52,15 @@
   /* Transitions */
   --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-editorial: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+  --transition-3d: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.45s ease;
+
+  /* 3D Depth & Elevation Tokens (Soft Champagne / Warm Luxury) */
+  --shadow-3d-subtle: 0 4px 14px -2px rgba(119, 91, 63, 0.08);
+  --shadow-3d-soft: 0 12px 28px -6px rgba(119, 91, 63, 0.12), 0 4px 10px -2px rgba(119, 91, 63, 0.05);
+  --shadow-3d-hover: 0 20px 42px -10px rgba(119, 91, 63, 0.20), 0 8px 18px -4px rgba(119, 91, 63, 0.08);
+  --shadow-3d-floating: 0 28px 56px -12px rgba(44, 33, 23, 0.22), 0 12px 24px -6px rgba(119, 91, 63, 0.12);
+  --silk-gold-sheen: linear-gradient(135deg, rgba(254, 227, 175, 0.6) 0%, rgba(224, 183, 124, 0.25) 50%, rgba(200, 174, 132, 0.5) 100%);
+  --perspective-3d: 1000px;
 
   /* Container */
   --max-width: 1320px;
@@ -163,7 +172,7 @@ img {
   }
 }
 
-/* Editorial Button Styles */
+/* Editorial Button Styles with 3D Tactile Elevation & Silk Shimmer */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -178,16 +187,46 @@ img {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   border: 1px solid var(--primary-brown);
+  border-radius: 2px;
   position: relative;
   overflow: hidden;
-  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-3d-subtle);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, background-color 0.35s ease;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -120%;
+  width: 70%;
+  height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(254, 227, 175, 0.35) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg);
+  transition: left 0.75s ease;
+  pointer-events: none;
 }
 
 .btn-primary:hover {
   background-color: #5E4630;
   border-color: #5E4630;
   color: #FFFFFF;
-  box-shadow: 0 4px 16px rgba(119, 91, 63, 0.18);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-3d-hover);
+}
+
+.btn-primary:hover::after {
+  left: 140%;
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: var(--shadow-3d-subtle);
 }
 
 .btn-secondary {
@@ -305,3 +344,16 @@ img {
 #philosophy {
   scroll-margin-top: 90px;
 }
+
+/* Accessibility: Support prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+

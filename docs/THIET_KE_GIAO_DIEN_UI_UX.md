@@ -210,7 +210,7 @@ Giao diện Chân trang được nâng cấp toàn diện theo chuẩn Haute Cou
 * **Cơ chế Phân trang Thông minh & Tự động Đặt lại (Smart Pagination & Auto-Reset):**
   * Tự động đặt lại số trang về trang 1 (`setCurrentPage(1)`) mỗi khi người dùng thay đổi bất kỳ tiêu chí lọc nào (từ khóa tìm kiếm, danh mục giới tính, loại trang phục, kích cỡ, màu sắc, thanh trượt giá, sắp xếp).
   * Chốt chặn an toàn kiểm soát giới hạn biên (`currentPage > totalPages`): Tự động kéo về trang 1 nếu kết quả lọc bị co hẹp, đảm bảo khách hàng luôn thấy sản phẩm khớp mà không bị kẹt ở trang trống.
-* **Dữ liệu sản phẩm mẫu (~8 món cân bằng):** Pha trộn hài hòa giữa áo blazer nữ, sơ mi nam, đầm nữ, quần âu nam, áo khoác nam và áo lụa nữ.
+* **Dữ liệu sản phẩm phong phú (36 thiết kế thời trang cao cấp — Cân bằng giới tính & Song ngữ 100%):** Mở rộng danh mục lên 36 sản phẩm chuẩn mực Atelier (15 trang phục Nữ, 13 trang phục Nam, 7 phụ kiện da thật & thắt lưng, 1 kiệt tác Runway độc bản). Toàn bộ 36 sản phẩm đều có đầy đủ ảnh lookbook Unsplash độ phân giải cao, ảnh phụ hover (`secondaryImage`), thông số giá, size, màu sắc, kho hàng và bản địa hóa song ngữ đối xứng Anh - Việt trong `productTranslations`.
 
 ---
 
@@ -505,6 +505,52 @@ Trước khi nộp bài cho Trưởng nhóm (Leader), từng thành viên phải
 * **Chuyển đổi linh hoạt & Lưu địa chỉ mới thông minh:**
   * Khách hàng có thể bấm chọn nhanh giữa các địa chỉ đã lưu (Nhà riêng, Văn phòng...).
   * Nút `+ Giao đến địa chỉ mới` cho phép nhập địa chỉ khác khi cần, kèm tùy chọn lưu tự động vào Profile cho những lần mua sắm tiếp theo.
+
+---
+
+## 💎 XII. QUY CHUẨN HIỆU ỨNG 3D CHIỀU SÂU & TƯƠNG TÁC ÁNH SÁNG VÀNG KIM (3D SPATIAL & GOLDEN STARDUST SPECIFICATION)
+
+### 1. Triết lý Ứng dụng 3D trong Thời Trang Xa Xỉ (Haute Couture 3D Philosophy)
+* **Tôn vinh trang phục là trọng tâm tối thượng:** Tuyệt đối không đặt các vật thể 3D thô cứng hay khối hình hoạt họa che chắn người mẫu hoặc đè lên khối văn bản giới thiệu.
+* **Tạo chiều sâu không gian (Spatial Depth):** 3D được thể hiện qua chuyển động nâng nổi của các thẻ giao diện (*UI Elevation*), đổ bóng ấm đa tầng (*Warm Amber Diffuse Shadows*) và lớp ánh sáng tương tác vi mô tinh xảo.
+
+### 2. Quy Chuẩn Vệt Bụi Vàng & Tinh Tú Lấp Lánh Theo Chuột (`GoldenCursorTrail.jsx`)
+* **Bản chất kỹ thuật:** Canvas 60 FPS độc lập với `pointer-events: none` và `z-index: 99999`, không gây chặn click vào bất kỳ liên kết hay nút bấm nào.
+* **Bảng màu hạt sáng:**
+  * `#FFFDF5` (Trắng kim cương / Diamond White).
+  * `#FEE3AF` (Vàng kem tơ lụa / Silk Cream).
+  * `#E0B77C` (Vàng champagne ấm / Warm Champagne Gold).
+  * `#CAA072` (Caramel đồng thau / Caramel Bronze).
+* **Đặc tính vật lý vi mô:**
+  * Khi di chuột: Sinh ra các hạt bụi vàng phát sáng nhẹ và ngôi sao 4 cánh xoay góc nhẹ nhàng, bay ngược chiều di chuyển và mờ dần trong ~0.5s – 0.6s.
+  * Khi dừng chuột: Toàn bộ hạt sáng tan biến hoàn toàn, trả lại màn hình tĩnh lặng, tinh tươm.
+  * Tự động vô hiệu hóa trên màn hình cảm ứng di động (`(pointer: coarse)`).
+
+### 3. Quy Chuẩn Chiều Sâu 3D Logo Thương Hiệu LUNE
+* **Không gian 3D vi mô:** Gán `perspective: 600px` trên khung Logo và đa tầng `text-shadow` ánh vàng kem (`#FEE3AF`) và hổ phách (`#775B3F`).
+* **Trạng thái Hover:** Logo nâng nhẹ về phía người nhìn (`translateY(-1px) scale(1.02)`), khoảng cách chữ nới rộng thanh thoát (`letter-spacing: 0.20em`), vệt đổ bóng sáng rực lên tạo cảm giác kim loại mạ vàng chạm nổi.
+
+### 4. Hệ Thống Token Độ Cao & Bóng Đổ 3D Hổ Phách (Warm Luxury 3D Shadow Tokens)
+Quy chuẩn tại `:root` trong `src/index.css`:
+* `--shadow-3d-subtle: 0 4px 14px -2px rgba(119, 91, 63, 0.08);` (Trạng thái thẻ tĩnh).
+* `--shadow-3d-soft: 0 12px 28px -6px rgba(119, 91, 63, 0.12), 0 4px 10px -2px rgba(119, 91, 63, 0.05);` (Trạng thái nổi trung bình).
+* `--shadow-3d-hover: 0 20px 42px -10px rgba(119, 91, 63, 0.20), 0 8px 18px -4px rgba(119, 91, 63, 0.08);` (Trạng thái thẻ sản phẩm hover).
+* `--shadow-3d-floating: 0 28px 56px -12px rgba(44, 33, 23, 0.22), 0 12px 24px -6px rgba(119, 91, 63, 0.12);` (Trạng thái danh mục hover).
+
+### 5. Quy Chuẩn Thẻ Sản Phẩm & Thẻ Danh Mục Nâng Khối 3D
+* **Product Card:** 
+  * Khi hover: Thẻ nâng bổng 8px (`translateY(-8px)`), viền bắt sáng satin, bóng đổ hổ phách lan tỏa, ảnh zoom nhẹ nhàng 1.06x (`cubic-bezier(0.25, 1, 0.5, 1)`).
+  * Product Tag: Bo góc 20px kết hợp kính mờ tán xạ (`backdrop-filter: blur(10px)`) và bóng đổ tách lớp.
+* **Category Card:** Nâng bổng 6px (`translateY(-6px)`), nút tròn mũi tên trượt sang phải kích thích nhấp chuột khám phá.
+
+### 6. Quy Chuẩn Nút Bấm Xúc Giác 3D & Vệt Sáng Lụa
+* **Trạng thái Hover:** Nút `.btn-primary` nâng nhẹ 2px (`translateY(-2px)`) kèm vệt sáng lụa mềm (`linear-gradient(105deg, ...)` với pseudo-element `::after`) quét chéo qua bề mặt.
+* **Trạng thái Active (Click):** Nút lún xuống 1px (`translateY(1px)`), tạo cảm giác phản hồi cơ học 3D xúc giác chân thực.
+
+### 7. Quy Chuẩn Khả Năng Tiếp Cận & Tương Thích (Accessibility Compliance)
+* Tích hợp chuẩn `@media (prefers-reduced-motion: reduce)` trong `index.css`: Tự động ngắt các hiệu ứng chuyển động mạnh cho người dùng có cài đặt trợ năng hệ thống.
+* Đảm bảo tỷ lệ tương phản chữ viết trên nền đạt chuẩn WCAG AA (> 7:1) xuyên suốt toàn bộ các khối 3D.
+
 
 
 

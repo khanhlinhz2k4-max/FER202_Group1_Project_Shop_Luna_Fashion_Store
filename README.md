@@ -101,12 +101,23 @@
    - Widget ChatBot trực tuyến 24/7 có mặt ở mọi trang của Storefront.
    - Trí thông minh tư vấn kích cỡ may đo chuẩn xác theo số đo tự nhiên của từng khách hàng, thanh gợi ý nhanh và song ngữ tự động.
 
-### 14. 🌌 Không Gian Thị Sai 3D Đa Tầng Nghệ Thuật (Multi-Layer 3D Depth Parallax Hero Banner)
-- **Chuẩn phong cách bìa tạp chí Haute Couture:** Tách lớp không gian thành 3 tầng chiều sâu trực quan theo thời gian thực:
-  - *Tầng 1 (Hậu cảnh):* Ảnh bộ sưu tập chuyển động thị sai nghịch hướng chuột (`translate3d(-10px, -8px, 0)`).
-  - *Tầng 2 (Trung cảnh):* Khối chữ nghệ thuật Serif Playfair Display và các nút hành động chuyển động xuôi hướng chuột (`translate3d(10px, 8px, 0)`).
-  - *Tầng 3 (Tiền cảnh 3D nổi khối):* Thẻ Swatch chất liệu may đo Atelier (`hero-3d-badge-card`) nghiêng đa hướng trong không gian 3D (`perspective(1000px) rotateX(...) rotateY(...)`), cập nhật động theo từng slide (Lụa tơ tằm Lyon, Len Cashmere Mông Cổ, Vải lanh Normandy, Da bò Ý Full-Grain).
-- **Zero Heavy 3D Library:** 100% xây dựng bằng CSS 3D Transforms và sự kiện chuột nhẹ nhàng, tải trang 60fps mượt mà, tự động tắt trên màn hình di động/tablet để bảo toàn tính chuẩn mực của giao diện.
+### 14. ✨ Nâng Cấp Giao Diện 3D Chiều Sâu & Vệt Bụi Vàng Lấp Lánh (3D Spatial Depth & Golden Stardust Trail)
+- **Vệt Bụi Vàng & Tinh Tú 3D Theo Chuột (`GoldenCursorTrail.jsx`):**
+  - Khi người dùng rê chuột, các tinh thể vàng champagne (`#FEE3AF`, `#E0B77C`) và ngôi sao kim cương 4 cánh (`#FFFDF5`) phát sáng lơ lửng rồi tan biến êm dịu sau ~0.5s như bụi phấn kim tuyến trong show diễn Haute Couture.
+  - Cấu hình `pointer-events: none` và 60 FPS tăng tốc phần cứng GPU, tự động tắt trên màn hình cảm ứng di động, bảo toàn 100% diện tích ngắm đồ và không cản trở thao tác click mua hàng.
+- **Logo LUNE 3D Chạm Nổi Ánh Kim (`App.css`):**
+  - Áp dụng góc nhìn 3D (`perspective: 600px`) với hệ thống đa tầng `text-shadow` ánh vàng kem và hổ phách.
+  - Khi hover, logo nâng nhẹ về phía người nhìn, nới rộng khoảng cách ký tự (`letter-spacing: 0.20em`) tạo cảm giác như kim loại mạ vàng được chiếu rọi ánh đèn showroom.
+- **Thẻ Sản Phẩm & Thẻ Danh Mục Nâng Nổi 3D (`App.css`):**
+  - Hiệu ứng nâng bổng không gian 3D (`translateY(-8px)` cho ProductCard, `translateY(-6px)` cho CategoryCard).
+  - Đổ bóng màu hổ phách nâu ấm mềm mịn (`--shadow-3d-hover`), ảnh phóng to nhẹ 1.06x tạo cảm giác sản phẩm nổi lên khỏi mặt trang.
+  - Tag sản phẩm ("New Season", "Bestseller"): Bo tròn mềm mại kết hợp hiệu ứng kính mờ 3D lơ lửng (*Glassmorphism 3D Floating Tag* với `backdrop-filter: blur(10px)`).
+- **Nút Bấm Phản Hồi Xúc Giác 3D & Vệt Sáng Lụa (`index.css`):**
+  - Nút `.btn-primary` nâng nhẹ 2px kèm vệt sáng lụa mềm (*Silk Shimmer Sweep*) quét ngang bề mặt khi hover.
+  - Khi bấm chuột, nút lún xuống 1px (`translateY(1px)`) mang lại cảm giác cơ học xúc giác chân thực.
+- **Bảo Toàn Bảng Màu & Khả Năng Tiếp Cận:**
+  - Giữ nguyên 100% bảng màu kinh điển của thương hiệu (`#775B3F`, `#FAF7F2`, `#C8AE84`, `#E0B77C`, `#FEE3AF`).
+  - Hỗ trợ đầy đủ chuẩn `@media (prefers-reduced-motion: reduce)` cho người dùng nhạy cảm thị giác.
 
 ---
 
