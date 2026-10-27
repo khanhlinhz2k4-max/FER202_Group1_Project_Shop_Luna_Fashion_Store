@@ -472,7 +472,7 @@ Ký hiệu:
      1. Trạng thái kích hoạt khả dụng: `active === true` (được mở qua icon con mắt `Eye`).
      2. Khung thời gian hiệu lực: $\text{startsAt} \le \text{Thời gian hiện tại} \le \text{expiresAt}$.
      3. Đạt định mức chi tiêu tối thiểu: $\text{Tạm tính (Subtotal)} \ge \text{minSpend}$.
-   * **Giao diện trải nghiệm người dùng tại Checkout:** Hệ thống tự động lọc danh sách các mã thỏa mãn điều kiện và hiển thị trực tiếp trong bộ chọn `Dropdown` sang trọng để khách hàng dễ dàng áp dụng bằng 1 click; hỗ trợ hiển thị gợi ý upsell mua thêm đối với các voucher sắp đạt mốc tối thiểu; hỗ trợ cả hình thức nhập mã thủ công (`promoCode`).
+   * **Giao diện trải nghiệm người dùng tại Checkout (Custom Boutique Voucher Dropdown):** Hệ thống tự động lọc danh sách các mã thỏa mãn điều kiện và hiển thị trực tiếp trong bộ chọn Custom Dropdown cao cấp (thay thế hoàn toàn thẻ `<select>` mặc định của trình duyệt để khắc phục triệt để lỗi mũi tên trồi ra ngoài mép viền và dải màu xám đen mặc định của hệ điều hành). Dropdown tích hợp icon `<ChevronDown />` xoay 180° mượt mà, căn lề đệm an toàn 14px, mỗi voucher là một thẻ ưu đãi trực quan kèm badge mã code viền kem, mức giảm và điều kiện chi tiêu tối thiểu; tích hợp tự động đóng khi click ra ngoài (`click outside`); hỗ trợ hiển thị gợi ý upsell mua thêm đối với các voucher sắp đạt mốc tối thiểu; hỗ trợ cả hình thức nhập mã thủ công (`promoCode`). Nút chọn địa chỉ mới cũng được chuẩn hóa hiển thị 1 icon `<Plus />` duy nhất.
    * **Công thức khấu trừ chiết khấu:**
      - Nếu loại `percentage`: $\text{Discount} = \text{Tạm tính} \times \left(\frac{\text{Value}}{100}\right)$.
      - Nếu loại `fixed`: $\text{Discount} = \min(\text{Value}, \text{Tạm tính})$.

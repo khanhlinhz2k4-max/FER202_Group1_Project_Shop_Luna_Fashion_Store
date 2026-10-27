@@ -504,7 +504,25 @@ Trước khi nộp bài cho Trưởng nhóm (Leader), từng thành viên phải
   * Tự động chọn sẵn địa chỉ mặc định (*Default*) với viền vàng nâu sang trọng, rút ngắn thời gian đặt hàng từ 60 giây xuống còn 2 giây.
 * **Chuyển đổi linh hoạt & Lưu địa chỉ mới thông minh:**
   * Khách hàng có thể bấm chọn nhanh giữa các địa chỉ đã lưu (Nhà riêng, Văn phòng...).
-  * Nút `+ Giao đến địa chỉ mới` cho phép nhập địa chỉ khác khi cần, kèm tùy chọn lưu tự động vào Profile cho những lần mua sắm tiếp theo.
+  * Nút `Giao đến địa chỉ mới` (`Ship to a new address`) cho phép nhập địa chỉ khác khi cần, kèm tùy chọn lưu tự động vào Profile cho những lần mua sắm tiếp theo.
+
+### 4. Bộ Chọn Voucher Tùy Biến Độc Quyền Tại Checkout (Custom Boutique Voucher Dropdown)
+* **Khắc phục triệt để hạn chế của thẻ HTML `<select>` native:**
+  * Trên hệ điều hành Windows và các trình duyệt Chromium, thẻ `<select>` mặc định bị ép render qua User-Agent Shadow DOM của hệ điều hành, dẫn đến menu khi mở ra có dải màu xám sẫm (`#555`) tương phản thô kệch, phá vỡ phong cách mỹ thuật Warm Luxury của boutique.
+  * Mũi tên hệ thống không cho phép tùy biến vị trí linh hoạt, dẫn đến việc xung đột với `padding` và bị dính chặt hoặc trồi ra ngoài mép viền phải (`border`).
+* **Quy chuẩn thiết kế Custom Dropdown Component:**
+  * **Nút bấm kích hoạt (Trigger Button):** Thiết kế phẳng thanh lịch với viền be cát `#C8AE84`, lề đệm an toàn `padding: 10px 14px`, bố cục Flexbox căn giữa hoàn hảo.
+  * **Biểu tượng điều hướng xoay 180° (`<ChevronDown />`):** Dùng icon SVG màu nâu đồng `#775B3F`, cách mép phải an toàn 14px (triệt tiêu 100% lỗi dính viền/trồi mép), tự động xoay 180 độ êm ái (`transition: transform 0.2s ease`) khi mở danh sách.
+  * **Thẻ danh mục nổi đa tầng (Floating Voucher Listbox):**
+    * Nền trắng tinh khôi `#FFFFFF`, viền be `#C8AE84`, bóng mờ sang trọng `0 8px 24px -4px rgba(119, 91, 63, 0.16)`.
+    * Mỗi voucher hiển thị như một **chiếc thẻ ưu đãi mini (Voucher Card)**: Badge mã code viền kem nổi bật, nhãn mức giảm (% hoặc $), điều kiện đơn tối thiểu và dấu tích `<Check />` màu đồng khi được chọn.
+    * Tùy chọn `-- Select a Voucher --` rõ ràng giúp khách hủy chọn mã nhanh chóng mà không gây lỗi giao diện.
+  * **Tương tác thông minh (`click outside`):** Lắng nghe sự kiện click ngoài màn hình bằng `useEffect` và `useRef` để tự động thu gọn menu khi người dùng click ra vùng khác.
+
+### 5. Chuẩn Hóa Biểu Tượng Nút Hành Động (Action Icon Single-Instance Standardization)
+* **Triệt tiêu lỗi trùng lặp ký hiệu thị giác (No Duplicate Glyphs):**
+  * Nút chuyển đổi địa chỉ nhận hàng được chuẩn hóa cấu trúc: Chỉ dùng 1 icon SVG duy nhất `<Plus size={14} />`, tách biệt hoàn toàn với chuỗi văn bản dịch thuật (`'Giao đến địa chỉ mới'` / `'Ship to a new address'`).
+  * Loại bỏ hoàn toàn lỗi hiển thị 2 dấu cộng liền kề (`+ +`), mang lại sự chỉn chu tuyệt đối cho từng chi tiết giao diện.
 
 ---
 
