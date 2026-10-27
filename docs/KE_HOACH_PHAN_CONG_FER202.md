@@ -197,7 +197,8 @@
      * Nút bấm dẫn sang trang Thanh toán.
   2. **Trang Thanh Toán (`src/pages/CheckoutPage.jsx` & `CheckoutPage.css`):**
      * Form nhập thông tin giao hàng: Họ tên, Số điện thoại, Địa chỉ nhận hàng (Validate không để trống, kiểm tra định dạng SĐT).
-     * **Tích hợp Voucher Thông minh:** Cung cấp bộ chọn Dropdown voucher khả dụng lấy từ `ShopContext` (`vouchers`), lọc theo điều kiện kích hoạt, thời hạn và mức chi tiêu tối thiểu `minSpend`. Đồng thời hỗ trợ nhập mã thủ công, tự động tính toán số tiền giảm theo thời gian thực (giảm theo % hoặc cố định USD), và ghi nhận `voucherCode` vào chi tiết đơn hàng `addOrder()`.
+     * **Tích hợp Custom Boutique Voucher Dropdown:** Nâng cấp từ thẻ `<select>` native sang Custom Select Component thuần chuẩn Warm Luxury: Tích hợp icon `<ChevronDown />` xoay 180° mượt mà không bị lỗi trồi mép/viền, loại bỏ hoàn toàn dải màu xám đen mặc định của hệ điều hành Windows, hiển thị badge mã giảm giá, mức giảm, điều kiện chi tiêu tối thiểu, và tính năng tự động đóng khi click ra ngoài (`click outside`). Đồng thời hỗ trợ nhập mã thủ công, tự động tính toán số tiền giảm theo thời gian thực (giảm theo % hoặc cố định USD), và ghi nhận `voucherCode` vào chi tiết đơn hàng `addOrder()`.
+     * **Sổ Địa Chỉ Giao Hàng & Nút Thêm Mới Chuẩn Hóa:** Tích hợp chọn nhanh địa chỉ từ Profile và chuẩn hóa nút "Giao đến địa chỉ mới" / "Ship to a new address" hiển thị duy nhất 1 icon `<Plus />` tinh gọn.
      * Chọn phương thức thanh toán: COD (Thanh toán khi nhận hàng) hoặc Thẻ ngân hàng giả lập.
      * Cột tóm tắt đơn hàng: Tạm tính, phí vận chuyển, số tiền được giảm, tổng thanh toán cuối cùng.
   3. **Trang Đặt Hàng Thành Công (`src/pages/OrderSuccessPage.jsx` & `OrderSuccess.css`):**

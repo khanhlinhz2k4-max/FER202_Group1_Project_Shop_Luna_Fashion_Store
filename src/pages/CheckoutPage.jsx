@@ -1,8 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { useLanguage } from '../context/LanguageContext';
-import { ShieldCheck, ArrowLeft, CheckCircle2, QrCode, Copy, Check, MapPin, Plus, CreditCard, Lock, Globe } from 'lucide-react';
+import { ShieldCheck, ArrowLeft, CheckCircle2, QrCode, Copy, Check, MapPin, Plus, CreditCard, Lock, Globe, ChevronDown } from 'lucide-react';
 
 /**
  * CheckoutPage Component
@@ -90,6 +90,19 @@ export default function CheckoutPage() {
   };
 
   const [selectedVoucherId, setSelectedVoucherId] = useState('');
+  const [isVoucherDropdownOpen, setIsVoucherDropdownOpen] = useState(false);
+  const voucherDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (voucherDropdownRef.current && !voucherDropdownRef.current.contains(event.target)) {
+        setIsVoucherDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [promoMessage, setPromoMessage] = useState('');
   const [errors, setErrors] = useState({});
@@ -392,7 +405,7 @@ export default function CheckoutPage() {
                   onMouseEnter={e => e.currentTarget.style.backgroundColor = '#FAF7F2'}
                   onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
-                  <Plus size={14} /> {t('checkout.addNewAddressBtn', '+ Giao đến địa chỉ mới')}
+                  <Plus size={14} /> {t('checkout.addNewAddressBtn', 'Giao đến địa chỉ mới')}
                 </button>
               ) : (
                 <button
@@ -866,37 +879,161 @@ export default function CheckoutPage() {
           {/* Voucher selection & Promo code */}
           <div style={{ marginBottom: '20px' }}>
             {eligibleVouchers.length > 0 && (
-              <div style={{ marginBottom: '12px' }}>
+              <div style={{ marginBottom: '14px', position: 'relative' }} ref={voucherDropdownRef}>
                 <label 
-                  htmlFor="checkout-voucher" 
+                  id="checkout-voucher-label"
                   style={{ display: 'block', marginBottom: '6px', fontSize: '0.82rem', fontWeight: 600, color: '#5C4A3A', textTransform: 'uppercase', letterSpacing: '0.04em' }}
                 >
                   {t('checkout.selectVoucherLabel', 'Available Boutique Vouchers')}
                 </label>
-                <select
+
+                {/* Custom Boutique Select Trigger */}
+                <button
+                  type="button"
                   id="checkout-voucher"
-                  value={selectedVoucherId}
-                  onChange={e => handleVoucherSelect(e.target.value)}
-                  style={{ 
-                    width: '100%', 
-                    padding: '9px 12px', 
-                    border: '1px solid #C8AE84', 
-                    borderRadius: '2px', 
-                    backgroundColor: '#FFFFFF', 
-                    fontSize: '0.85rem', 
-                    color: '#2C2117',
+                  aria-labelledby="checkout-voucher-label"
+                  aria-haspopup="listbox"
+                  aria-expanded={isVoucherDropdownOpen}
+                  onClick={() => setIsVoucherDropdownOpen(prev => !prev)}
+                  style={{
+                    width: '100%',
+                    padding: '10px 14px',
+                    border: isVoucherDropdownOpen ? '1.5px solid #775B3F' : '1px solid #C8AE84',
+                    borderRadius: '3px',
+                    backgroundColor: '#FFFFFF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
                     outline: 'none',
-                    cursor: 'pointer' 
+                    textAlign: 'left',
+                    boxShadow: isVoucherDropdownOpen ? '0 0 0 3px rgba(119, 91, 63, 0.1)' : 'none',
+                    transition: 'border-color 0.2s ease, box-shadow 0.2s ease'
                   }}
                 >
-                  <option value="">{t('checkout.noVoucher', '-- Select a Voucher --')}</option>
-                  {eligibleVouchers.map(voucher => (
-                    <option key={voucher.id} value={voucher.id}>
-                      {voucher.code} - {voucher.discountType === 'percent' ? `${voucher.discountValue}% OFF` : `$${voucher.discountValue} OFF`}
-                      {Number(voucher.minSubtotal) > 0 ? ` (Min. $${voucher.minSubtotal})` : ''}
-                    </option>
-                  ))}
-                </select>
+                  <span style={{ fontSize: '0.85rem', color: selectedVoucher ? '#2C2117' : '#8F7965', display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {selectedVoucher ? (
+                      <>
+                        <span style={{ backgroundColor: '#FAF7F2', border: '1px solid #D5C3A5', padding: '1px 6px', borderRadius: '3px', fontWeight: 700, fontSize: '0.78rem', color: '#775B3F' }}>
+                          {selectedVoucher.code}
+                        </span>
+                        <span style={{ fontWeight: 500 }}>
+                          {selectedVoucher.discountType === 'percent' ? `${selectedVoucher.discountValue}% OFF` : `$${selectedVoucher.discountValue} OFF`}
+                          {Number(selectedVoucher.minSubtotal) > 0 ? ` (Min. $${selectedVoucher.minSubtotal})` : ''}
+                        </span>
+                      </>
+                    ) : (
+                      t('checkout.noVoucher', '-- Select a Voucher --')
+                    )}
+                  </span>
+                  <ChevronDown 
+                    size={16} 
+                    color="#775B3F" 
+                    style={{ 
+                      flexShrink: 0, 
+                      marginLeft: '8px',
+                      transform: isVoucherDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)', 
+                      transition: 'transform 0.2s ease' 
+                    }} 
+                  />
+                </button>
+
+                {/* Custom Dropdown Menu List */}
+                {isVoucherDropdownOpen && (
+                  <div
+                    role="listbox"
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 4px)',
+                      left: 0,
+                      right: 0,
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #C8AE84',
+                      borderRadius: '4px',
+                      boxShadow: '0 8px 24px -4px rgba(119, 91, 63, 0.16), 0 3px 8px -2px rgba(119, 91, 63, 0.08)',
+                      zIndex: 60,
+                      maxHeight: '260px',
+                      overflowY: 'auto'
+                    }}
+                  >
+                    {/* Clear selection option */}
+                    <div
+                      role="option"
+                      aria-selected={!selectedVoucherId}
+                      onClick={() => {
+                        handleVoucherSelect('');
+                        setIsVoucherDropdownOpen(false);
+                      }}
+                      style={{
+                        padding: '10px 14px',
+                        fontSize: '0.82rem',
+                        color: '#8F7965',
+                        borderBottom: '1px solid #F0E8DC',
+                        cursor: 'pointer',
+                        backgroundColor: !selectedVoucherId ? '#FAF7F2' : '#FFFFFF',
+                        transition: 'background-color 0.15s ease'
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#FAF7F2'; }}
+                      onMouseLeave={e => { e.currentTarget.style.backgroundColor = !selectedVoucherId ? '#FAF7F2' : '#FFFFFF'; }}
+                    >
+                      {t('checkout.noVoucher', '-- Select a Voucher --')}
+                    </div>
+
+                    {/* Voucher items */}
+                    {eligibleVouchers.map(voucher => {
+                      const isSelected = voucher.id === selectedVoucherId;
+                      return (
+                        <div
+                          key={voucher.id}
+                          role="option"
+                          aria-selected={isSelected}
+                          onClick={() => {
+                            handleVoucherSelect(voucher.id);
+                            setIsVoucherDropdownOpen(false);
+                          }}
+                          style={{
+                            padding: '10px 14px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '8px',
+                            borderBottom: '1px solid #F5EFEB',
+                            cursor: 'pointer',
+                            backgroundColor: isSelected ? '#FAF7F2' : '#FFFFFF',
+                            borderLeft: isSelected ? '3px solid #775B3F' : '3px solid transparent',
+                            transition: 'background-color 0.15s ease'
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#FAF7F2'; }}
+                          onMouseLeave={e => { e.currentTarget.style.backgroundColor = isSelected ? '#FAF7F2' : '#FFFFFF'; }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ 
+                              backgroundColor: '#FAF7F2', 
+                              border: '1px solid #D5C3A5', 
+                              padding: '2px 7px', 
+                              borderRadius: '3px', 
+                              fontWeight: 700, 
+                              fontSize: '0.78rem', 
+                              color: '#775B3F',
+                              letterSpacing: '0.03em'
+                            }}>
+                              {voucher.code}
+                            </span>
+                            <span style={{ fontSize: '0.84rem', color: '#2C2117', fontWeight: 500 }}>
+                              {voucher.discountType === 'percent' ? `${voucher.discountValue}% OFF` : `$${voucher.discountValue} OFF`}
+                              {Number(voucher.minSubtotal) > 0 && (
+                                <span style={{ color: '#8F7965', fontSize: '0.78rem', marginLeft: '4px' }}>
+                                  (Min. ${voucher.minSubtotal})
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                          {isSelected && <Check size={16} color="#775B3F" style={{ flexShrink: 0 }} />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
 
