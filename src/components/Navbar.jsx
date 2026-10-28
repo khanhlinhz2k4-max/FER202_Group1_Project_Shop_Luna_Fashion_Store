@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Search, 
@@ -47,6 +47,7 @@ export default function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const searchInputRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -320,6 +321,7 @@ export default function Navbar() {
                 <div className="search-input-box">
                   <Search size={18} className="search-input-icon" />
                   <input 
+                    ref={searchInputRef}
                     type="text" 
                     placeholder={t('nav.searchPlaceholder')}
                     value={searchQuery}
@@ -327,24 +329,30 @@ export default function Navbar() {
                     onKeyDown={handleSearchKeyDown}
                     autoFocus
                   />
-                  {searchQuery && (
+                  {searchQuery ? (
                     <button 
                       type="button" 
                       className="search-clear-btn" 
-                      onClick={() => setSearchQuery('')}
+                      onClick={() => {
+                        setSearchQuery('');
+                        searchInputRef.current?.focus();
+                      }}
                       aria-label="Clear search query"
+                      title={language === 'vi' ? 'Xóa từ khóa tìm kiếm' : 'Clear search query'}
                     >
-                      <X size={15} />
+                      <X size={16} />
+                    </button>
+                  ) : (
+                    <button 
+                      type="button" 
+                      className="search-close-btn"
+                      onClick={() => setSearchOpen(false)}
+                      aria-label="Close search drawer"
+                      title={language === 'vi' ? 'Đóng tìm kiếm' : 'Close search drawer'}
+                    >
+                      <X size={18} />
                     </button>
                   )}
-                  <button 
-                    type="button" 
-                    className="search-close-btn"
-                    onClick={() => setSearchOpen(false)}
-                    aria-label="Close search drawer"
-                  >
-                    <X size={18} />
-                  </button>
                 </div>
 
                 {/* Trending Searches Section (Active when input is empty) */}
@@ -446,6 +454,15 @@ export default function Navbar() {
           </div>
         )}
       </header>
+
+      {/* Search Drawer Backdrop Overlay */}
+      {searchOpen && (
+        <div 
+          className="search-nav-overlay"
+          onClick={() => setSearchOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
       {/* Mobile Menu Backdrop Overlay */}
       <div 
