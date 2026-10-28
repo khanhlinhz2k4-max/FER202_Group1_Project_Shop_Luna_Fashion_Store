@@ -24,24 +24,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-/* Backdrop Overlay for Search Drawer */
-.search-nav-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(44, 33, 23, 0.35);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
-  z-index: 998;
-  animation: searchOverlayFadeIn 0.22s ease;
-}
-
-@keyframes searchOverlayFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .search-inner-wrapper {
@@ -88,6 +70,7 @@
 }
 
 .search-clear-btn,
+.search-submit-btn,
 .search-close-btn {
   background: none;
   border: none;
@@ -102,6 +85,7 @@
 }
 
 .search-clear-btn:hover,
+.search-submit-btn:hover,
 .search-close-btn:hover {
   color: var(--primary-brown);
   background-color: var(--bg-subtle);
