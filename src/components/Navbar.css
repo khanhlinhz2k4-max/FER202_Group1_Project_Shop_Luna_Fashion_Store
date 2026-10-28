@@ -70,6 +70,7 @@
 }
 
 .search-clear-btn,
+.search-submit-btn,
 .search-close-btn {
   background: none;
   border: none;
@@ -84,6 +85,7 @@
 }
 
 .search-clear-btn:hover,
+.search-submit-btn:hover,
 .search-close-btn:hover {
   color: var(--primary-brown);
   background-color: var(--bg-subtle);

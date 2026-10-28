@@ -334,16 +334,16 @@ export default function Navbar() {
                       onClick={() => setSearchQuery('')}
                       aria-label="Clear search query"
                     >
-                      <X size={15} />
+                      <X size={16} />
                     </button>
                   )}
                   <button 
                     type="button" 
-                    className="search-close-btn"
-                    onClick={() => setSearchOpen(false)}
-                    aria-label="Close search drawer"
+                    className="search-submit-btn"
+                    onClick={() => executeSearch()}
+                    aria-label="Submit search"
                   >
-                    <X size={18} />
+                    <Search size={18} />
                   </button>
                 </div>
 
