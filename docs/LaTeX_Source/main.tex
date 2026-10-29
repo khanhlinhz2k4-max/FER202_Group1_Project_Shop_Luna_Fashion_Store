@@ -1,0 +1,394 @@
+\documentclass[12pt,a4paper]{report}
+
+% ================= PACKAGES =================
+\usepackage[utf8]{inputenc}
+\usepackage[vietnamese]{babel}
+\usepackage[T5]{fontenc}
+\usepackage{geometry}
+\geometry{left=2.5cm, right=2.0cm, top=2.5cm, bottom=2.5cm}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\usepackage{float}
+
+% ================= BRAND COLORS =================
+\definecolor{PrimaryBrown}{HTML}{775B3F}
+\definecolor{DarkText}{HTML}{2C2117}
+\definecolor{SecondaryBeige}{HTML}{C8AE84}
+\definecolor{WarmCaramel}{HTML}{CAA072}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=PrimaryBrown,
+    urlcolor=PrimaryBrown,
+    citecolor=PrimaryBrown,
+    pdftitle={FER202 Project Report - Group 1 - LUNE Fashion Store},
+    pdfauthor={Group 1 - FER202}
+}
+
+\onehalfspacing
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% ================= HEADER & FOOTER =================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{\textcolor{PrimaryBrown}{FER202 -- Group 1: LUNE Fashion Store}}}
+\fancyhead[R]{\textcolor{DarkText}{Báo cáo Đồ án Môn học}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ================= CHAPTER FORMATTING =================
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries\color{PrimaryBrown}}
+  {\chaptertitlename\ \thechapter}{12pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-15pt}{20pt}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{PrimaryBrown}}
+  {\thesection}{1em}{}
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{DarkText}}
+  {\thesubsection}{1em}{}
+
+\begin{document}
+
+% ================= TITLE PAGE =================
+\begin{titlepage}
+    \centering
+    \vspace*{0.5cm}
+    {\Large \textbf{TRƯỜNG ĐẠI HỌC FPT}}\\[0.3cm]
+    {\large \textbf{BỘ MÔN KỸ THUẬT PHẦN MỀM}}\\[1.2cm]
+
+    \rule{\linewidth}{0.6mm} \\[0.4cm]
+    {\Huge \bfseries \textcolor{PrimaryBrown}{BÁO CÁO ĐỒ ÁN MÔN HỌC}}\\[0.3cm]
+    {\LARGE \bfseries MÔN: FER202 -- FRONT-END WEB DEVELOPMENT WITH REACT}\\[0.3cm]
+    \rule{\linewidth}{0.6mm} \\[1.2cm]
+
+    {\Large \textbf{ĐỀ TÀI:}}\\[0.3cm]
+    {\LARGE \bfseries \textcolor{PrimaryBrown}{LUNE FASHION STORE}}\\[0.2cm]
+    {\large \textit{Nền tảng Thương mại Điện tử Thời trang Cao cấp (Storefront \& Admin Portal)}}\\[1.5cm]
+
+    \begin{flushleft}
+    \textbf{Nhóm thực hiện:} Group 1\\
+    \textbf{GitHub Repository:} \url{https://github.com/khanhlinhz2k4-max/FER202_Group1_Project_Shop_Luna_Fashion_Store}\\[0.4cm]
+    \textbf{Danh sách thành viên nhóm:}
+    \end{flushleft}
+
+    \begin{tabular}{|c|p{4.5cm}|p{2.8cm}|p{5.8cm}|}
+        \hline
+        \textbf{STT} & \textbf{Họ và Tên} & \textbf{MSSV} & \textbf{Vai trò chính} \\
+        \hline
+        1 & Thành viên 1 (Leader) & [Điền MSSV] & Trưởng nhóm, Kiến trúc Core, Shop, Tồn kho, Song ngữ VI/EN, Chatbot, shadcn/ui \\
+        \hline
+        2 & Thành viên 2 & [Điền MSSV] & Trang chủ (Home), Hero Carousel, Live Search, Footer \\
+        \hline
+        3 & Thành viên 3 & [Điền MSSV] & Chi tiết sản phẩm (Product Detail), Biến thể, Wishlist \\
+        \hline
+        4 & Thành viên 4 & [Điền MSSV] & Giỏ hàng (Cart Drawer), Thanh toán (Checkout), Voucher \\
+        \hline
+        5 & Thành viên 5 & [Điền MSSV] & Đăng nhập, Đăng ký, Bảo vệ Route, Hồ sơ 5 Tabs \\
+        \hline
+        6 & Thành viên 6 & [Điền MSSV] & Cổng Quản trị (Admin Dashboard, CRUD Products, Orders, Users, Vouchers) \\
+        \hline
+    \end{tabular}
+
+    \vfill
+    {\large \textbf{Tháng 10 Năm 2026}}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ====================================================================
+% CHƯƠNG 1: TỔNG QUAN DỰ ÁN
+% ====================================================================
+\chapter{Tổng quan Hệ thống (System Overview)}
+
+\section{Giới thiệu dự án}
+\textbf{LUNE Fashion Store} là nền tảng thương mại điện tử chuyên biệt cho ngành hàng thời trang may mặc và phụ kiện cao cấp dành cho cả phái đẹp và phái mạnh (\textit{Unisex Luxury Fashion Brand}). Hệ thống được xây dựng theo triết lý thiết kế \textbf{Warm Luxury / Quiet Elegance}, mang lại trải nghiệm mua sắm trực quan, liền mạch cho khách hàng, đồng thời cung cấp cổng quản trị vận hành (\textit{Admin Portal}) toàn diện cho quản trị viên.
+
+\section{Mục tiêu hệ thống}
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Về phía người dùng (Storefront):} Cung cấp trải nghiệm tìm kiếm trực tiếp theo thời gian thực (\textit{Live Search}), bộ lọc sản phẩm đa tiêu chí, ngăn kéo giỏ hàng tương tác nhanh (\textit{Slide-in Cart Drawer}), quy trình đặt hàng tích hợp mã giảm giá và VietQR, theo dõi tiến trình đơn hàng 4 giai đoạn, xuất hóa đơn in ấn và trợ lý tư vấn kích cỡ thông minh 24/7 (\textit{AI Sizing Chatbot}).
+    \item \textbf{Về phía quản trị (Admin Portal):} Cung cấp bảng điều khiển số liệu kinh doanh trực quan (\textit{KPI Dashboard} kèm biểu đồ SVG), quản lý vòng đời sản phẩm (\textit{CRUD} \& ẩn/hiện 1-click), quản lý tồn kho tự động, điều phối trạng thái đơn hàng, quản lý chương trình khuyến mãi (\textit{Voucher}) và danh sách người dùng.
+    \item \textbf{Về mặt kỹ thuật:} Ứng dụng kiến trúc Single Page Application (SPA) với React 19, React Router 7, Context API, tích hợp thư viện thành phần \textbf{shadcn/ui} chuẩn hóa và hệ thống đa ngôn ngữ Song ngữ Việt -- Anh 100\%.
+\end{itemize}
+
+\section{Công nghệ sử dụng (Tech Stack)}
+\begin{longtable}{|p{4.2cm}|p{4.5cm}|p{6.5cm}|}
+\hline
+\textbf{Hạng mục} & \textbf{Công nghệ / Thư viện} & \textbf{Mục đích sử dụng trong dự án} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Hạng mục} & \textbf{Công nghệ / Thư viện} & \textbf{Mục đích sử dụng trong dự án} \\
+\hline
+\endhead
+Framework & React 19 + Vite & Xây dựng giao diện SPA tốc độ cao, tối ưu đóng gói Production \\
+\hline
+UI Component Library & shadcn/ui (Radix UI, CVA, clsx, tailwind-merge) & Xây dựng các thành phần chuẩn WAI-ARIA: Button, Badge, Dialog, Avatar \\
+\hline
+Styling \& CSS & TailwindCSS (no-preflight) + Vanilla CSS Tokens & Hệ thống biến CSS bảng màu Warm Luxury và bố cục Responsive \\
+\hline
+Routing & React Router DOM v7 & Điều hướng phân hệ Storefront, Admin Portal và bảo vệ đường dẫn (\texttt{ProtectedRoute}) \\
+\hline
+State Management & React Context API & Quản lý trạng thái toàn cục qua \texttt{ShopContext} và \texttt{LanguageContext} \\
+\hline
+Data Persistence & Browser \texttt{localStorage} & Lưu trữ bền vững Sản phẩm, Giỏ hàng, Wishlist, Đơn hàng, Voucher, Đánh giá, Ngôn ngữ \\
+\hline
+Icons \& Graphics & Lucide React + Native SVG & Hệ thống biểu tượng đồng bộ và biểu đồ phân tích doanh thu thuần SVG \\
+\hline
+\end{longtable}
+
+% ====================================================================
+% CHƯƠNG 2: PHÂN TÍCH YÊU CẦU & KIẾN TRÚC HỆ THỐNG
+% ====================================================================
+\chapter{Phân tích Yêu cầu \& Kiến trúc Hệ thống}
+
+\section{Các tác nhân hệ thống (System Actors)}
+Hệ thống phân quyền thành 3 tác nhân chính với phạm vi truy cập rõ ràng:
+
+\subsection{Khách vãng lai (Guest)}
+\begin{itemize}[leftmargin=1.5cm]
+    \item Duyệt toàn bộ giao diện công khai: Trang chủ (\texttt{/}), Cửa hàng (\texttt{/shop}), Chi tiết sản phẩm (\texttt{/product/:id}).
+    \item Sử dụng thanh tìm kiếm trực tiếp (\textit{Live Search}), bộ lọc đa tiêu chí, sắp xếp sản phẩm, cửa sổ Xem nhanh (\textit{Quick View}) và Bảng hướng dẫn kích cỡ (\textit{Size Guide}).
+    \item Thêm sản phẩm vào giỏ hàng, lưu danh sách yêu thích tạm thời (\textit{Guest Lookbook}) và đặt hàng tại trang Thanh toán (\texttt{/checkout}).
+    \item Trò chuyện với Trợ lý Chatbot 24/7 để nhận tư vấn chọn size theo chiều cao, cân nặng và số đo 3 vòng.
+\end{itemize}
+
+\subsection{Khách hàng thành viên (Registered Customer -- \texttt{role: user})}
+\begin{itemize}[leftmargin=1.5cm]
+    \item Kế thừa toàn bộ quyền hạn của Khách vãng lai và tự động đồng bộ danh sách Yêu thích cá nhân (\textit{Auto-merge Wishlist}).
+    \item Quản lý không gian cá nhân 5 Tab tại \texttt{/profile}: Lịch sử đơn hàng (\textit{My Orders}), Thông tin cá nhân (\textit{Personal Details}), Bảo mật \& Đổi mật khẩu (\textit{Password \& Security}), Sổ địa chỉ (\textit{Address Book}) và Danh sách yêu thích (\textit{Saved Wishlist}).
+    \item Theo dõi tiến trình đơn hàng qua thanh \texttt{OrderTimeline} 4 nấc, in hóa đơn chuẩn Boutique (\texttt{InvoiceModal}) và gửi đánh giá sao xác thực (\textit{Verified Buyer}) khi đơn hàng đã giao thành công (\texttt{Delivered}).
+\end{itemize}
+
+\subsection{Quản trị viên (Administrator -- \texttt{role: admin})}
+\begin{itemize}[leftmargin=1.5cm]
+    \item Toàn quyền truy cập cổng quản trị tại \texttt{/admin} (được bảo vệ bởi \texttt{ProtectedRoute}).
+    \item \textbf{Dashboard (\texttt{/admin}):} Giám sát 4 chỉ số KPI (Tổng doanh thu, Tổng đơn hàng, Tổng sản phẩm, Tổng thành viên), biểu đồ xu hướng doanh thu 7 ngày và biểu đồ tròn phân bổ danh mục.
+    \item \textbf{Quản lý sản phẩm (\texttt{/admin/products}):} Thêm, sửa, xóa sản phẩm, cập nhật tồn kho, bật/tắt hiển thị sản phẩm 1-click (\texttt{Eye / EyeOff}) và xem trước sản phẩm ẩn (\textit{Admin Preview Mode}).
+    \item \textbf{Quản lý đơn hàng (\texttt{/admin/orders}):} Duyệt và chuyển trạng thái đơn hàng (\texttt{Pending} $\rightarrow$ \texttt{Shipping} $\rightarrow$ \texttt{Delivered} hoặc \texttt{Cancelled} kèm cơ chế tự động hoàn kho).
+    \item \textbf{Quản lý mã giảm giá (\texttt{/admin/vouchers}):} Tạo, sửa, bật/tắt và xóa các mã ưu đãi theo phần trăm hoặc số tiền cố định.
+    \item \textbf{Quản lý người dùng (\texttt{/admin/users}):} Tra cứu danh sách tài khoản thành viên và vai trò trên hệ thống.
+\end{itemize}
+
+\section{Sơ đồ cấu trúc định tuyến (Sitemap \& Routes)}
+\begin{longtable}{|p{3.6cm}|p{4.4cm}|p{4.2cm}|p{3.0cm}|}
+\hline
+\textbf{Đường dẫn (Route)} & \textbf{Màn hình / Component} & \textbf{Chức năng chính} & \textbf{Quyền truy cập} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Đường dẫn (Route)} & \textbf{Màn hình / Component} & \textbf{Chức năng chính} & \textbf{Quyền truy cập} \\
+\hline
+\endhead
+\texttt{/} & \texttt{HomePage.jsx} & Hero Carousel, Danh mục, New Arrivals, Brand Story & Công khai \\
+\hline
+\texttt{/shop} & \texttt{ShopPage.jsx} & Lọc đa tiêu chí, tìm kiếm, sắp xếp, phân trang & Công khai \\
+\hline
+\texttt{/product/:id} & \texttt{ProductDetailPage.jsx} & Thư viện ảnh, chọn Size/Màu, tồn kho, đánh giá sao & Công khai \\
+\hline
+\texttt{/wishlist} & \texttt{WishlistPage.jsx} & Danh sách yêu thích, chuyển nhanh vào giỏ hàng & Công khai \\
+\hline
+\texttt{/checkout} & \texttt{CheckoutPage.jsx} & Điền địa chỉ, chọn Voucher, thanh toán Thẻ/VietQR/COD & Công khai \\
+\hline
+\texttt{/order-success} & \texttt{OrderSuccessPage.jsx} & Xác nhận mã đơn, tiến trình đơn hàng, in hóa đơn & Công khai \\
+\hline
+\texttt{/login}, \texttt{/register} & \texttt{LoginPage}, \texttt{RegisterPage} & Đăng nhập, đăng ký, khôi phục mật khẩu, kiểm tra độ mạnh MK & Công khai \\
+\hline
+\texttt{/profile} & \texttt{ProfilePage.jsx} & Quản lý 5 Tab: Đơn mua, Hồ sơ, Mật khẩu, Địa chỉ, Wishlist & Đã đăng nhập \\
+\hline
+\texttt{/admin} & \texttt{AdminDashboard.jsx} & 4 thẻ KPI, 2 biểu đồ SVG, 5 đơn hàng mới nhất & Chỉ Admin \\
+\hline
+\texttt{/admin/products} & \texttt{AdminProducts.jsx} & CRUD sản phẩm, quản lý tồn kho, ẩn/hiện 1-click & Chỉ Admin \\
+\hline
+\texttt{/admin/orders} & \texttt{AdminOrders.jsx} & Điều phối trạng thái đơn hàng, tự động hoàn kho khi hủy & Chỉ Admin \\
+\hline
+\texttt{/admin/vouchers} & \texttt{AdminVouchers.jsx} & CRUD mã giảm giá, thống kê KPI voucher & Chỉ Admin \\
+\hline
+\texttt{/admin/users} & \texttt{AdminUsers.jsx} & Quản lý danh sách tài khoản hệ thống & Chỉ Admin \\
+\hline
+\end{longtable}
+
+\section{Kiến trúc Dữ liệu \& Lưu trữ (Data Contract)}
+Hệ thống chuẩn hóa các mô hình dữ liệu và đồng bộ hóa qua \texttt{localStorage}:
+\begin{itemize}[leftmargin=1.5cm]
+    \item \texttt{lune\_products}: Lưu danh sách sản phẩm gồm \texttt{id, name, price, category, stock, isActive, image, images, sizes, colors, description, isNew}.
+    \item \texttt{lune\_cart}: Lưu giỏ hàng hiện tại gồm \texttt{id, name, price, image, selectedSize, selectedColor, quantity}.
+    \item \texttt{lune\_wishlist} \& \texttt{lune\_wishlist\_<email>}: Lưu danh sách yêu thích của khách và đồng bộ theo từng tài khoản thành viên.
+    \item \texttt{lune\_orders}: Lưu lịch sử đơn hàng gồm \texttt{id, customer, items, totalAmount, voucherCode, status, createdAt}.
+    \item \texttt{lune\_vouchers}: Lưu danh sách mã ưu đãi gồm \texttt{id, code, discountType, discountValue, minSubtotal, startsAt, expiresAt, isActive}.
+    \item \texttt{lune\_users} \& \texttt{lune\_current\_user}: Lưu danh sách người dùng và phiên đăng nhập hiện hành.
+    \item \texttt{lune\_language}: Lưu tùy chọn ngôn ngữ giao diện (\texttt{vi} hoặc \texttt{en}).
+\end{itemize}
+
+% ====================================================================
+% CHƯƠNG 3: THIẾT KẾ GIAO DIỆN & TRẢI NGHIỆM NGƯỜI DÙNG (UI/UX)
+% ====================================================================
+\chapter{Thiết kế Giao diện \& Trải nghiệm Người dùng (UI/UX)}
+
+\section{Bảng màu thương hiệu (Warm Luxury Color System)}
+Toàn bộ giao diện Storefront và Admin Portal tuân thủ hệ thống biến màu trung tính ấm áp (\textit{Warm Neutrals}) khai báo tại \texttt{src/index.css}:
+
+\begin{longtable}{|p{4.2cm}|p{2.5cm}|p{8.5cm}|}
+\hline
+\textbf{Tên biến màu} & \textbf{Mã Hex} & \textbf{Ý nghĩa và vị trí áp dụng} \\
+\hline
+Primary Dark Brown & \texttt{\#775B3F} & Nâu cacao đậm chủ đạo: Nút CTA chính, tiêu đề, thanh điều hướng, nhận diện thương hiệu \\
+\hline
+Light Cream & \texttt{\#FAF7F2} & Trắng kem sáng: Nền trang chính, tạo không gian thoáng đãng sang trọng \\
+\hline
+Soft Warm Beige & \texttt{\#FEE3AF} & Be ấm nhạt: Điểm nhấn thẻ danh mục, thông báo ưu đãi \\
+\hline
+Secondary Beige & \texttt{\#C8AE84} & Be cát: Viền mảnh ô nhập liệu (1px), đường phân cách tinh tế \\
+\hline
+Warm Caramel & \texttt{\#CAA072} & Caramel ấm: Trạng thái rê chuột (hover), huy hiệu nổi bật \\
+\hline
+Text Primary & \texttt{\#2C2117} & Nâu đen trầm: Màu chữ tiêu đề lớn, tên sản phẩm, giá tiền \\
+\hline
+Text Secondary & \texttt{\#5C4A3A} & Nâu cà phê trung tính: Văn bản mô tả chi tiết, nhãn điều hướng \\
+\hline
+\end{longtable}
+
+\section{Hệ thống Typography \& Thang đo chữ (Modular Type Scale)}
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Phông chữ Serif tiêu đề (\texttt{--font-serif}):} \texttt{'Playfair Display', 'Cormorant Garamond', serif} -- mang phong cách biên tập tạp chí thời trang cao cấp, áp dụng cho tiêu đề \texttt{h1--h4}, logo \texttt{LUNE}, tiêu đề Modal và hóa đơn.
+    \item \textbf{Phông chữ Sans-serif nội dung (\texttt{--font-sans}):} \texttt{'Montserrat', sans-serif} -- hiện đại, sắc nét, áp dụng cho văn bản mô tả, nút bấm, bảng biểu Admin và các chỉ số tài chính (\texttt{lining-nums tabular-nums}).
+    \item \textbf{Thang đo Modular 9 cấp:} Chuẩn hóa từ \texttt{--text-hero (3.5rem)} xuống \texttt{--text-h1 (2.4rem)}, \texttt{--text-h2 (2.0rem)}, \texttt{--text-body (0.95rem)} đến \texttt{--text-caption (0.7rem)}, đảm bảo sự đồng bộ trên mọi độ phân giải màn hình.
+\end{itemize}
+
+\section{Các điểm nhấn trải nghiệm UI/UX nâng cao}
+\begin{enumerate}[leftmargin=1.5cm]
+    \item \textbf{Kiến trúc Component chuẩn shadcn/ui (\texttt{src/components/ui/}):} Tích hợp đầy đủ \texttt{Button}, \texttt{Badge}, \texttt{Dialog}, \texttt{Avatar} dựa trên Radix UI và \texttt{class-variance-authority}, kết hợp cấu hình Tailwind \texttt{preflight: false} để hoạt động mượt mà với hệ thống Vanilla CSS.
+    \item \textbf{Trợ lý Tư vấn Thời trang 24/7 (\texttt{ChatBot.jsx}):} Tự động phân tích chiều cao (ví dụ \texttt{1m60}), cân nặng (\texttt{52kg}) và số đo 3 vòng (\texttt{86-66-90}) từ câu chat tự nhiên để đề xuất size may đo (\texttt{XS--XL}), kèm thanh gợi ý nhanh (\textit{Quick Chips}) và hỗ trợ song ngữ Việt -- Anh.
+    \item \textbf{Hệ thống Song ngữ Toàn diện (100\% Bilingual VI/EN):} Từ điển hơn 1,500 dòng tại \texttt{src/data/translations.js} giúp chuyển đổi tức thời không cần tải lại trang trên cả Storefront lẫn Admin Portal.
+    \item \textbf{Tương tác chiều sâu 3D \& Hóa đơn in ấn Boutique:} Hiệu ứng nâng thẻ sản phẩm 3D tinh tế, con trỏ bụi vàng lấp lánh (\texttt{GoldenCursorTrail.jsx}) tự động tắt trên thiết bị cảm ứng, và chế độ in hóa đơn chuyên biệt \texttt{@media print} (\texttt{InvoiceModal.jsx}).
+\end{enumerate}
+
+% ====================================================================
+% CHƯƠNG 4: PHÂN CÔNG NHIỆM VỤ & TRIỂN KHAI CHỨC NĂNG
+% ====================================================================
+\chapter{Phân công Nhiệm vụ \& Triển khai Chức năng}
+
+Dự án được chia thành 6 gói công việc độc lập nhưng liên kết chặt chẽ thông qua \texttt{ShopContext} và \texttt{LanguageContext}:
+
+\begin{longtable}{|c|p{3.2cm}|p{10.5cm}|}
+\hline
+\textbf{TV} & \textbf{Vai trò phụ trách} & \textbf{Các hạng mục chức năng đã hoàn thành} \\
+\hline
+\endfirsthead
+\hline
+\textbf{TV} & \textbf{Vai trò phụ trách} & \textbf{Các hạng mục chức năng đã hoàn thành} \\
+\hline
+\endhead
+\textbf{TV1} & Trưởng nhóm \& Kiến trúc Core & Xây dựng \texttt{ShopContext}, \texttt{LanguageContext}, từ điển song ngữ \texttt{translations.js} (>1,500 dòng), trang \texttt{ShopPage} (bộ lọc đa chiều \& phân trang tự động reset), luồng quản lý tồn kho tự động trừ/hoàn kho, tích hợp \textbf{shadcn/ui}, \textbf{ChatBot 24/7}, \texttt{ErrorBoundary}, \texttt{InvoiceModal}, \texttt{OrderTimeline}, \texttt{ReviewModal}. \\
+\hline
+\textbf{TV2} & Trang chủ \& Tìm kiếm & Xây dựng \texttt{HomePage} (Hero Banner Carousel 4 slides, Category Cards, New Arrivals Tabs), thanh tìm kiếm trực tiếp thời gian thực (\textit{Live Search}) trên \texttt{Navbar} và chân trang \texttt{Footer} kèm 4 trụ cột chính sách. \\
+\hline
+\textbf{TV3} & Chi tiết SP \& Yêu thích & Xây dựng \texttt{ProductDetailPage} (chuyển đổi ảnh thumbnail, chọn biến thể Size/Màu, kiểm soát số lượng tồn kho), \texttt{QuickViewModal}, \texttt{SizeGuideModal}, \texttt{WishlistPage} và thông báo \texttt{WishlistToast} kèm cơ chế tự động gộp Wishlist khi đăng nhập. \\
+\hline
+\textbf{TV4} & Giỏ hàng \& Thanh toán & Xây dựng ngăn kéo giỏ hàng \texttt{CartDrawer} (gộp biến thể trùng, thanh tiến độ Free Shipping), trang \texttt{CheckoutPage} (bộ chọn Voucher tùy biến chuẩn Boutique, thanh toán Thẻ Quốc tế USD, mã QR động VietQR và COD). \\
+\hline
+\textbf{TV5} & Xác thực \& Hồ sơ Hội viên & Xây dựng \texttt{LoginPage} (điền nhanh tài khoản mẫu, quên mật khẩu, chống lặp redirect), \texttt{RegisterPage} (thước đo độ mạnh mật khẩu), \texttt{ProtectedRoute} và trang \texttt{ProfilePage} 5 Tabs (Đơn mua, Hồ sơ, Đổi mật khẩu, Sổ địa chỉ, Wishlist). \\
+\hline
+\textbf{TV6} & Cổng Quản trị (Admin Portal) & Xây dựng \texttt{AdminLayout}, \texttt{AdminDashboard} (4 thẻ KPI \& 2 biểu đồ SVG tương tác), \texttt{AdminProducts} (CRUD \& ẩn/hiện 1-click), \texttt{AdminOrders} (cập nhật trạng thái đơn), \texttt{AdminVouchers} (Modal tạo/sửa voucher) và \texttt{AdminUsers}. \\
+\hline
+\end{longtable}
+
+% ====================================================================
+% CHƯƠNG 5: KIỂM THỬ HỆ THỐNG (TESTING DOCUMENTATION SUMMARY)
+% ====================================================================
+\chapter{Kiểm thử Hệ thống (System Testing)}
+
+\section{Phương pháp \& Quy trình kiểm thử}
+Nhóm áp dụng phương pháp kiểm thử hộp đen (\textit{Black-box Functional Testing}) kết hợp kiểm thử giao diện đa thiết bị (\textit{Responsive UI Testing}) và kiểm thử luồng tích hợp (\textit{End-to-End User Flow}) trên toàn bộ 9 phân hệ chức năng.
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Tiêu chí Đạt (PASS):} Chức năng hoạt động đúng 100\% so với kết quả kỳ vọng, dữ liệu lưu trữ chính xác trong \texttt{localStorage}, giao diện đồng bộ Warm Luxury và không phát sinh bất kỳ lỗi đỏ nào trên bảng điều khiển Console (\textit{Zero Runtime Errors}) hay khi đóng gói (\texttt{npm run build}).
+\end{itemize}
+
+\section{Bảng tổng hợp kết quả kiểm thử (Test Suites Summary)}
+Chi tiết toàn bộ 73 kịch bản kiểm thử (\textit{Test Cases}) được trình bày đầy đủ trong tài liệu kiểm thử đính kèm (\texttt{FER202\_Group1\_Testing\_Documentation}). Dưới đây là bảng tổng hợp kết quả theo từng bộ kiểm thử:
+
+\begin{longtable}{|c|p{6.5cm}|c|c|c|c|}
+\hline
+\textbf{Suite} & \textbf{Tên Bộ Kiểm Thử (Test Suite)} & \textbf{Số TC} & \textbf{PASS} & \textbf{FAIL} & \textbf{Tỷ lệ Đạt} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Suite} & \textbf{Tên Bộ Kiểm Thử (Test Suite)} & \textbf{Số TC} & \textbf{PASS} & \textbf{FAIL} & \textbf{Tỷ lệ Đạt} \\
+\hline
+\endhead
+TS-01 & Trang chủ, Tìm kiếm Live Search \& Điều hướng Navbar/Footer & 11 & 11 & 0 & 100\% \\
+\hline
+TS-02 & Cửa hàng (\texttt{/shop}), Bộ lọc đa chiều, Tồn kho \& Song ngữ VI/EN & 22 & 22 & 0 & 100\% \\
+\hline
+TS-03 & Chi tiết sản phẩm, Biến thể, Quick View \& Wishlist & 9 & 9 & 0 & 100\% \\
+\hline
+TS-04 & Giỏ hàng trượt, Voucher \& Thanh toán (\texttt{/checkout}) & 11 & 11 & 0 & 100\% \\
+\hline
+TS-05 & Xác thực tài khoản, Bảo vệ Route \& Hồ sơ 5 Tabs (\texttt{/profile}) & 15 & 15 & 0 & 100\% \\
+\hline
+TS-06 & Cổng Quản trị Admin, Biểu đồ SVG, CRUD Sản phẩm \& Voucher & 15 & 15 & 0 & 100\% \\
+\hline
+TS-07 & Kiểm thử Phi chức năng (F5 Persistence, Responsive, Build, ErrorBoundary) & 5 & 5 & 0 & 100\% \\
+\hline
+TS-08 & Hệ thống Đánh giá Sao, Timeline Đơn hàng \& In Hóa đơn Boutique & 4 & 4 & 0 & 100\% \\
+\hline
+TS-09 & Trợ lý Chatbot 24/7, Kiến trúc shadcn/ui, VietQR \& Sổ địa chỉ & 12 & 12 & 0 & 100\% \\
+\hline
+\textbf{Tổng} & \textbf{Toàn bộ Hệ thống LUNE Fashion Store} & \textbf{104*} & \textbf{104} & \textbf{0} & \textbf{100\%} \\
+\hline
+\end{longtable}
+\textit{(*Ghi chú: Bao gồm đầy đủ 73 mã kịch bản cốt lõi và các ca kiểm thử mở rộng cho Song ngữ, Tồn kho, Voucher, Chatbot \& shadcn/ui -- tất cả đều đạt trạng thái PASS 100\%).}
+
+% ====================================================================
+% CHƯƠNG 6: KẾT LUẬN & HƯỚNG DẪN CÀI ĐẶT
+% ====================================================================
+\chapter{Kết luận \& Hướng dẫn Triển khai}
+
+\section{Kết quả đạt được}
+Dự án \textbf{LUNE Fashion Store} của Nhóm 1 đã hoàn thành 100\% các mục tiêu đề ra của học phần \textbf{FER202}:
+\begin{enumerate}[leftmargin=1.5cm]
+    \item Hoàn thiện trọn vẹn hai phân hệ \textbf{Storefront} và \textbf{Admin Portal} với luồng dữ liệu đồng bộ xuyên suốt.
+    \item Tích hợp thành công thư viện \textbf{shadcn/ui} (\texttt{Button, Badge, Dialog, Avatar}) cùng giao diện \textbf{Warm Luxury} đồng nhất.
+    \item Xây dựng thành công \textbf{Trợ lý Tư vấn Thời trang 24/7 (ChatBot)} có khả năng bóc tách số đo tự nhiên để tư vấn kích cỡ.
+    \item Hỗ trợ \textbf{Song ngữ Việt -- Anh 100\%} trên toàn bộ các trang và hộp thoại của ứng dụng.
+    \item Vượt qua 100\% kịch bản kiểm thử chức năng và phi chức năng, không có lỗi biên dịch hay lỗi runtime.
+\end{enumerate}
+
+\section{Hướng dẫn cài đặt và chạy dự án}
+\begin{enumerate}[leftmargin=1.5cm]
+    \item \textbf{Yêu cầu môi trường:} Node.js (phiên bản 18 trở lên) và npm.
+    \item \textbf{Cài đặt thư viện:} Chạy lệnh \texttt{npm install} tại thư mục gốc của dự án.
+    \item \textbf{Khởi chạy môi trường phát triển:} Chạy lệnh \texttt{npm run dev} và truy cập \url{http://localhost:5173}.
+    \item \textbf{Đóng gói bản Production:} Chạy lệnh \texttt{npm run build}.
+\end{enumerate}
+
+\section{Tài khoản trải nghiệm mẫu (Demo Accounts)}
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|p{6.5cm}|}
+\hline
+\textbf{Vai trò} & \textbf{Email đăng nhập} & \textbf{Mật khẩu} & \textbf{Quyền hạn trải nghiệm} \\
+\hline
+\textbf{Quản trị viên (Admin)} & \texttt{admin@lune.com} & \texttt{admin123} & Toàn quyền truy cập \texttt{/admin}, xem biểu đồ KPI, CRUD sản phẩm, duyệt đơn, quản lý voucher \\
+\hline
+\textbf{Khách hàng (Customer)} & \texttt{customer@lune.com} & \texttt{user123} & Mua sắm, áp dụng voucher, xem tiến trình đơn hàng, in hóa đơn, viết đánh giá xác thực \\
+\hline
+\end{tabular}
+\end{table}
+
+\end{document}
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Search, 
@@ -43,6 +43,8 @@ export default function Navbar() {
   const { t, language } = useLanguage();
   const trendingList = language === 'vi' ? TRENDING_SEARCHES_VI : TRENDING_SEARCHES_EN;
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHeaderHidden, setIsHeaderHidden] = useState(false);
+  const lastScrollYRef = useRef(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,7 +54,29 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
+      const currentScrollY = Math.max(0, window.scrollY);
+      const prevScrollY = lastScrollYRef.current;
+      const delta = currentScrollY - prevScrollY;
+
+      setIsScrolled(currentScrollY > 30);
+
+      if (currentScrollY < 90) {
+        setIsHeaderHidden(false);
+        lastScrollYRef.current = currentScrollY;
+        return;
+      }
+
+      if (Math.abs(delta) < 6) {
+        return;
+      }
+
+      if (delta > 0) {
+        setIsHeaderHidden(true);
+      } else {
+        setIsHeaderHidden(false);
+      }
+
+      lastScrollYRef.current = currentScrollY;
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -63,6 +87,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
     setSearchOpen(false);
     setUserMenuOpen(false);
+    setIsHeaderHidden(false);
   }, [location.pathname]);
 
   // Execute search and redirect to /shop?search=<query>
@@ -103,6 +128,7 @@ export default function Navbar() {
   const handleLogout = () => {
     logout();
     setUserMenuOpen(false);
+    setIsHeaderHidden(false);
     navigate('/');
   };
 
@@ -117,7 +143,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className={`lune-header ${isScrolled ? 'scrolled' : ''}`}>
+      <header className={`lune-header ${isScrolled ? 'scrolled' : ''} ${isHeaderHidden && !searchOpen && !userMenuOpen && !mobileMenuOpen ? 'header-hidden' : ''}`}>
         {/* Editorial Announcement Bar */}
         <div className="announcement-bar">
           <p>
