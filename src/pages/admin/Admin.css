@@ -129,7 +129,7 @@
 
 .admin-table {
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   border-collapse: collapse;
   text-align: left;
   font-size: 0.85rem;
@@ -153,6 +153,7 @@
   padding: 11px 10px;
   border-bottom: 1px solid #F0E8DC;
   vertical-align: middle;
+  max-width: 220px;
   color: #2C2117;
 }
 
@@ -350,6 +351,8 @@
 }
 
 .admin-count {
+  white-space: nowrap;
+  flex-shrink: 0;
   font-size: 0.82rem;
   color: #5C4A3A;
   font-weight: 600;
@@ -665,6 +668,21 @@
   .admin-content {
     padding: 20px 16px;
   }
+
+  .admin-card {
+    padding: 18px 16px;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-charts-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-table {
+    min-width: 720px;
+  }
 }
 
 @media (max-width: 560px) {
@@ -677,6 +695,79 @@
   }
 
   .admin-modal {
-    padding: 20px;
+    padding: 18px 16px;
+  }
+
+  .admin-field-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .admin-topbar-portal-prefix,
+  .admin-topbar-username,
+  .admin-topbar-divider {
+    display: none !important;
+  }
+
+  .admin-page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .admin-page-header .admin-primary-btn {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .admin-toolbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    padding: 14px 16px;
+  }
+
+  .admin-search {
+    flex: 1 1 160px;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .admin-toolbar:has(.admin-select) .admin-search {
+    flex: 1 1 100%;
+  }
+
+  .admin-select {
+    flex: 1 1 130px;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .admin-count {
+  white-space: nowrap;
+  flex-shrink: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .admin-chart-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-modal-overlay {
+    padding: 12px;
+  }
+
+  .admin-modal-actions {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .admin-modal-actions button {
+    width: 100%;
+    justify-content: center;
   }
 }

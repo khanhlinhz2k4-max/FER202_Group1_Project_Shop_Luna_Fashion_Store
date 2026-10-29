@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useShop } from '../../context/ShopContext';
 import { useLanguage } from '../../context/LanguageContext';
+import CustomSelect from '../../components/CustomSelect';
 import { 
   Search, 
   Plus, 
@@ -277,7 +278,7 @@ export default function AdminOrders() {
           />
         </div>
 
-        <select
+        <CustomSelect
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
           className="admin-select"
@@ -287,8 +288,8 @@ export default function AdminOrders() {
           <option value="shipping">{t('admin.orders.filterShipping', 'Shipping')} ({shippingCount})</option>
           <option value="delivered">{t('admin.orders.filterDelivered', 'Delivered')} ({deliveredCount})</option>
           <option value="cancelled">{t('admin.orders.filterCancelled', 'Cancelled')} ({orders.filter(o => o.status === 'Cancelled').length})</option>
-        </select>
-        <span className="admin-count">{filteredOrders.length} {t('common.items', 'orders')}</span>
+        </CustomSelect>
+        <span className="admin-count">{filteredOrders.length} {t('admin.orders.countUnit', 'orders')}</span>
       </div>
 
       {/* Orders Table */}
@@ -323,18 +324,18 @@ export default function AdminOrders() {
                       </span>
                     </td>
                     <td>
-                      <div style={{ fontWeight: 600, color: '#2C2117', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      <div style={{ fontWeight: 600, color: '#2C2117', maxWidth: '180px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {order.customer?.name || 'Guest Client'}
                       </div>
                       <div style={{ fontSize: '0.78rem', color: '#8F7965', whiteSpace: 'nowrap' }}>
                         {order.customer?.phone || 'No phone'}
                       </div>
-                      <div style={{ fontSize: '0.75rem', color: '#8F7965', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={order.customer?.address}>
+                      <div style={{ fontSize: '0.75rem', color: '#8F7965', maxWidth: '180px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={order.customer?.address}>
                         {order.customer?.address || 'Standard Address'}
                       </div>
                     </td>
                     <td>
-                      <div style={{ fontSize: '0.82rem', lineHeight: '1.4' }}>
+                      <div style={{ fontSize: '0.82rem', lineHeight: '1.4', maxWidth: '190px' }}>
                         {(order.items || []).map((it, idx) => (
                           <div key={idx} style={{ marginBottom: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={`${it.quantity}x ${it.name} (${it.selectedSize})`}>
                             • <strong>{it.quantity}x</strong> {it.name} <span style={{ color: '#8F7965', fontSize: '0.75rem' }}>({it.selectedSize})</span>
@@ -349,13 +350,13 @@ export default function AdminOrders() {
                       <span style={{ fontSize: '0.78rem', color: '#2C2117', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'inline-block' }}>
                         {order.paymentMethod === 'Cash on Delivery' ? t('admin.orders.cod', 'COD') :
                          order.paymentMethod === 'Credit Card' ? t('admin.orders.creditCard', 'Credit Card') :
-                         order.paymentMethod === 'Direct Bank Transfer' ? t('admin.orders.bankTransfer', 'Bank Transfer') : 
+                         order.paymentMethod === 'Direct Bank Transfer' || (order.paymentMethod && (order.paymentMethod.includes('Bank') || order.paymentMethod.includes('VietQR'))) ? t('admin.orders.bankTransfer', 'Bank Transfer') : 
                          (order.paymentMethod || 'COD')}
                       </span>
                     </td>
                     <td className="text-center">
-                      <div style={{ maxWidth: '120px', margin: '0 auto' }}>
-                        <select
+                      <div style={{ minWidth: '118px', maxWidth: '136px', margin: '0 auto' }}>
+                        <CustomSelect
                           value={order.status || 'Pending'}
                           onChange={e => updateOrderStatus(order.id, e.target.value)}
                           style={{
@@ -383,7 +384,7 @@ export default function AdminOrders() {
                           <option value="Shipping">{t('admin.orders.filterShipping', 'Shipping')}</option>
                           <option value="Delivered">{t('admin.orders.filterDelivered', 'Delivered')}</option>
                           <option value="Cancelled">{t('admin.orders.filterCancelled', 'Cancelled')}</option>
-                        </select>
+                        </CustomSelect>
                       </div>
                     </td>
                     <td className="text-center">
@@ -499,7 +500,7 @@ export default function AdminOrders() {
               <div className="admin-field-row">
                 <div className="admin-field">
                   <label>{t('admin.orders.labelSelectProduct', 'Select Product *')}</label>
-                  <select
+                  <CustomSelect
                     className="admin-input"
                     value={newOrderForm.productId}
                     onChange={e => setNewOrderForm({ ...newOrderForm, productId: e.target.value })}
@@ -510,12 +511,12 @@ export default function AdminOrders() {
                         {p.name} (${p.price}) — Stock: {p.stock ?? 20}
                       </option>
                     ))}
-                  </select>
+                  </CustomSelect>
                 </div>
 
                 <div className="admin-field">
                   <label>{t('admin.orders.labelSize', 'Size')}</label>
-                  <select
+                  <CustomSelect
                     className="admin-input"
                     value={newOrderForm.selectedSize}
                     onChange={e => setNewOrderForm({ ...newOrderForm, selectedSize: e.target.value })}
@@ -526,7 +527,7 @@ export default function AdminOrders() {
                     <option value="L">L</option>
                     <option value="XL">XL</option>
                     <option value="One Size">One Size</option>
-                  </select>
+                  </CustomSelect>
                 </div>
               </div>
 
@@ -545,7 +546,7 @@ export default function AdminOrders() {
 
                 <div className="admin-field">
                   <label>{t('admin.orders.labelPaymentMethod', 'Payment Method')}</label>
-                  <select
+                  <CustomSelect
                     className="admin-input"
                     value={newOrderForm.paymentMethod}
                     onChange={e => setNewOrderForm({ ...newOrderForm, paymentMethod: e.target.value })}
@@ -553,7 +554,7 @@ export default function AdminOrders() {
                     <option value="Cash on Delivery">{t('admin.orders.cod', 'Cash on Delivery')}</option>
                     <option value="Credit Card">{t('admin.orders.creditCard', 'Credit Card')}</option>
                     <option value="Direct Bank Transfer">{t('admin.orders.bankTransfer', 'Direct Bank Transfer')}</option>
-                  </select>
+                  </CustomSelect>
                 </div>
               </div>
 
@@ -710,7 +711,7 @@ export default function AdminOrders() {
               <div className="admin-field-row">
                 <div className="admin-field">
                   <label>{t('admin.orders.labelStatus', 'Order Status')}</label>
-                  <select
+                  <CustomSelect
                     className="admin-input"
                     value={editOrderForm.status}
                     onChange={e => setEditOrderForm({ ...editOrderForm, status: e.target.value })}
@@ -719,12 +720,12 @@ export default function AdminOrders() {
                     <option value="Shipping">{t('admin.orders.filterShipping', 'Shipping')}</option>
                     <option value="Delivered">{t('admin.orders.filterDelivered', 'Delivered')}</option>
                     <option value="Cancelled">{t('admin.orders.filterCancelled', 'Cancelled')}</option>
-                  </select>
+                  </CustomSelect>
                 </div>
 
                 <div className="admin-field">
                   <label>{t('admin.orders.labelPaymentMethod', 'Payment Method')}</label>
-                  <select
+                  <CustomSelect
                     className="admin-input"
                     value={editOrderForm.paymentMethod}
                     onChange={e => setEditOrderForm({ ...editOrderForm, paymentMethod: e.target.value })}
@@ -732,7 +733,7 @@ export default function AdminOrders() {
                     <option value="Cash on Delivery">{t('admin.orders.cod', 'Cash on Delivery')}</option>
                     <option value="Credit Card">{t('admin.orders.creditCard', 'Credit Card')}</option>
                     <option value="Direct Bank Transfer">{t('admin.orders.bankTransfer', 'Direct Bank Transfer')}</option>
-                  </select>
+                  </CustomSelect>
                 </div>
               </div>
 

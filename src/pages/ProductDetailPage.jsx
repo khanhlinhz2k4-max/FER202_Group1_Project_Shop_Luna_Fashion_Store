@@ -174,7 +174,7 @@ export default function ProductDetailPage() {
         style={{
           maxWidth: '1200px',
           margin: '0 auto',
-          padding: '24px'
+          padding: 'var(--product-detail-pad, 24px)'
         }}
       >
         {/* Admin Preview Mode Notice */}
@@ -210,7 +210,8 @@ export default function ProductDetailPage() {
             gap: '6px',
             fontSize: '0.78rem',
             color: '#78716C',
-            marginBottom: '32px'
+            marginBottom: '32px',
+            flexWrap: 'wrap'
           }}
         >
           <Link
@@ -248,8 +249,8 @@ export default function ProductDetailPage() {
           style={{
             display: 'grid',
             gridTemplateColumns:
-              'minmax(0, 1.05fr) minmax(0, 0.95fr)',
-            gap: '50px',
+              'var(--product-detail-cols, minmax(0, 1.05fr) minmax(0, 0.95fr))',
+            gap: 'var(--product-detail-gap, 50px)',
             alignItems: 'start'
           }}
         >
@@ -361,7 +362,9 @@ export default function ProductDetailPage() {
                 backgroundColor: '#FAF7F2',
                 border: '1px solid #E7DDCE',
                 borderRadius: '2px',
-                width: 'fit-content'
+                width: 'fit-content',
+                maxWidth: '100%',
+                flexWrap: 'wrap'
               }}
               onClick={() => {
                 const el = document.getElementById('client-reviews-section');
@@ -861,7 +864,8 @@ export default function ProductDetailPage() {
               display: 'flex',
               justifyContent: 'center',
               borderBottom: '1px solid #E7E5E4',
-              overflowX: 'auto'
+              overflowX: 'auto',
+              flexWrap: 'wrap'
             }}
           >
 
@@ -1157,7 +1161,7 @@ export default function ProductDetailPage() {
         style={{
           maxWidth: '1200px',
           margin: '60px auto 0',
-          padding: '48px 24px 0',
+          padding: '48px 24px 72px',
           borderTop: '1px solid #E7DDCE'
         }}
       >
@@ -1170,7 +1174,7 @@ export default function ProductDetailPage() {
           </h2>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.8fr)', gap: '48px', alignItems: 'start' }}>
+        <div className="product-reviews-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.8fr)', gap: '48px', alignItems: 'start' }}>
           {/* Left: Rating Breakdown Card */}
           <div style={{ backgroundColor: '#FAF7F2', border: '1px solid #E7DDCE', borderRadius: '4px', padding: '32px 28px', textAlign: 'center' }}>
             <div style={{ fontFamily: 'var(--font-serif)', fontSize: 'var(--text-hero)', fontWeight: 600, color: '#2C2117', lineHeight: 1 }}>
@@ -1304,6 +1308,30 @@ export default function ProductDetailPage() {
                     </h4>
                     <p style={{ margin: 0, fontSize: '0.86rem', color: '#57534E', lineHeight: 1.6 }}>
                       {item.comment}
+                      {item.adminReply && (
+                        <span
+                          style={{
+                            display: 'block',
+                            marginTop: '12px',
+                            padding: '10px 14px',
+                            backgroundColor: '#FAF7F2',
+                            borderLeft: '3px solid #775B3F',
+                            borderRadius: '0 4px 4px 0',
+                          }}
+                        >
+                          <span style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px', gap: '8px' }}>
+                            <strong style={{ fontSize: '0.74rem', fontWeight: 700, color: '#775B3F', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
+                              {t('admin.reviews.atelierReplyLabel', 'LUNE Atelier Official Response')}
+                            </strong>
+                            {item.adminReplyDate && (
+                              <span style={{ fontSize: '0.72rem', color: '#8F7965' }}>{item.adminReplyDate}</span>
+                            )}
+                          </span>
+                          <span style={{ display: 'block', fontSize: '0.84rem', color: '#2C2117', lineHeight: 1.5 }}>
+                            {item.adminReply}
+                          </span>
+                        </span>
+                      )}
                     </p>
                   </div>
                 ))}

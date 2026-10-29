@@ -101,6 +101,9 @@ Quy chuẩn tập trung qua 9 biến CSS toàn cục tại `:root` trong `src/in
   * Hỗ trợ điều hướng trơn tru từ mọi trang con (`/shop`, `/product/:id`, `/profile`...) về đúng các section neo trên Trang chủ thông qua `ScrollToTop` trong `App.jsx`.
   * Khai báo quy chuẩn CSS `scroll-margin-top: 90px` cho toàn bộ các section đích (`#categories, #new-arrivals, #about, #philosophy`), triệt tiêu 100% tình trạng tiêu đề bị thanh Navbar cố định (Sticky Header) che khuất.
 * **Cột phải (Cụm tiện ích & Chuyển đổi ngôn ngữ):** Nút chuyển ngữ Song ngữ `LanguageSwitcher` (`VI | EN`), Icon Tìm kiếm (`Search`), Yêu thích (`Wishlist`), Giỏ hàng (`Cart`), Tài khoản (`User / Login`).
+* **Cơ chế Thanh Điều Hướng Sticky Thông Minh (Smart Hide-on-Scroll-Down / Show-on-Scroll-Up Header):**
+  * Khung `.sticky-header-wrapper` cố định đỉnh màn hình (`position: sticky; top: 0; z-index: 1000`), tự động ẩn lên trên mượt mà (`transform: translateY(-100%)`, `transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)`) khi người dùng cuộn xuống quá 80px để nhường trọn vẹn không gian cho việc ngắm trang phục.
+  * Khi người dùng cuộn nhẹ ngược lên trên, thanh Header lập tức trượt xuất hiện trở lại; tự động khóa hiển thị không ẩn khi đang mở thanh tìm kiếm trực tiếp (`searchOpen`) hoặc ngăn kéo di động (`mobileMenuOpen`).
 * **Menu trượt di động Chuẩn Quiet Luxury (Mobile Navigation Drawer):** 
   * **Quy chuẩn Font chữ đồng nhất 100%:** Toàn bộ danh sách liên kết và nút chức năng sử dụng **Font Sans-serif `--font-sans` (`Montserrat`)**, `font-size: 0.95rem`, `font-weight: 500`, loại bỏ hoàn toàn tình trạng pha trộn lộn xộn giữa font Serif cổ điển và font Sans-serif hiện đại.
   * **Đồng nhất Casing Title Case 100%:** Toàn bộ mục menu và tiện ích chuẩn hóa sang **Title Case trang nhã** (*Trang Chủ, Cửa Hàng, Trang Phục Nữ, Trang Phục Nam, Bộ Sưu Tập Mới, Về LUNE; Giỏ Hàng, Sản Phẩm Yêu Thích, Tài Khoản Của Tôi, Đăng Xuất*), triệt tiêu hoàn toàn lỗi chắp vá ALL CAPS lộn xộn.
@@ -367,7 +370,7 @@ Giao diện Chân trang được nâng cấp toàn diện theo chuẩn Haute Cou
 ```
 
 * **Khung Quản trị (`AdminLayout.jsx`):** Sidebar cố định 260px bên trái tông màu tối lịch lãm; Topbar quản trị bên phải tinh gọn (loại bỏ huy hiệu `[Administrator]` trùng lặp, tối giản bộ chuyển đổi ngôn ngữ sang dạng pill sang trọng `VI | EN`, avatar admin và nút Đăng xuất an toàn).
-* **Chuẩn Hóa Thiết Kế Đồng Bộ "1 Form Duy Nhất" (Unified Admin Design System):** Toàn bộ 5 trang Admin (`/admin`, `/admin/products`, `/admin/orders`, `/admin/users`, `/admin/vouchers`) tuân thủ tuyệt đối 1 cấu trúc hình học và hệ màu Warm Luxury duy nhất:
+* **Chuẩn Hóa Thiết Kế Đồng Bộ "1 Form Duy Nhất" (Unified Admin Design System):** Toàn bộ 6 trang Admin (`/admin`, `/admin/products`, `/admin/orders`, `/admin/users`, `/admin/vouchers`, `/admin/reviews`) tuân thủ tuyệt đối 1 cấu trúc hình học và hệ màu Warm Luxury duy nhất:
   * **Tiêu đề trang:** Khung `.admin-page-header` với tiêu đề chính `.admin-title` (Font serif *Playfair Display* `var(--text-h2)` `2.0rem`, màu nâu gỗ `#2C2117`), phụ đề `.admin-subtitle` (Font sans *Montserrat* `0.95rem`, màu cà phê `#5C4A3A`) và nút thao tác chính `.admin-primary-btn` (icon `size={16}`).
   * **Thẻ số liệu KPI thống nhất:** Hệ thống lưới `grid repeat(auto-fit, minmax(180px, 1fr))` gap `16px`. Mỗi thẻ mang định dạng Flex hàng ngang (`padding: 16px 20px`), hộp biểu tượng chuẩn `42x42px` bo góc `4px` viền mảnh `#E7DDCE`, nhãn danh mục hoa (`var(--text-badge)` `0.75rem`, letterSpacing `0.04em`, màu `#5C4A3A`), và giá trị số liệu lớn in đậm font sans tabular-nums `1.6rem` (`#2C2117`).
   * **Quy chuẩn Phân cấp Typography 3 Tầng & Bảng Màu Luxury:** Áp dụng nghiêm ngặt cho toàn bộ bảng biểu Admin: Nâu gỗ đen `#2C2117` cho tiêu đề, mã đơn, số tiền và doanh thu; Nâu cà phê `#5C4A3A` cho tiêu đề cột và nhãn phân loại; Nâu cát xám `#8F7965` cho metadata phụ và ngày giờ. Triệt tiêu hoàn toàn các màu bootstrap sặc sỡ; cố định kích thước và chống rớt chữ cho các thẻ pill danh mục bằng `whitespace-nowrap flex-shrink-0`.
@@ -393,6 +396,14 @@ Giao diện Chân trang được nâng cấp toàn diện theo chuẩn Haute Cou
   * Nút bấm `+ Create Voucher` trên tiêu đề mở cửa sổ **Modal Popup sang trọng (`Create Voucher Modal`)** với lớp nền mờ `backdrop-blur`, hiệu ứng vi chuyển động mở mượt mà, hỗ trợ bộ chọn **Ngày & Giờ Bắt Đầu** và **Ngày & Giờ Kết Thúc** (`datetime-local`) có xác thực logic thời gian.
   * Modal chỉnh sửa (`Edit Voucher Modal`) nạp sẵn dữ liệu cũ, giúp Admin tập trung thao tác mà không làm xao nhãng việc đối soát bảng dữ liệu.
   * Bảng dữ liệu hiển thị mã code viền màu kem nổi bật, cột loại ưu đãi, mức giảm, đơn tối thiểu, thời gian hiệu lực và **Bộ 3 Icon thao tác hình vuông đồng bộ (`36x36px`)**: Icon con mắt (`Eye` / `EyeOff`) cho phép bật/tắt hiển thị voucher tức thời mà không gây lệch bảng, bên cạnh icon Sửa (`Edit3`) và Xóa (`Trash2`).
+* **Quản trị Đánh giá & Phản hồi Khách hàng (`AdminReviews.jsx` - `/admin/reviews`):**
+  * 4 thẻ KPI thống kê (Tổng đánh giá, Điểm xếp hạng trung bình, Đánh giá 5 sao, Đang hiển thị công khai), thanh tìm kiếm và bộ lọc theo số sao / trạng thái hiển thị.
+  * **Tuân thủ Nguyên tắc Minh bạch Đánh giá (Read-Only Customer Content):** Loại bỏ hoàn toàn nút tự thêm đánh giá ảo và không cho phép Admin sửa số sao hay lời bình của khách hàng.
+  * **Modal Xem Chi Tiết & Phản Hồi Chính Thức (`LUNE Atelier Response`):** Hiển thị nguyên bản đánh giá của khách trong khung chỉ đọc (Read-Only), bên dưới là ô soạn thảo phản hồi chính thức của thương hiệu (`adminReply`) hiển thị trực tiếp dưới nhận xét của khách tại trang `ProductDetailPage.jsx`.
+  * **Bộ 3 Nút Thao tác Chuẩn `36x36px`:** Xem & Phản hồi (`MessageSquare`), Ẩn/Hiện đánh giá khỏi Storefront (`Eye` / `EyeOff`) và Xóa đánh giá spam (`Trash2`).
+* **Chuẩn Hóa Bộ Chọn `CustomSelect.jsx` (React Portal) & Định Dạng Bảng Biểu Mobile:**
+  * Thay thế toàn bộ 15 thẻ `<select>` native trên các trang Admin và Storefront bằng `CustomSelect.jsx` kết xuất qua `createPortal(..., document.body)`, triệt tiêu hoàn toàn popup mặc định khổng lồ của trình duyệt khi thu phóng thiết bị di động.
+  * Chuẩn hóa `.admin-table` sang `table-layout: auto` và `.admin-toolbar` tự động xuống dòng ngang gọn gàng trên mobile, đảm bảo không bị cắt chữ tiêu đề cột (`PAYME...`, `ACTIO...`) hay đè chồng các badge/nút thao tác; khoảng đệm đáy `#client-reviews-section` tại `ProductDetailPage.jsx` được cân chỉnh thoáng đãng tách biệt hoàn toàn với Footer.
 
 ---
 

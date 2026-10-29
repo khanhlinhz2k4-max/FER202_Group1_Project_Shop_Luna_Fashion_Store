@@ -345,6 +345,30 @@ img {
   scroll-margin-top: 90px;
 }
 
+/* CustomSelect Luxury Dropdown Global Styles */
+.lune-custom-select-trigger:hover:not(:disabled) {
+  border-color: #C8AE84 !important;
+}
+
+.lune-custom-select-option:not(.selected):hover:not(:disabled) {
+  background-color: #FAF7F2 !important;
+  color: #775B3F !important;
+}
+
+.lune-custom-select-menu {
+  scrollbar-width: thin;
+  scrollbar-color: #E7DDCE transparent;
+}
+
+.lune-custom-select-menu::-webkit-scrollbar {
+  width: 5px;
+}
+
+.lune-custom-select-menu::-webkit-scrollbar-thumb {
+  background: #E7DDCE;
+  border-radius: 3px;
+}
+
 /* Accessibility: Support prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   *,

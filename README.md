@@ -22,7 +22,7 @@
     - Khung quản trị (`AdminLayout`) kèm bộ nút chuyển ngữ `VI | EN` độc lập dạng pill tối giản ngay trên Topbar.
     - Bảng điều khiển (`AdminDashboard`) với 4 thẻ KPI, bộ đôi biểu đồ trực quan SVG (Xu hướng doanh thu 7 ngày & Phân bổ danh mục Donut) và bảng 5 đơn mới nhất song ngữ.
     - Quản lý sản phẩm CRUD (`AdminProducts`) với cơ chế Ẩn/Hiện sản phẩm 1-click (`Eye / EyeOff`), bảng dữ liệu tồn kho, modal thêm/sửa sản phẩm và thông báo toast.
-    - Quản lý đơn hàng (`AdminOrders`), Quản lý voucher (`AdminVouchers`) và Quản lý người dùng (`AdminUsers`).
+    - Quản lý đơn hàng (`AdminOrders`), Quản lý voucher (`AdminVouchers`), Quản lý đánh giá & phản hồi (`AdminReviews`) và Quản lý người dùng (`AdminUsers`).
 - **Bản địa hóa Động Sản phẩm (`tp()`):** Tự động chuyển đổi tên và mô tả sản phẩm giữa tiếng Việt và tiếng Anh mà không làm sai lệch ID sản phẩm hoặc giỏ hàng.
 - **Lưu trữ Cố định (`localStorage`):** Tự động ghi nhớ tùy chọn ngôn ngữ (`'lune_language'`) qua các phiên truy cập và khi tải lại trang (F5).
 
@@ -34,6 +34,7 @@
 ### 3. ⭐ Hệ Thống Đánh Giá & Xếp Hạng Khách Hàng Xác Thực (`ReviewModal.jsx`)
 - Khách hàng sau khi nhận hàng (`Delivered`) được mở khóa quyền viết đánh giá xác thực (`Verified Buyer`).
 - Bộ chọn mức độ hài lòng 1–5 sao kèm nhãn cảm xúc song ngữ và thuật toán tính điểm trung bình thời gian thực.
+- **Kiểm Duyệt Đánh Giá Minh Bạch & Phản Hồi Chính Thức (`AdminReviews.jsx` - `/admin/reviews`):** Quản trị viên theo dõi 4 thẻ KPI đánh giá, đọc nhận xét khách hàng ở chế độ Read-Only (bảo vệ tính trung thực, không chỉnh sửa đánh giá của khách và không tự tạo đánh giá ảo), gửi phản hồi chính thức từ `LUNE Atelier` (`adminReply`) hiển thị trực tiếp dưới nhận xét tại `ProductDetailPage.jsx`, bật/tắt ẩn đánh giá (`Eye / EyeOff`) hoặc xóa đánh giá spam (`Trash2`).
 
 ### 4. 📦 Theo Dõi Tiến Trình Đơn Hàng 4 Giai Đoạn (`OrderTimeline.jsx`)
 - Tiến trình trực quan 4 nấc: *Đã tiếp nhận -> May đo tại xưởng -> Đang vận chuyển -> Giao thành công*.
@@ -158,6 +159,7 @@ FER202_Group1_Project_Shop_Lune_Fashion_Store/
 │   │   ├── ChatBot.jsx         # TRỢ LÝ TƯ VẤN THỜI TRANG 24/7 (shadcn/ui inside)
 │   │   ├── ChatBot.css         # Style Warm Luxury cho Chatbot
 │   │   ├── CartDrawer.jsx      # Ngăn kéo giỏ hàng trượt
+│   │   ├── CustomSelect.jsx    # Bộ chọn Dropdown Warm Luxury qua React Portal
 │   │   ├── CategoryCard.jsx    # Thẻ danh mục sản phẩm
 │   │   ├── ErrorBoundary.jsx   # Lá chắn bắt lỗi ứng dụng toàn cục
 │   │   ├── Footer.jsx          # Chân trang atelier
@@ -177,7 +179,8 @@ FER202_Group1_Project_Shop_Lune_Fashion_Store/
 │   │   ├── products.js         # Dữ liệu trang phục & biến thể
 │   │   └── translations.js     # Từ điển Song ngữ VI / EN (>1,500 dòng)
 │   ├── pages/
-│   │   ├── admin/              # Phân hệ Quản trị viên (Dashboard, Orders, Products, Users, Vouchers)
+│   ├── pages/
+│   │   ├── admin/              # Phân hệ Quản trị viên (Dashboard, Orders, Products, Reviews, Users, Vouchers)
 │   │   ├── CheckoutPage.jsx    # Trang thanh toán đơn hàng & chọn voucher
 │   │   ├── HomePage.jsx        # Trang chủ thương hiệu
 │   │   ├── LoginPage.jsx       # Trang đăng nhập hội viên & modal quên mật khẩu
@@ -220,7 +223,7 @@ Toàn bộ tài liệu báo cáo, thiết kế và kiểm thử chuyên sâu đ�
 | 3 | Thành viên 3 | Chi tiết Sản phẩm & Yêu thích | Bộ chọn biến thể Size/Màu, Thư viện ảnh chi tiết, Danh sách yêu thích (`WishlistPage`), Thông báo Wishlist toast, Biểu ngữ sản phẩm lưu trữ di sản. |
 | 4 | Thành viên 4 | Giỏ hàng, Khuyến mãi & Đặt hàng | Ngăn kéo giỏ hàng (`CartDrawer`), Tiến độ Free Shipping, Mã giảm giá (`LUNE10`), Trang thanh toán (`CheckoutPage`), Tích hợp bộ chọn Voucher thông minh. |
 | 5 | Thành viên 5 | Xác thực & Hồ sơ Hội viên | Bố cục đăng nhập/đăng ký Split Layout, Xác thực form, Trình quản lý hồ sơ cá nhân (`ProfilePage`), Bảo mật phiên đăng nhập & phân quyền. |
-| 6 | Thành viên 6 | Cổng Quản trị viên (Admin Portal) | Bảng điều khiển KPI kèm 2 Biểu đồ SVG trực quan (`AdminDashboard`), Quản trị sản phẩm CRUD kèm cơ chế Ẩn/Hiện 1-click & Admin Preview Mode, Quản lý Voucher qua Modal Popup (`AdminVouchers`), Quản trị đơn hàng & người dùng, Tinh gọn Topbar & Chuẩn hóa bảng màu Warm Luxury Admin. |
+| 6 | Thành viên 6 | Cổng Quản trị viên (Admin Portal) | Bảng điều khiển KPI kèm 2 Biểu đồ SVG trực quan (`AdminDashboard`), Quản trị sản phẩm CRUD kèm cơ chế Ẩn/Hiện 1-click & Admin Preview Mode, Quản lý Voucher qua Modal Popup (`AdminVouchers`), Kiểm duyệt Đánh giá Read-Only & Phản hồi LUNE Atelier (`AdminReviews`), Bộ chọn `CustomSelect` & Chuẩn hóa bảng biểu Mobile/Desktop. |
 
 ---
 

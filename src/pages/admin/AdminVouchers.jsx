@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 import { useLanguage } from '../../context/LanguageContext';
+import CustomSelect from '../../components/CustomSelect';
 
 const initialForm = {
   code: '',
@@ -336,7 +337,7 @@ export default function AdminVouchers() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <span className="admin-count">{filteredVouchers.length} {t('admin.vouchers.totalVouchers', 'vouchers')}</span>
+        <span className="admin-count">{filteredVouchers.length} {t('admin.vouchers.countUnit', 'vouchers')}</span>
       </div>
 
       {/* Vouchers Table */}
@@ -376,7 +377,7 @@ export default function AdminVouchers() {
                         </span>
                       </td>
                       <td className="text-center" style={{ fontWeight: 600, color: '#2C2117', whiteSpace: 'nowrap' }}>${Number(voucher.minSubtotal) || 0}</td>
-                      <td className="text-center">{formatPeriod(voucher.startsAt, voucher.expiresAt)}</td>
+                      <td className="text-center" style={{ whiteSpace: 'nowrap' }}>{formatPeriod(voucher.startsAt, voucher.expiresAt)}</td>
                       <td className="text-center">
                         <span
                           style={{
@@ -475,14 +476,14 @@ export default function AdminVouchers() {
               <div className="admin-field admin-field-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
                   <label>{t('admin.vouchers.discountType', 'Discount Type *')}</label>
-                  <select
+                  <CustomSelect
                     className="admin-input"
                     value={form.discountType}
                     onChange={(e) => setForm({ ...form, discountType: e.target.value })}
                   >
                     <option value="percent">{t('admin.vouchers.percent', 'Percentage (%)')}</option>
                     <option value="fixed">{t('admin.vouchers.fixed', 'Fixed Amount ($)')}</option>
-                  </select>
+                  </CustomSelect>
                 </div>
 
                 <div>

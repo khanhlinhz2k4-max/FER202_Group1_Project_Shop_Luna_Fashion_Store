@@ -616,7 +616,7 @@ export default function AdminDashboard() {
 
       {/* Recent Orders Table */}
       <div className="admin-card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '8px' }}>
           <div>
             <h2 className="admin-section-title">{t('admin.dashboard.recentOrdersTitle', 'RECENT ORDERS')}</h2>
             <p className="admin-subtitle">{t('admin.dashboard.recentOrdersSubtitle', 'Latest orders needing fulfillment review')}</p>
@@ -645,11 +645,12 @@ export default function AdminDashboard() {
                     <strong style={{ color: '#2C2117', whiteSpace: 'nowrap' }}>{order.id}</strong>
                   </td>
                   <td>
-                    <div style={{ fontWeight: 600, color: '#2C2117', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{order.customer?.name}</div>
+                    <div style={{ fontWeight: 600, color: '#2C2117', maxWidth: '180px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{order.customer?.name}</div>
                     <div style={{ fontSize: '0.78rem', color: '#8F7965', whiteSpace: 'nowrap' }}>{order.customer?.phone}</div>
                   </td>
-                  <td className="text-center" style={{ color: '#2C2117' }}>{order.items?.length || 0} {t('common.items', 'items')}</td>
-                  <td className="text-center" style={{ fontWeight: 600, color: '#2C2117' }}>${order.totalAmount}</td>
+                  <td className="text-center" style={{ color: '#2C2117', whiteSpace: 'nowrap' }}>{order.items?.length || 0} {t('common.items', 'items')}</td>
+                  <td className="text-center" style={{ fontWeight: 600, color: '#2C2117', whiteSpace: 'nowrap' }}>${order.totalAmount}</td>
+
                   <td className="text-center">
                     <span className={`admin-status admin-status-${String(order.status).toLowerCase()}`} style={{ display: 'inline-block' }}>
                       {order.status === 'Pending' ? t('admin.orders.filterPending', 'Pending') :

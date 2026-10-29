@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { useLanguage } from '../context/LanguageContext';
 import ProductCard from '../components/ProductCard';
+import CustomSelect from '../components/CustomSelect';
 import { RotateCcw, Check, ArrowUpDown } from 'lucide-react';
 import './ShopPage.css';
 
@@ -290,7 +291,7 @@ export default function ShopPage() {
 
             <div className="shop-sort-wrap">
               <ArrowUpDown size={15} color="#78716C" />
-              <select 
+              <CustomSelect 
                 value={sortBy} 
                 onChange={e => setSortBy(e.target.value)}
                 className="shop-sort-select"
@@ -298,7 +299,7 @@ export default function ShopPage() {
                 <option value="newest">{t('shop.sortNewest')}</option>
                 <option value="price-asc">{t('shop.sortPriceAsc')}</option>
                 <option value="price-desc">{t('shop.sortPriceDesc')}</option>
-              </select>
+              </CustomSelect>
             </div>
           </div>
 

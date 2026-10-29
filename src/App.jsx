@@ -31,6 +31,7 @@ import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminVouchers from './pages/admin/AdminVouchers';
+import AdminReviews from './pages/admin/AdminReviews';
 
 import './App.css';
 
@@ -101,6 +102,7 @@ function AppContent() {
           <Route path="orders" element={<AdminOrders />} />
           <Route path="users" element={<AdminUsers />} />
           <Route path="vouchers" element={<AdminVouchers />} />
+          <Route path="reviews" element={<AdminReviews />} />
         </Route>
 
         {/* ================= CLIENT STOREFRONT ROUTES ================= */}
