@@ -89,17 +89,17 @@
         \hline
         \textbf{STT} & \textbf{Họ và Tên} & \textbf{MSSV} & \textbf{Vai trò chính} \\
         \hline
-        1 & Thành viên 1 (Leader) & [Điền MSSV] & Trưởng nhóm, Kiến trúc Core, Shop, Tồn kho, Song ngữ VI/EN, Chatbot, shadcn/ui \\
+        1 & Nguyễn Châu Khánh Linh (Leader) & QE180043 & Trưởng nhóm, Kiến trúc Core, Shop, Tồn kho, Song ngữ VI/EN, Chatbot, shadcn/ui \\
         \hline
-        2 & Thành viên 2 & [Điền MSSV] & Trang chủ (Home), Hero Carousel, Live Search, Footer \\
+        2 & Hồ Anh Nhật & QE200301 & Trang chủ (Home), Hero Carousel, Live Search, Smart Navbar, Footer \\
         \hline
-        3 & Thành viên 3 & [Điền MSSV] & Chi tiết sản phẩm (Product Detail), Biến thể, Wishlist \\
+        3 & Chu Bảo Khánh & HE171093 & Chi tiết sản phẩm (Product Detail), Biến thể, Wishlist \\
         \hline
-        4 & Thành viên 4 & [Điền MSSV] & Giỏ hàng (Cart Drawer), Thanh toán (Checkout), Voucher \\
+        4 & Thái Thu Hiền & QE190124 & Giỏ hàng (Cart Drawer), Thanh toán (Checkout), Voucher \\
         \hline
-        5 & Thành viên 5 & [Điền MSSV] & Đăng nhập, Đăng ký, Bảo vệ Route, Hồ sơ 5 Tabs \\
+        5 & Lê Phan Ngọc Huy & QE190055 & Đăng nhập, Đăng ký, Bảo vệ Route, Hồ sơ 5 Tabs, Admin Orders \& Users \\
         \hline
-        6 & Thành viên 6 & [Điền MSSV] & Cổng Quản trị (Admin Dashboard, CRUD Products, Orders, Users, Vouchers) \\
+        6 & Phạm Đình Đăng Quang & QE190013 & Cổng Quản trị (Admin Dashboard, CRUD Products, Vouchers, Reviews Moderation) \\
         \hline
     \end{tabular}
 
@@ -218,7 +218,9 @@ Hệ thống phân quyền thành 3 tác nhân chính với phạm vi truy cập
 \hline
 \texttt{/admin/vouchers} & \texttt{AdminVouchers.jsx} & CRUD mã giảm giá, thống kê KPI voucher & Chỉ Admin \\
 \hline
-\texttt{/admin/users} & \texttt{AdminUsers.jsx} & Quản lý danh sách tài khoản hệ thống & Chỉ Admin \\
+\texttt{/admin/reviews} & \texttt{AdminReviews.jsx} & Kiểm duyệt đánh giá (Read-Only), phản hồi LUNE Atelier, ẩn/xóa spam & Chỉ Admin \\
+\hline
+\texttt{/admin/users} & \texttt{AdminUsers.jsx} & Quản lý danh sách tài khoản hệ thống (CRUD) & Chỉ Admin \\
 \hline
 \end{longtable}
 
@@ -340,7 +342,7 @@ TS-04 & Giỏ hàng trượt, Voucher \& Thanh toán (\texttt{/checkout}) & 11 &
 \hline
 TS-05 & Xác thực tài khoản, Bảo vệ Route \& Hồ sơ 5 Tabs (\texttt{/profile}) & 15 & 15 & 0 & 100\% \\
 \hline
-TS-06 & Cổng Quản trị Admin, Biểu đồ SVG, CRUD Sản phẩm \& Voucher & 15 & 15 & 0 & 100\% \\
+TS-06 & Cổng Quản trị Admin, Biểu đồ SVG, CRUD Sản phẩm, Voucher \& Kiểm duyệt Đánh giá & 18 & 18 & 0 & 100\% \\
 \hline
 TS-07 & Kiểm thử Phi chức năng (F5 Persistence, Responsive, Build, ErrorBoundary) & 5 & 5 & 0 & 100\% \\
 \hline
@@ -348,7 +350,7 @@ TS-08 & Hệ thống Đánh giá Sao, Timeline Đơn hàng \& In Hóa đơn Bout
 \hline
 TS-09 & Trợ lý Chatbot 24/7, Kiến trúc shadcn/ui, VietQR \& Sổ địa chỉ & 12 & 12 & 0 & 100\% \\
 \hline
-\textbf{Tổng} & \textbf{Toàn bộ Hệ thống LUNE Fashion Store} & \textbf{104*} & \textbf{104} & \textbf{0} & \textbf{100\%} \\
+\textbf{Tổng} & \textbf{Toàn bộ Hệ thống LUNE Fashion Store} & \textbf{107*} & \textbf{107} & \textbf{0} & \textbf{100\%} \\
 \hline
 \end{longtable}
 \textit{(*Ghi chú: Bao gồm đầy đủ 73 mã kịch bản cốt lõi và các ca kiểm thử mở rộng cho Song ngữ, Tồn kho, Voucher, Chatbot \& shadcn/ui -- tất cả đều đạt trạng thái PASS 100\%).}

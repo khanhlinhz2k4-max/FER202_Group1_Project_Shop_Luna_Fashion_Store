@@ -237,7 +237,7 @@ export default function CheckoutPage() {
     }
   };
 
-  const shippingFee = cartTotal >= 250 ? 0 : 15;
+  const shippingFee = cartTotal >= 200 ? 0 : 15;
   const finalTotal = Math.max(0, cartTotal - appliedDiscount + shippingFee);
 
   const handleSubmit = (e) => {

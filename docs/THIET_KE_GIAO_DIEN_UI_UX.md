@@ -85,7 +85,7 @@ Quy chuẩn tập trung qua 9 biến CSS toàn cục tại `:root` trong `src/in
 ### 1. Thanh điều hướng chính (Navbar Layout)
 ```
 +---------------------------------------------------------------------------------+
-| ANNOUNCEMENT: COMPLIMENTARY WORLDWIDE SHIPPING ON ORDERS OVER $150 · LUNE 2026  |
+| ANNOUNCEMENT: COMPLIMENTARY WORLDWIDE SHIPPING ON ORDERS OVER $200 · LUNE 2026  |
 +---------------------------------------------------------------------------------+
 |  LUNE              Home    Shop All    Categories    New Collection    About    [🔍] [♡] [🛍️] [👤] |
 +---------------------------------------------------------------------------------+
@@ -305,7 +305,7 @@ Giao diện Chân trang được nâng cấp toàn diện theo chuẩn Haute Cou
 
 * **Ngăn kéo Giỏ hàng (`CartDrawer.jsx`):**
   * Trượt mượt mà từ mép phải màn hình (độ rộng 420px trên Desktop, 100% trên Mobile), nền mờ (Backdrop Blur).
-  * Thanh tiến độ Free Shipping: Đo khoảng cách tới hạn mức miễn phí vận chuyển ($150).
+  * Thanh tiến độ Free Shipping: Đo khoảng cách tới hạn mức miễn phí vận chuyển ($200).
   * Danh sách món hàng cuộn được: Ảnh nhỏ 3:4, tên, size, màu, nút tăng giảm số lượng `[-] [+]` và nút thùng rác xóa món.
   * Khối đáy cố định: Tạm tính và nút chuyển sang trang thanh toán.
 * **Trang Thanh toán (`/checkout`):**

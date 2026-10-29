@@ -305,7 +305,7 @@ export const translations = {
     footer: {
       // 4 Pillars
       pillarDeliveryTitle: 'Giao Hàng Đặc Quyền',
-      pillarDeliveryDesc: 'Miễn phí vận chuyển cho đơn hàng từ $150',
+      pillarDeliveryDesc: 'Miễn phí vận chuyển cho đơn hàng từ $200',
       pillarDeliveryTooltip: 'Bấm để xem Tiêu chuẩn Giao hàng & Đóng gói cao cấp của chúng tôi',
       pillarSustainableTitle: 'Thời Trang Bền Vững',
       pillarSustainableDesc: 'Lụa tự nhiên, linen hữu cơ, kỹ nghệ may đo đạo đức',
@@ -390,7 +390,7 @@ export const translations = {
       dStep3Title: '03. Vận Chuyển Hỏa Tốc',
       dStep3Desc: 'Bàn giao đơn vị hỏa tốc chuyên biệt: giao trong 2-4h tại nội thành và 24-48h trên toàn quốc với mã theo dõi trực tiếp.',
       deliveryGuidelinesTitle: 'Đặc Quyền Giao Nhận:',
-      dGuide1: '• Miễn phí vận chuyển toàn quốc cho tất cả đơn hàng từ $150.',
+      dGuide1: '• Miễn phí vận chuyển toàn quốc cho tất cả đơn hàng từ $200.',
       dGuide2: '• Hỗ trợ mở kiện đồng kiểm và dịch vụ thử trang phục tại nhà cho khách hàng.',
       dGuide3: '• Đội ngũ nhân viên giao hàng chu đáo, bảo đảm trang phục giữ nguyên phom dáng tuyệt hảo.',
 
@@ -1408,7 +1408,7 @@ export const translations = {
     footer: {
       // 4 Pillars
       pillarDeliveryTitle: 'Complimentary Delivery',
-      pillarDeliveryDesc: 'On all domestic purchases exceeding $150',
+      pillarDeliveryDesc: 'On all domestic purchases exceeding $200',
       pillarDeliveryTooltip: 'Click to view our Complimentary Delivery & Packaging Standards',
       pillarSustainableTitle: 'Sustainable Luxury',
       pillarSustainableDesc: 'Natural silks, organic linens, ethical ateliers',
@@ -1493,7 +1493,7 @@ export const translations = {
       dStep3Title: '03. Express Transit',
       dStep3Desc: 'Dispatched via premium couriers: 2-4 hours urban express and 24-48 hours nationwide with live tracking.',
       deliveryGuidelinesTitle: 'Delivery Privileges:',
-      dGuide1: '• Complimentary nationwide delivery on all purchases exceeding $150.',
+      dGuide1: '• Complimentary nationwide delivery on all purchases exceeding $200.',
       dGuide2: '• White-glove doorstep inspection and fitting verification available upon delivery.',
       dGuide3: '• Specialized protective garment bags ensure impeccable silhouette retention in transit.',
 
