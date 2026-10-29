@@ -305,7 +305,7 @@ export const translations = {
     footer: {
       // 4 Pillars
       pillarDeliveryTitle: 'Giao Hàng Đặc Quyền',
-      pillarDeliveryDesc: 'Miễn phí vận chuyển cho đơn hàng từ $150',
+      pillarDeliveryDesc: 'Miễn phí vận chuyển cho đơn hàng từ $200',
       pillarDeliveryTooltip: 'Bấm để xem Tiêu chuẩn Giao hàng & Đóng gói cao cấp của chúng tôi',
       pillarSustainableTitle: 'Thời Trang Bền Vững',
       pillarSustainableDesc: 'Lụa tự nhiên, linen hữu cơ, kỹ nghệ may đo đạo đức',
@@ -390,7 +390,7 @@ export const translations = {
       dStep3Title: '03. Vận Chuyển Hỏa Tốc',
       dStep3Desc: 'Bàn giao đơn vị hỏa tốc chuyên biệt: giao trong 2-4h tại nội thành và 24-48h trên toàn quốc với mã theo dõi trực tiếp.',
       deliveryGuidelinesTitle: 'Đặc Quyền Giao Nhận:',
-      dGuide1: '• Miễn phí vận chuyển toàn quốc cho tất cả đơn hàng từ $150.',
+      dGuide1: '• Miễn phí vận chuyển toàn quốc cho tất cả đơn hàng từ $200.',
       dGuide2: '• Hỗ trợ mở kiện đồng kiểm và dịch vụ thử trang phục tại nhà cho khách hàng.',
       dGuide3: '• Đội ngũ nhân viên giao hàng chu đáo, bảo đảm trang phục giữ nguyên phom dáng tuyệt hảo.',
 
@@ -803,6 +803,7 @@ export const translations = {
         products: 'Quản Lý Sản Phẩm',
         orders: 'Quản Lý Đơn Hàng',
         vouchers: 'Quản Lý Voucher',
+        reviews: 'Quản Lý Đánh Giá',
         users: 'Quản Lý Người Dùng',
         viewStorefront: 'Xem Cửa Hàng',
         signOut: 'Đăng Xuất'
@@ -945,7 +946,8 @@ export const translations = {
         confirmDelete: 'Bạn có chắc chắn muốn xóa vĩnh viễn đơn hàng này?',
         toastUpdated: 'Đã cập nhật đơn hàng thành công!',
         toastDeleted: 'Đã xóa đơn hàng thành công!',
-        toastCreated: 'Đã tạo đơn hàng mới thành công!'
+        toastCreated: 'Đã tạo đơn hàng mới thành công!',
+        countUnit: 'đơn hàng'
       },
       vouchers: {
         title: 'QUẢN LÝ VOUCHER & KHUYẾN MẠI',
@@ -998,7 +1000,8 @@ export const translations = {
         errCode: 'Mã voucher phải từ 3-24 ký tự (chữ hoa, số, _ hoặc -).',
         errExists: 'Mã voucher này đã tồn tại trong hệ thống.',
         errValue: 'Giá trị giảm không hợp lệ (1-100% hoặc lớn hơn $0).',
-        errMin: 'Đơn tối thiểu phải lớn hơn hoặc bằng 0.'
+        errMin: 'Đơn tối thiểu phải lớn hơn hoặc bằng 0.',
+        countUnit: 'voucher'
       },
       users: {
         title: 'QUẢN LÝ NGƯỜI DÙNG & TÀI KHOẢN',
@@ -1048,7 +1051,59 @@ export const translations = {
         roleCustomerOption: '👤 Hội viên (Khách hàng)',
         toastCreated: 'Đã tạo tài khoản mới thành công!',
         toastUpdated: 'Đã cập nhật thông tin tài khoản thành công!',
+        countUnit: 'tài khoản',
         toastDeleted: 'Đã xóa tài khoản thành công!'
+      },
+      reviews: {
+        title: 'QUẢN LÝ ĐÁNH GIÁ & PHẢN HỒI',
+        subtitle: 'Kiểm duyệt đánh giá sản phẩm, theo dõi điểm chất lượng và gửi phản hồi từ LUNE Atelier.',
+        addNew: 'Thêm Đánh Giá',
+        totalReviews: 'TỔNG ĐÁNH GIÁ',
+        avgRating: 'ĐIỂM TRUNG BÌNH',
+        fiveStarReviews: 'ĐÁNH GIÁ 5 SAO',
+        repliedReviews: 'ĐÃ PHẢN HỒI',
+        searchPlaceholder: 'Tìm kiếm theo tên sản phẩm, khách hàng, nội dung...',
+        filterAllStars: 'Tất cả số sao',
+        filterAllStatus: 'Tất cả trạng thái',
+        filterVisible: 'Đang hiển thị',
+        filterHidden: 'Đang tạm ẩn',
+        countUnit: 'đánh giá',
+        colProduct: 'Sản Phẩm',
+        colClient: 'Khách Hàng',
+        colRating: 'Số Sao',
+        colReview: 'Nội Dung & Phản Hồi',
+        colStatus: 'Trạng Thái',
+        colActions: 'Thao Tác',
+        verifiedClient: 'Đã mua hàng',
+        statusVisible: 'Hiển thị',
+        statusHidden: 'Tạm ẩn',
+        repliedBadge: 'Đã phản hồi',
+        atelierReplyLabel: 'Phản hồi từ LUNE Atelier',
+        tooltipReplyEdit: 'Xem chi tiết, Sửa & Phản hồi',
+        tooltipHide: 'Đang hiển thị công khai (Bấm để ẩn)',
+        tooltipShow: 'Đang tạm ẩn (Bấm để hiển thị lại)',
+        btnDelete: 'Xóa đánh giá',
+        empty: 'Không tìm thấy đánh giá nào phù hợp.',
+        modalEditTitle: 'CHI TIẾT & PHẢN HỒI ĐÁNH GIÁ',
+        modalCreateTitle: 'THÊM ĐÁNH GIÁ KHÁCH HÀNG',
+        labelProduct: 'Sản Phẩm *',
+        labelClientName: 'Tên Khách Hàng *',
+        labelClientEmail: 'Email Khách Hàng',
+        labelRating: 'Mức Đánh Giá (Số Sao) *',
+        labelTitle: 'Tiêu Đề Đánh Giá *',
+        labelComment: 'Nội Dung Đánh Giá *',
+        labelAtelierReply: 'Phản Hồi Chính Thức Từ LUNE Atelier',
+        replyPlaceholder: 'Nhập lời cảm ơn hoặc giải đáp từ LUNE Atelier (hiển thị dưới đánh giá trên trang sản phẩm)...',
+        labelVerified: 'Xác nhận khách hàng đã mua sản phẩm (Verified Client)',
+        btnCancel: 'Hủy Bỏ',
+        btnSave: 'Lưu & Gửi Phản Hồi',
+        btnCreate: 'Tạo Đánh Giá',
+        confirmDelete: 'Bạn có chắc chắn muốn xóa vĩnh viễn đánh giá này?',
+        toastCreated: 'Đã thêm đánh giá mới thành công!',
+        toastUpdated: 'Đã cập nhật đánh giá & phản hồi thành công!',
+        toastHidden: 'Đã ẩn đánh giá khỏi trang sản phẩm!',
+        toastShown: 'Đã hiển thị lại đánh giá trên trang sản phẩm!',
+        toastDeleted: 'Đã xóa đánh giá thành công!'
       }
     }
   },
@@ -1353,7 +1408,7 @@ export const translations = {
     footer: {
       // 4 Pillars
       pillarDeliveryTitle: 'Complimentary Delivery',
-      pillarDeliveryDesc: 'On all domestic purchases exceeding $150',
+      pillarDeliveryDesc: 'On all domestic purchases exceeding $200',
       pillarDeliveryTooltip: 'Click to view our Complimentary Delivery & Packaging Standards',
       pillarSustainableTitle: 'Sustainable Luxury',
       pillarSustainableDesc: 'Natural silks, organic linens, ethical ateliers',
@@ -1438,7 +1493,7 @@ export const translations = {
       dStep3Title: '03. Express Transit',
       dStep3Desc: 'Dispatched via premium couriers: 2-4 hours urban express and 24-48 hours nationwide with live tracking.',
       deliveryGuidelinesTitle: 'Delivery Privileges:',
-      dGuide1: '• Complimentary nationwide delivery on all purchases exceeding $150.',
+      dGuide1: '• Complimentary nationwide delivery on all purchases exceeding $200.',
       dGuide2: '• White-glove doorstep inspection and fitting verification available upon delivery.',
       dGuide3: '• Specialized protective garment bags ensure impeccable silhouette retention in transit.',
 
@@ -1851,6 +1906,7 @@ export const translations = {
         products: 'Products',
         orders: 'Orders',
         vouchers: 'Vouchers',
+        reviews: 'Reviews & Ratings',
         users: 'Users & Access',
         viewStorefront: 'View Storefront',
         signOut: 'Sign Out'
@@ -1993,7 +2049,8 @@ export const translations = {
         confirmDelete: 'Are you sure you want to permanently delete this order?',
         toastUpdated: 'Order updated successfully!',
         toastDeleted: 'Order deleted successfully!',
-        toastCreated: 'New order created successfully!'
+        toastCreated: 'New order created successfully!',
+        countUnit: 'orders'
       },
       vouchers: {
         title: 'VOUCHER MANAGEMENT',
@@ -2046,7 +2103,8 @@ export const translations = {
         errCode: 'Code must be 3-24 characters using letters, numbers, _ or -.',
         errExists: 'This voucher code already exists.',
         errValue: 'Discount value must be valid (1-100% or greater than $0).',
-        errMin: 'Minimum order must be zero or greater.'
+        errMin: 'Minimum order must be zero or greater.',
+        countUnit: 'vouchers'
       },
       users: {
         title: 'USERS & ACCESS CONTROL',
@@ -2096,7 +2154,59 @@ export const translations = {
         roleCustomerOption: '👤 Customer (Client)',
         toastCreated: 'New user account created successfully!',
         toastUpdated: 'User account updated successfully!',
-        toastDeleted: 'User account deleted successfully!'
+        toastDeleted: 'User account deleted successfully!',
+        countUnit: 'accounts'
+      },
+      reviews: {
+        title: 'REVIEWS & RATINGS MANAGEMENT',
+        subtitle: 'Moderate client testimonials, monitor product ratings, and publish official LUNE Atelier responses.',
+        addNew: 'Add Review',
+        totalReviews: 'TOTAL REVIEWS',
+        avgRating: 'AVERAGE RATING',
+        fiveStarReviews: '5-STAR REVIEWS',
+        repliedReviews: 'ATELIER REPLIED',
+        searchPlaceholder: 'Search by product name, client, or review content...',
+        filterAllStars: 'All Ratings',
+        filterAllStatus: 'All Statuses',
+        filterVisible: 'Visible Only',
+        filterHidden: 'Hidden Only',
+        countUnit: 'reviews',
+        colProduct: 'Product',
+        colClient: 'Client',
+        colRating: 'Rating',
+        colReview: 'Review & Response',
+        colStatus: 'Status',
+        colActions: 'Actions',
+        verifiedClient: 'Verified',
+        statusVisible: 'Visible',
+        statusHidden: 'Hidden',
+        repliedBadge: 'Atelier Replied',
+        atelierReplyLabel: 'LUNE Atelier Official Response',
+        tooltipReplyEdit: 'View Details, Edit & Reply',
+        tooltipHide: 'Visible on storefront (Click to hide)',
+        tooltipShow: 'Hidden from storefront (Click to show)',
+        btnDelete: 'Delete review',
+        empty: 'No reviews match your search and filter criteria.',
+        modalEditTitle: 'REVIEW DETAILS & ATELIER RESPONSE',
+        modalCreateTitle: 'ADD CLIENT TESTIMONIAL',
+        labelProduct: 'Select Product *',
+        labelClientName: 'Client Name *',
+        labelClientEmail: 'Client Email',
+        labelRating: 'Star Rating *',
+        labelTitle: 'Review Headline *',
+        labelComment: 'Review Comment *',
+        labelAtelierReply: 'Official LUNE Atelier Response',
+        replyPlaceholder: 'Write an official response from LUNE Atelier (displayed publicly beneath this review)...',
+        labelVerified: 'Mark as Verified Client purchase',
+        btnCancel: 'Cancel',
+        btnSave: 'Save & Publish Response',
+        btnCreate: 'Create Review',
+        confirmDelete: 'Are you sure you want to permanently delete this review?',
+        toastCreated: 'New client review added successfully!',
+        toastUpdated: 'Review and Atelier response updated successfully!',
+        toastHidden: 'Review hidden from storefront!',
+        toastShown: 'Review restored to storefront!',
+        toastDeleted: 'Review deleted successfully!'
       }
     }
   }

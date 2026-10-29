@@ -79,6 +79,25 @@
 * Mã giảm giá: `'lune_vouchers'`
 * Danh sách User: `'lune_users'`
 * Tài khoản hiện tại: `'lune_current_user'`
+* Đánh giá & Nhận xét: `'lune_reviews'`
+* Tùy chọn Ngôn ngữ: `'lune_language'`
+
+### 6. Cấu trúc Đối tượng Đánh giá & Phản hồi (`Review`)
+```javascript
+{
+  id: "rev-1729123456789",        // Mã định danh duy nhất
+  productId: 1,                   // ID sản phẩm được đánh giá
+  author: "Alexander Vance",      // Tên khách hàng đánh giá (Read-Only đối với Admin)
+  rating: 5,                      // Số sao 1–5 (Read-Only đối với Admin)
+  title: "Drapes like water",     // Tiêu đề nhận xét (Read-Only đối với Admin)
+  comment: "Purchased this...",   // Nội dung nhận xét của khách (Read-Only đối với Admin)
+  verified: true,                 // Nhãn Verified Client
+  isHidden: false,                // Trạng thái kiểm duyệt hiển thị (true: ẩn khỏi Storefront)
+  adminReply: "Thank you...",     // Phản hồi chính thức từ LUNE Atelier (hiển thị dưới đánh giá)
+  repliedAt: "2026-10-29",        // Ngày phản hồi của Atelier
+  date: "2026-10-11"              // Ngày khách gửi đánh giá
+}
+```
 
 ---
 
@@ -140,7 +159,7 @@
       * **Tích hợp Thư viện shadcn/ui (`components.json`, `src/components/ui/`, `src/lib/utils.js`):** Khởi tạo cấu trúc shadcn chuẩn với Radix UI Slot/Dialog, Class-Variance-Authority (CVA), cấu hình Tailwind không Preflight chống vỡ giao diện; xây dựng các component `Button`, `Badge`, `Dialog`, `Avatar`.
       * **Trợ Lý May Đo Cá Nhân Thông Minh (`ChatBot.jsx` & `ChatBot.css`):** Widget chat trực tuyến 24/7 tích hợp bộ phân tích ngôn ngữ tự nhiên (NLP) nhận diện chiều cao, cân nặng và số đo 3 vòng của khách để gợi ý size may đo chuẩn xác (`XS, S, M, L, XL`); thanh gợi ý nhanh vuốt chạm mượt mà; hỗ trợ song ngữ Việt - Anh thời gian thực.
       * **Tinh giản Header & Đồng bộ Mỹ thuật:** Chuẩn hóa thanh điều khiển chỉ với 2 nút Làm mới (`RotateCcw`) và Đóng (`✕`), gỡ bỏ hoàn toàn thanh dock thu nhỏ 62px, khép lại trải nghiệm người dùng tinh tế, sang trọng.
-* **Files phụ trách:** `components.json`, `tailwind.config.js`, `jsconfig.json`, `src/lib/utils.js`, `src/components/ui/button.jsx`, `src/components/ui/badge.jsx`, `src/components/ui/dialog.jsx`, `src/components/ui/avatar.jsx`, `src/components/ChatBot.jsx`, `src/components/ChatBot.css`, `src/context/ShopContext.jsx`, `src/context/LanguageContext.jsx`, `src/data/translations.js`, `src/components/ErrorBoundary.jsx`, `src/components/LanguageSwitcher.jsx`, `src/components/LanguageSwitcher.css`, `src/App.jsx`, `src/index.css`, `src/pages/ShopPage.jsx`, `src/pages/ShopPage.css`, `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminOrders.jsx`, `src/pages/admin/AdminUsers.jsx`, `src/pages/ProductDetailPage.jsx`, `src/components/QuickViewModal.jsx`, `src/components/ProductCard.jsx`, `src/pages/ProfilePage.jsx`, `src/pages/ProfilePage.css`, `src/pages/LoginPage.jsx`, `src/pages/RegisterPage.jsx`, `src/pages/OrderSuccessPage.jsx`, `src/components/StarRating.jsx`, `src/components/ReviewModal.jsx`, `src/components/ReviewModal.css`, `src/components/InvoiceModal.jsx`, `src/components/InvoiceModal.css`, `src/components/OrderTimeline.jsx`, `src/components/OrderTimeline.css`.
+* **Files phụ trách:** `components.json`, `tailwind.config.js`, `jsconfig.json`, `src/lib/utils.js`, `src/components/ui/button.jsx`, `src/components/ui/badge.jsx`, `src/components/ui/dialog.jsx`, `src/components/ui/avatar.jsx`, `src/components/CustomSelect.jsx`, `src/components/ChatBot.jsx`, `src/components/ChatBot.css`, `src/context/ShopContext.jsx`, `src/context/LanguageContext.jsx`, `src/data/translations.js`, `src/components/ErrorBoundary.jsx`, `src/components/LanguageSwitcher.jsx`, `src/components/LanguageSwitcher.css`, `src/App.jsx`, `src/index.css`, `src/pages/ShopPage.jsx`, `src/pages/ShopPage.css`, `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminOrders.jsx`, `src/pages/admin/AdminUsers.jsx`, `src/pages/admin/AdminReviews.jsx`, `src/pages/ProductDetailPage.jsx`, `src/components/QuickViewModal.jsx`, `src/components/ProductCard.jsx`, `src/pages/ProfilePage.jsx`, `src/pages/ProfilePage.css`, `src/pages/LoginPage.jsx`, `src/pages/RegisterPage.jsx`, `src/pages/OrderSuccessPage.jsx`, `src/components/StarRating.jsx`, `src/components/ReviewModal.jsx`, `src/components/ReviewModal.css`, `src/components/InvoiceModal.jsx`, `src/components/InvoiceModal.css`, `src/components/OrderTimeline.jsx`, `src/components/OrderTimeline.css`.
 
 ---
 
@@ -156,6 +175,7 @@
      * **Tìm kiếm trực tiếp thời gian thực (Live Search):** Dropdown gợi ý theo thời gian thực kèm ảnh nhỏ, giá tiền và từ khóa xu hướng (*Trending Searches*).
      * **Chuẩn Hóa Menu Ngăn Kéo Di Động (Mobile Drawer Harmonization):** Đồng nhất 100% font Sans-serif `--font-sans` (`Montserrat`) cho toàn bộ nút menu, quy chuẩn Title Case (*Trang Phục Nữ, Trang Phục Nam, Giỏ Hàng, Danh Sách Yêu Thích, Tài Khoản Của Tôi*), tiêu đề nhóm tinh giản (`BỘ SƯU TẬP`, `TÀI KHOẢN CỦA BẠN`), và loại bỏ triệt để nhãn phân quyền kỹ thuật `(USER)` tại nút Đăng xuất.
      * **Kết nối trang Shop:** Khi gõ từ khóa và bấm Enter, tự động chuyển hướng sang trang `/shop?search=<từ_khóa>`.
+     * **Thanh Điều Hướng Sticky Thông Minh (Smart Hide-on-Scroll-Down / Show-on-Scroll-Up Header):** Tự động ẩn gọn (`translateY(-100%)`) khi người dùng cuộn xuống để mở rộng không gian chiêm ngưỡng trang phục và hiện lại tức thì khi cuộn lên; tự động khóa hiển thị khi đang mở ô tìm kiếm hoặc ngăn kéo Mobile Drawer.
   3. **Hoàn thiện Chân Trang Chuẩn Quiet Luxury (`src/components/Footer.jsx` & `Footer.css`):**
      * **Bốn Trụ Cột Giá Trị Thương Hiệu (Brand Pillars):** Khối nền Nâu Cacao ấm áp `#6C5238` viền chỉ be kem mảnh, loại bỏ hoàn toàn các thẻ nhãn thô ráp `[INFO]`, icon đĩa tròn kem sáng `var(--light-cream)`, tích hợp Modal chính sách mở nhanh khi click.
      * **Chuẩn Hóa Typography Cột & Cân Bằng Quang Học Song Ngữ:** Đồng nhất tiêu đề cột in hoa toàn bộ (`letter-spacing: 0.08em`, `line-height: 1.35`), tinh chỉnh từ dịch `DANH MỤC` cân đối với `CATEGORIES`, danh sách liên kết theo chuẩn Title Case trang nhã (`line-height: 1.45`).
@@ -257,7 +277,15 @@
   6. **Chuẩn Hóa 100% Brand Luxury Palette & Hệ Typography 3 Tầng Admin:**
      * Áp dụng thống nhất màu `#2C2117` cho tiêu đề bảng, số tiền, mã đơn và KPI; `#5C4A3A` cho tiêu đề cột và nhãn phân loại; `#8F7965` cho metadata phụ.
      * Triệt tiêu hoàn toàn các màu bootstrap sặc sỡ trên toàn bộ 5 màn hình quản trị, chống vỡ dòng cho các thẻ pill phân loại bằng `whitespace-nowrap flex-shrink-0`.
-* **Files phụ trách:** `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminOrders.jsx`, `src/pages/admin/AdminUsers.jsx`, `src/pages/admin/AdminVouchers.jsx`, `src/pages/admin/AdminVouchers.css`, `src/pages/admin/Admin.css`.
+   7. **Quản Trị Đánh Giá & Phản Hồi Khách Hàng Chuẩn Minh Bạch (`src/pages/admin/AdminReviews.jsx` - `/admin/reviews`):**
+      * **4 thẻ KPI thống kê:** Tổng lượt đánh giá, Điểm xếp hạng trung bình toàn hệ thống, Số đánh giá 5 sao tuyệt đối và Số đánh giá đang hiển thị công khai.
+      * **Nguyên tắc Minh bạch Thương hiệu (Review Integrity Rule):** Quản trị viên **TUYỆT ĐỐI KHÔNG** được phép chỉnh sửa số sao, tiêu đề hay nội dung nhận xét gốc của khách hàng, và không có chức năng tự tạo đánh giá ảo.
+      * **Modal Xem Chi Tiết (Read-Only) & Phản Hồi Chính Thức (`LUNE Atelier Response`):** Hiển thị nguyên vẹn đánh giá của khách ở chế độ chỉ đọc; cung cấp khung nhập phản hồi chính thức của thương hiệu (`adminReply`) hiển thị trực tiếp bên dưới nhận xét của khách tại `ProductDetailPage.jsx`.
+      * **Kiểm duyệt Ẩn/Hiện (`Eye / EyeOff`) & Xóa Spam (`Trash2`):** Nút ẩn/hiện tức thời giúp lọc các bình luận vi phạm khỏi Storefront và tự động tính lại điểm trung bình sao công khai; nút xóa kèm hộp thoại xác nhận an toàn.
+   8. **Chuẩn Hóa Toàn Bộ Bộ Chọn Custom Dropdown (`src/components/CustomSelect.jsx`) & Bảng Dữ Liệu Responsive:**
+      * Thay thế toàn bộ 15 thẻ `<select>` mặc định trên cả Admin và Storefront bằng `CustomSelect` kết xuất qua React Portal (`createPortal`), loại bỏ hoàn toàn popup khổng lồ thô kệch của trình duyệt khi thu phóng mobile.
+      * Chuẩn hóa `.admin-table` (`table-layout: auto`) và `.admin-toolbar` trên mobile, chống cắt chữ tiêu đề cột (`PAYME...`, `ACTIO...`) và chống đè các badge/nút thao tác.
+* **Files phụ trách:** `src/components/CustomSelect.jsx`, `src/layouts/AdminLayout.jsx`, `src/pages/admin/AdminDashboard.jsx`, `src/pages/admin/AdminProducts.jsx`, `src/pages/admin/AdminOrders.jsx`, `src/pages/admin/AdminUsers.jsx`, `src/pages/admin/AdminVouchers.jsx`, `src/pages/admin/AdminVouchers.css`, `src/pages/admin/AdminReviews.jsx`, `src/pages/admin/Admin.css`.
 
 ---
 
@@ -274,7 +302,7 @@
 3. **Quy tắc Dữ liệu (State & LocalStorage):**
    * Mọi thao tác thêm/sửa/xóa sản phẩm, giỏ hàng, đơn hàng đều phải gọi qua các hàm của `ShopContext`. Tuyệt đối không tự ý viết các câu lệnh `localStorage` độc lập làm lệch dữ liệu của nhóm.
 4. **Tiêu chí nghiệm thu (Definition of Done - DoD):**
-   * Chạy lệnh `npm run build` thành công, không sinh lỗi (1936 modules transformed, 0 error).
+   * Chạy lệnh `npm run build` thành công, không sinh lỗi (1954 modules transformed, 0 error).
    * Chuẩn hóa Đa ngôn ngữ (i18n): 752 / 752 key đối xứng 1:1 giữa tiếng Việt và tiếng Anh, không sót chuỗi hardcoded.
    * Giao diện chuẩn Responsive (hiển thị đẹp trên cả Desktop và Điện thoại).
    * Không có bất kỳ lỗi đỏ nào hiển thị ở màn hình F12 Console của trình duyệt.

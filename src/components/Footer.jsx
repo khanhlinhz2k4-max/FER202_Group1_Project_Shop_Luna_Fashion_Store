@@ -106,7 +106,7 @@ export default function Footer() {
                 <h4 className="pillar-title">
                   {t('footer.pillarDeliveryTitle', 'Complimentary Delivery')}
                 </h4>
-                <p>{t('footer.pillarDeliveryDesc', 'On all domestic purchases exceeding $150')}</p>
+                <p>{t('footer.pillarDeliveryDesc', 'On all domestic purchases exceeding $200')}</p>
               </div>
             </div>
 
@@ -446,7 +446,7 @@ export default function Footer() {
                 <div className="policy-section-block">
                   <h4 style={{ fontSize: '0.92rem', color: '#775B3F', marginBottom: '0.35rem' }}>{t('footer.deliveryGuidelinesTitle', 'Delivery Privileges:')}</h4>
                   <p style={{ fontSize: '0.82rem', color: '#5C4A3A' }}>
-                    {t('footer.dGuide1', '• Complimentary nationwide delivery on all purchases exceeding $150.')}<br />
+                    {t('footer.dGuide1', '• Complimentary nationwide delivery on all purchases exceeding $200.')}<br />
                     {t('footer.dGuide2', '• White-glove doorstep inspection and fitting verification available upon delivery.')}<br />
                     {t('footer.dGuide3', '• Specialized protective garment bags ensure impeccable silhouette retention in transit.')}
                   </p>

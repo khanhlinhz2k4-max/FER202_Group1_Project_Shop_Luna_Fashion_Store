@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, Outlet, Link, useNavigate } from 'react-router-dom';
 import { useShop } from '../context/ShopContext';
 import { useLanguage } from '../context/LanguageContext';
-import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu, Globe, Ticket } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ClipboardList, Users, LogOut, ExternalLink, Shield, Menu, Globe, Ticket, Star } from 'lucide-react';
 import '../pages/admin/Admin.css';
 
 export default function AdminLayout() {
@@ -16,6 +16,7 @@ export default function AdminLayout() {
     { to: '/admin/products', label: t('admin.sidebar.products', 'Products'), icon: ShoppingBag },
     { to: '/admin/orders', label: t('admin.sidebar.orders', 'Orders'), icon: ClipboardList },
     { to: '/admin/vouchers', label: t('admin.sidebar.vouchers', 'Vouchers'), icon: Ticket },
+    { to: '/admin/reviews', label: t('admin.sidebar.reviews', 'Reviews & Ratings'), icon: Star },
     { to: '/admin/users', label: t('admin.sidebar.users', 'Users'), icon: Users },
   ];
 
@@ -112,7 +113,7 @@ export default function AdminLayout() {
               <Menu size={20} />
             </button>
             <div style={{ fontSize: '0.9rem', color: '#5C4A3A' }}>
-              <span>{t('admin.topbar.portal', 'Admin Portal')}</span> / <strong style={{ color: '#2C2117' }}>Lune Fashion Store</strong>
+              <span className="admin-topbar-portal-prefix">{t('admin.topbar.portal', 'Admin Portal')} / </span><strong style={{ color: '#2C2117' }}>Lune Fashion Store</strong>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -167,12 +168,12 @@ export default function AdminLayout() {
               </button>
             </div>
 
-            <div style={{ width: '1px', height: '18px', backgroundColor: '#E7DDCE' }} />
+            <div className="admin-topbar-divider" style={{ width: '1px', height: '18px', backgroundColor: '#E7DDCE' }} />
 
             {/* Streamlined User Profile without redundant badge */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div className="admin-avatar notranslate" translate="no">{initials}</div>
-              <span style={{ fontSize: '0.88rem', fontWeight: 600, color: '#2C2117', letterSpacing: '0.01em' }}>
+              <span className="admin-topbar-username" style={{ fontSize: '0.88rem', fontWeight: 600, color: '#2C2117', letterSpacing: '0.01em' }}>
                 {displayName}
               </span>
             </div>

@@ -2,6 +2,7 @@ import React, { useMemo, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
 import { useLanguage } from '../../context/LanguageContext';
+import CustomSelect from '../../components/CustomSelect';
 import { Plus, Edit3, Trash2, Search, X, Eye, EyeOff, ExternalLink, CheckCircle2, ShoppingBag, Sparkles, Layers, AlertTriangle, Upload, Star } from 'lucide-react';
 
 const DEFAULT_CATEGORIES = ['Women', 'Men', 'Accessories'];
@@ -401,17 +402,17 @@ export default function AdminProducts() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <select className="admin-select" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+        <CustomSelect className="admin-select" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
           <option value="all">{t('admin.products.allCategories', 'All Categories')}</option>
           {categoryOptions.map((c) => (
             <option key={c} value={c}>{c}</option>
           ))}
-        </select>
-        <select className="admin-select" value={filterVisibility} onChange={(e) => setFilterVisibility(e.target.value)}>
+        </CustomSelect>
+        <CustomSelect className="admin-select" value={filterVisibility} onChange={(e) => setFilterVisibility(e.target.value)}>
           <option value="all">{t('admin.products.filterVisibilityAll', 'All Statuses')}</option>
           <option value="active">{t('admin.products.filterVisibilityActive', 'Active Only')}</option>
           <option value="hidden">{t('admin.products.filterVisibilityHidden', 'Hidden Only')}</option>
-        </select>
+        </CustomSelect>
         <span className="admin-count">{displayedProducts.length} {t('common.items', 'products')}</span>
       </div>
 
@@ -442,7 +443,7 @@ export default function AdminProducts() {
                       <td>
                         <div className="admin-product-cell" style={{ minWidth: 0 }}>
                           <img src={p.image} alt={p.name} className="admin-thumb" style={{ flexShrink: 0 }} />
-                          <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                          <div style={{ minWidth: 0, maxWidth: '210px', overflow: 'hidden' }}>
                             <strong style={{ display: 'block', color: '#2C2117', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={p.name}>{p.name}</strong>
                             <span style={{ fontSize: '0.75rem', color: '#8F7965' }}>ID: #{p.id}</span>
                           </div>
@@ -582,7 +583,7 @@ export default function AdminProducts() {
 
               <div className="admin-field">
                 <label>{t('admin.products.labelCategory', 'Category *')}</label>
-                <select
+                <CustomSelect
                   className="admin-input"
                   value={form.category}
                   onChange={(e) => updateField('category', e.target.value)}
@@ -590,7 +591,7 @@ export default function AdminProducts() {
                   {categoryOptions.map((c) => (
                     <option key={c} value={c}>{c}</option>
                   ))}
-                </select>
+                </CustomSelect>
               </div>
 
               {/* Product Multi-Image Upload & Management */}

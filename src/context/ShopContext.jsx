@@ -723,11 +723,11 @@ export function ShopProvider({ children }) {
   };
 
   const getProductReviews = (productId) => {
-    return reviews.filter(r => Number(r.productId) === Number(productId));
+    return reviews.filter(r => Number(r.productId) === Number(productId) && r.isHidden !== true);
   };
 
   const getProductRatingStats = (productId) => {
-    const prodReviews = reviews.filter(r => Number(r.productId) === Number(productId));
+    const prodReviews = reviews.filter(r => Number(r.productId) === Number(productId) && r.isHidden !== true);
     if (prodReviews.length === 0) {
       return {
         averageRating: 5.0,
@@ -757,6 +757,32 @@ export function ShopProvider({ children }) {
       distribution,
       percentages
     };
+  };
+
+  const updateReview = (id, updatedFields) => {
+    setReviews(prev => prev.map(r => r.id === id ? { ...r, ...updatedFields } : r));
+  };
+
+  const toggleReviewVisibility = (id) => {
+    setReviews(prev => prev.map(r => r.id === id ? { ...r, isHidden: !r.isHidden } : r));
+  };
+
+  const replyToReview = (id, replyText) => {
+    const trimmed = (replyText || '').trim();
+    const replyDate = new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+    setReviews(prev => prev.map(r => r.id === id ? {
+      ...r,
+      adminReply: trimmed,
+      adminReplyDate: trimmed ? replyDate : null
+    } : r));
+  };
+
+  const deleteReview = (id) => {
+    setReviews(prev => prev.filter(r => r.id !== id));
   };
 
   // ================= AUTH / USER ACTIONS (CRUD) =================
@@ -959,6 +985,10 @@ export function ShopProvider({ children }) {
       addReview,
       getProductReviews,
       getProductRatingStats,
+      updateReview,
+      toggleReviewVisibility,
+      replyToReview,
+      deleteReview,
 
       // Auth & User CRUD actions
       login,

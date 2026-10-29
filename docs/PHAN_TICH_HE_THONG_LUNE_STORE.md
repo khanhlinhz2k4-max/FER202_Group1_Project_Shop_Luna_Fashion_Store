@@ -85,6 +85,8 @@ graph TD
     AdminPortal --> AdminProd["/admin/products (Quản trị kho sản phẩm - CRUD)"]
     AdminPortal --> AdminOrd["/admin/orders (Quản trị luồng đơn hàng)"]
     AdminPortal --> AdminUsers["/admin/users (Quản lý danh sách thành viên)"]
+    AdminPortal --> AdminVouchers["/admin/vouchers (Quản lý Voucher & Ưu đãi)"]
+    AdminPortal --> AdminReviews["/admin/reviews (Quản lý Đánh giá & Phản hồi Atelier)"]
 ```
 
 ### 1. Kiến trúc phân hệ Khách hàng (Storefront)
@@ -109,6 +111,7 @@ graph TD
 | `/admin/orders` | **Quản lý đơn hàng (Orders)** | Toàn bộ danh sách đơn đặt hàng từ khách, công cụ thay đổi trạng thái đơn hàng (`Pending` -> `Shipping` -> `Delivered` -> `Cancelled`). | Chỉ tài khoản `role: admin` |
 | `/admin/users` | **Quản lý thành viên (Users)** | Danh mục người dùng đã đăng ký tài khoản trong hệ sinh thái, phân loại cấp bậc tài khoản (`admin` / `user`). | Chỉ tài khoản `role: admin` |
 | `/admin/vouchers` | **Quản lý Voucher & Ưu đãi (Vouchers)** | Bảng điều khiển quản lý mã ưu đãi, 4 thẻ KPI thống kê, bộ lọc tìm kiếm, bộ 3 nút thao tác (Eye/EyeOff, Edit, Delete) và Modal Popup tạo/sửa voucher chuẩn Warm Luxury. | Chỉ tài khoản `role: admin` |
+| `/admin/reviews` | **Quản lý Đánh giá & Phản hồi (Reviews & Ratings)** | Bảng điều khiển kiểm duyệt đánh giá khách hàng với 4 thẻ KPI, bộ lọc theo số sao/trạng thái hiển thị, Modal xem chi tiết đánh giá ở chế độ Chỉ Đọc (Read-Only) và gửi Phản hồi chính thức từ LUNE Atelier (`adminReply`), nút Bật/Tắt ẩn đánh giá (`Eye/EyeOff`) và Xóa spam (`Trash2`). | Chỉ tài khoản `role: admin` |
 
 ---
 
@@ -338,6 +341,8 @@ sequenceDiagram
 | **A-09** | Bản địa hóa Song ngữ Phân hệ Quản trị (Admin i18n) | Tích hợp bộ chuyển đổi ngôn ngữ độc lập `LanguageSwitcher` (`VI \| EN`) ngay trên thanh Topbar quản trị; tự động bản địa hóa toàn bộ thanh Sidebar, 4 thẻ KPI, bộ lọc/tìm kiếm, tiêu đề cột bảng, modal form CRUD sản phẩm, thông báo xóa an toàn và thông báo toast sang tiếng Việt / tiếng Anh tức thì. | Đăng nhập với quyền `admin`, nhấp nút chuyển ngữ trên Admin Topbar. | 100% giao diện phân hệ Admin chuyển đổi ngôn ngữ trơn tru mà không cần reload trang; lưu trạng thái đồng bộ vào `localStorage`. |
 | **A-10** | Quản lý Mã Giảm Giá & Ưu Đãi Đặc Quyền (Admin Vouchers Modal) | Bảng điều khiển quản lý voucher toàn diện: 4 thẻ KPI thống kê (Tổng mã, Đang áp dụng, Giảm theo %, Giảm cố định), bộ lọc tìm kiếm mã tức thời, bộ 3 nút thao tác biểu tượng đồng bộ (`Eye / EyeOff` bật/tắt kích hoạt tức thời, `Edit` sửa qua modal nạp dữ liệu cũ, `Delete` xóa an toàn), form **Modal Popup sang trọng (`Create / Edit Voucher Modal`)** hỗ trợ cài đặt Ngày & Giờ Bắt Đầu và Ngày & Giờ Kết Thúc chính xác, kiểm tra ràng buộc logic thời gian. | Đăng nhập với quyền `admin`, truy cập `/admin/vouchers`. | Quản trị viên quản lý voucher tiện lợi qua Modal Popup chuẩn Warm Luxury; voucher lưu bền vững vào `localStorage`, khách hàng được đối soát 3 điều kiện và gợi ý upsell mua thêm tại Checkout. |
 | **A-11** | Cơ chế Ẩn/Hiện Sản phẩm & Chế độ Xem trước Admin (Product Visibility & Preview Mode) | Cho phép Admin bật/tắt khả năng hiển thị ngoài cửa hàng (`isActive`) tức thì qua nút icon con mắt (`Eye / EyeOff`) đồng bộ tại `/admin/products`. Storefront tự động lọc bỏ các sản phẩm bị ẩn khỏi trang Home, trang Shop và Live Search. Khi Admin truy cập đường dẫn chi tiết của sản phẩm bị ẩn sẽ kích hoạt biểu ngữ cảnh báo màu hổ phách sang trọng *"Chế độ Xem Trước Quản Trị"* kèm nút điều hướng quay về kho; trong khi khách vãng lai sẽ thấy biểu ngữ lưu trữ sản phẩm (*Archived Piece*) và bị vô hiệu hóa nút mua hàng. | Nhấp icon `Eye / EyeOff` tại `/admin/products` hoặc truy cập URL sản phẩm ẩn với quyền Admin. | Bật/tắt trạng thái hiển thị tức thì không làm lệch bảng; bảo vệ kho hàng an toàn mà không cần xóa sản phẩm; cung cấp chế độ xem trước đặc quyền cho Quản trị viên. |
+| **A-12** | Kiểm duyệt Đánh giá & Phản hồi Chính thức LUNE Atelier (Reviews Moderation & Official Reply) | Thống kê 4 chỉ số KPI đánh giá (Tổng lượt đánh giá, Điểm trung bình toàn hệ thống, Số đánh giá 5 sao, Số đánh giá đang hiển thị); tìm kiếm và lọc theo mức sao (1–5 sao) hoặc trạng thái hiển thị (`Visible / Hidden`). Bảo vệ tính minh bạch: Admin chỉ xem nội dung đánh giá khách hàng ở chế độ Read-Only (không được sửa số sao/nội dung của khách, không tự tạo đánh giá ảo), gửi phản hồi chính thức từ thương hiệu (`adminReply`) đồng bộ trực tiếp ra trang Chi tiết sản phẩm, ẩn/hiện bình luận (`Eye / EyeOff`) hoặc xóa đánh giá spam (`Trash2`). | Đăng nhập với quyền `admin`, truy cập `/admin/reviews`. | Đảm bảo tính xác thực 100% của đánh giá khách hàng; phản hồi LUNE Atelier hiển thị sang trọng dưới bài đánh giá tại `/product/:id`; ẩn đánh giá tự động cập nhật lại điểm trung bình công khai. |
+| **A-13** | Chuẩn hóa Bộ chọn CustomSelect & Bảng Quản trị Đa Thiết bị (Custom Dropdown & Table Standardization) | Thay thế toàn bộ 15 thẻ `<select>` mặc định của hệ điều hành bằng component `CustomSelect.jsx` kết xuất qua React Portal (`createPortal`) trên toàn bộ Admin và Storefront; chuẩn hóa bố cục bảng `.admin-table` (`table-layout: auto`) và thanh công cụ `.admin-toolbar` tự động co giãn mượt mà trên cả Desktop và Mobile. | Thao tác mở các bộ lọc chọn hoặc thu phóng màn hình Mobile/Tablet. | Không còn menu `<select>` khổng lồ thô kệch của trình duyệt trên Mobile DevTools; các tiêu đề cột và nút thao tác bảng Admin hiển thị sắc nét, không bị cắt chữ hay đè chồng lên nhau. |
 
 ---
 
@@ -364,6 +369,7 @@ Ký hiệu:
 | **Xem và Đổi trạng thái mọi Đơn hàng (`/admin/orders`)** | DENIED | DENIED | FULL |
 | **Xem danh sách Thành viên toàn hệ thống (`/admin/users`)** | DENIED | DENIED | FULL |
 | **Quản lý Voucher & Khuyến mại (`/admin/vouchers`)** | DENIED | DENIED | FULL |
+| **Kiểm duyệt Đánh giá & Phản hồi Atelier (`/admin/reviews`)** | DENIED | DENIED | FULL (Read-Only Customer Content + Reply/Hide/Delete) |
 
 ---
 
@@ -426,6 +432,16 @@ Ký hiệu:
 * **Thời gian kết thúc (Expires At):** Chuỗi ngày giờ kết thúc hiệu lực (Định dạng chuẩn `YYYY-MM-DDTHH:mm`).
 * **Trạng thái kích hoạt (Active):** Cờ boolean (`true` / `false`) cho phép Quản trị viên bật hoặc tạm ngưng phát hành mã ưu đãi qua nút biểu tượng con mắt (`Eye` / `EyeOff`).
 
+#### F. Thực thể Đánh giá & Phản hồi Khách hàng (Review Entity)
+* **Mã định danh (ID):** Chuỗi ký tự duy nhất định danh lượt đánh giá (Ví dụ: `rev-1729123456789`).
+* **Mã sản phẩm tham chiếu (Product ID):** Số nguyên liên kết trực tiếp tới sản phẩm được đánh giá.
+* **Tác giả đánh giá (Author):** Họ tên khách hàng gửi nhận xét (Read-Only đối với Quản trị viên).
+* **Số sao xếp hạng (Rating):** Số nguyên từ `1` đến `5` sao (Read-Only đối với Quản trị viên).
+* **Tiêu đề & Nội dung nhận xét (Title & Comment):** Cảm nhận thực tế của khách hàng về chất liệu, phom dáng (Read-Only đối với Quản trị viên).
+* **Trạng thái xác thực (Verified):** Cờ boolean (`true` cho khách hàng xác thực `Verified Client`).
+* **Trạng thái ẩn kiểm duyệt (isHidden):** Cờ boolean (`false`: hiển thị công khai và tính vào điểm trung bình; `true`: tạm ẩn khỏi Storefront do vi phạm tiêu chuẩn cộng đồng).
+* **Phản hồi chính thức từ thương hiệu (adminReply & repliedAt):** Nội dung phản hồi chăm sóc khách hàng từ `LUNE Atelier` kèm ngày phản hồi, hiển thị trang trọng bên dưới nhận xét của khách tại trang chi tiết sản phẩm.
+
 ---
 
 ### 2. Các Quy tắc Nghiệp vụ Cốt lõi (Business Rules)
@@ -478,6 +494,11 @@ Ký hiệu:
      - Nếu loại `fixed`: $\text{Discount} = \min(\text{Value}, \text{Tạm tính})$.
    * **Ghi nhận đơn hàng:** Mã ưu đãi được lưu trữ trực tiếp vào thuộc tính `voucherCode` của thực thể Đơn hàng để phục vụ đối soát doanh thu.
    * **Quản trị CRUD qua Modal Popup (`/admin/vouchers`):** Toàn bộ thao tác thêm mới và cập nhật thông tin voucher được thực hiện trong cửa sổ Modal Popup chuyên biệt hỗ trợ chọn Ngày & Giờ Bắt đầu và Kết thúc, bộ 3 nút thao tác biểu tượng đồng bộ (`Eye / EyeOff`, `Edit`, `Delete`) giúp Quản trị viên thao tác tập trung, chuẩn xác và hạn chế tối đa nhầm lẫn.
+
+8. **Quy tắc Minh bạch Đánh giá & Kiểm duyệt Phản hồi LUNE Atelier (Review Integrity & Moderation Rule):**
+   * **Bảo toàn tính trung thực của đánh giá khách hàng:** Quản trị viên tại `/admin/reviews` tuyệt đối không thể chỉnh sửa số sao (`rating`), tiêu đề (`title`), nội dung nhận xét (`comment`) hay tên khách hàng (`author`), đồng thời không có nút tự tạo đánh giá ảo.
+   * **Quyền Phản hồi chính thức (`replyToReview`):** Quản trị viên mở Modal Xem chi tiết (Read-Only) để đọc toàn bộ đánh giá của khách và viết/cập nhật phản hồi chính thức từ thương hiệu (`adminReply`). Phản hồi này lập tức đồng bộ và hiển thị dưới nhận xét của khách tại `ProductDetailPage.jsx`.
+   * **Quyền Kiểm duyệt Ẩn/Hiện (`toggleReviewVisibility`) & Xóa Spam (`deleteReview`):** Khi một đánh giá bị chuyển sang trạng thái Ẩn (`isHidden: true`), hệ thống lập tức loại trừ đánh giá đó khỏi danh sách hiển thị công khai (`getProductReviews`) và tính toán lại điểm trung bình sao (`getProductRatingStats`) trên toàn Storefront theo thời gian thực.
 
 ---
 

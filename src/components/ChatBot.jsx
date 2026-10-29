@@ -146,13 +146,13 @@ export default function ChatBot() {
       title: isVi ? '🔄 Chính sách đổi trả 30 ngày' : '🔄 30-Day Complimentary Exchange',
       text: isVi
         ? `Quý khách hoàn toàn an tâm mua sắm tại Lune:\n• Hỗ trợ đổi size hoặc đổi mẫu trong vòng 30 NGÀY kể từ khi nhận hàng.\n• Điều kiện: Sản phẩm còn nguyên tem mác, chưa qua sử dụng hoặc giặt tẩy.\n• Lune hỗ trợ nhận hàng đổi trả tận nơi miễn phí cho đơn hàng từ 1.000.000₫.`
-        : `Shop with total peace of mind at Lune:\n• 30-Day exchange period for sizes or alternative designs.\n• Requirement: Garment unworn, unwashed with all original atelier tags attached.\n• Complimentary home pickup on all orders over $150.`,
+        : `Shop with total peace of mind at Lune:\n• 30-Day exchange period for sizes or alternative designs.\n• Requirement: Garment unworn, unwashed with all original atelier tags attached.\n• Complimentary home pickup on all orders over $200.`,
     },
     shipping: {
       title: isVi ? '🚚 Vận chuyển & Giao hàng' : '🚚 Shipping & Delivery Rates',
       text: isVi
-        ? `Thông tin giao nhận hàng toàn quốc:\n• Miễn phí giao hàng hỏa tốc cho mọi đơn từ 1.500.000₫ (hoặc $150).\n• Nội thành (Hà Nội, TP.HCM): 1 - 2 ngày làm việc.\n• Các tỉnh thành khác: 2 - 4 ngày làm việc.\n• Mọi kiện hàng đều được đóng gói bằng hộp giấy lụa bảo vệ môi trường cao cấp.`
-        : `Worldwide & Nationwide Delivery details:\n• Free express shipping on orders over $150.\n• Metro centers: 1 - 2 business days.\n• Regional provinces: 2 - 4 business days.\n• All pieces arrive in sustainable signature silk packaging.`,
+        ? `Thông tin giao nhận hàng toàn quốc:\n• Miễn phí giao hàng hỏa tốc cho mọi đơn từ $200.\n• Nội thành (Hà Nội, TP.HCM): 1 - 2 ngày làm việc.\n• Các tỉnh thành khác: 2 - 4 ngày làm việc.\n• Mọi kiện hàng đều được đóng gói bằng hộp giấy lụa bảo vệ môi trường cao cấp.`
+        : `Worldwide & Nationwide Delivery details:\n• Free express shipping on orders over $200.\n• Metro centers: 1 - 2 business days.\n• Regional provinces: 2 - 4 business days.\n• All pieces arrive in sustainable signature silk packaging.`,
     },
     vouchers: {
       title: isVi ? '🎟️ Mã ưu đãi hiện có' : '🎟️ Active Promotional Vouchers',

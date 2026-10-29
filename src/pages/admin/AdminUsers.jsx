@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useShop } from '../../context/ShopContext';
 import { useLanguage } from '../../context/LanguageContext';
+import CustomSelect from '../../components/CustomSelect';
 import { 
   Users, 
   Shield, 
@@ -267,7 +268,7 @@ export default function AdminUsers() {
           />
         </div>
 
-        <select
+        <CustomSelect
           value={roleFilter}
           onChange={e => setRoleFilter(e.target.value)}
           className="admin-select"
@@ -275,8 +276,8 @@ export default function AdminUsers() {
           <option value="all">{t('admin.users.filterAll', 'All Roles')} ({totalUsersCount})</option>
           <option value="admin">{t('admin.users.filterAdmin', 'Administrators')} ({adminCount})</option>
           <option value="user">{t('admin.users.filterUser', 'Customers')} ({customerCount})</option>
-        </select>
-        <span className="admin-count">{filteredUsers.length} {t('admin.users.totalAccounts', 'users')}</span>
+        </CustomSelect>
+        <span className="admin-count">{filteredUsers.length} {t('admin.users.countUnit', 'accounts')}</span>
       </div>
 
       {/* Users Table */}
@@ -332,10 +333,12 @@ export default function AdminUsers() {
                           </div>
                         </div>
                       </td>
-                      <td style={{ color: '#2C2117', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={u.email}>{u.email}</td>
+                      <td style={{ color: '#2C2117' }} title={u.email}>
+                        <div style={{ maxWidth: '180px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.email}</div>
+                      </td>
                       <td className="text-center" style={{ color: '#2C2117', whiteSpace: 'nowrap' }}>{u.phone || '—'}</td>
                       <td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#2C2117' }} title={u.address}>
-                        {u.address || '—'}
+                        <div style={{ maxWidth: '180px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.address || '—'}</div>
                       </td>
                       <td className="text-center">
                         <span className="admin-role-badge" style={{
@@ -450,14 +453,14 @@ export default function AdminUsers() {
 
                 <div className="admin-field">
                   <label>{t('admin.users.labelRole', 'System Role *')}</label>
-                  <select
+                  <CustomSelect
                     className="admin-input"
                     value={newUserForm.role}
                     onChange={e => setNewUserForm({ ...newUserForm, role: e.target.value })}
                   >
                     <option value="user">{t('admin.users.roleCustomerOption', '👤 Customer (Client)')}</option>
                     <option value="admin">{t('admin.users.roleAdminOption', '🛡️ Administrator')}</option>
-                  </select>
+                  </CustomSelect>
                 </div>
               </div>
 
@@ -531,7 +534,7 @@ export default function AdminUsers() {
 
                 <div className="admin-field">
                   <label>{t('admin.users.labelRole', 'System Role *')}</label>
-                  <select
+                  <CustomSelect
                     className="admin-input"
                     value={editUserForm.role}
                     onChange={e => setEditUserForm({ ...editUserForm, role: e.target.value })}
@@ -539,7 +542,7 @@ export default function AdminUsers() {
                   >
                     <option value="user">{t('admin.users.roleCustomerOption', '👤 Customer (Client)')}</option>
                     <option value="admin">{t('admin.users.roleAdminOption', '🛡️ Administrator')}</option>
-                  </select>
+                  </CustomSelect>
                 </div>
               </div>
 

@@ -2453,3 +2453,29 @@ button.mobile-nav-link {
   padding: 1rem 0.5rem;
 }
 
+/* ==========================================================================
+   PRODUCT DETAIL PAGE — MOBILE RESPONSIVE OVERRIDES
+   ========================================================================== */
+@media (max-width: 768px) {
+  :root {
+    --product-detail-pad: 16px;
+    --product-detail-cols: minmax(0, 1fr);
+    --product-detail-gap: 24px;
+  }
+
+  .product-detail-main-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 24px !important;
+  }
+
+  .product-reviews-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 24px !important;
+  }
+
+  #client-reviews-section {
+    padding: 32px 16px 64px !important;
+    margin-top: 40px !important;
+  }
+}
+
