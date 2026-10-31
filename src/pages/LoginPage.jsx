@@ -88,6 +88,23 @@ export default function LoginPage() {
         modified = true;
       }
 
+      // 1b. Demo Customer Jane
+      if (!usersList.some(u => u.email?.toLowerCase() === 'jane@example.com')) {
+        usersList.push({
+          id: 'user-jane',
+          name: 'Jane Doe',
+          fullName: 'Jane Doe',
+          email: 'jane@example.com',
+          username: 'janedoe',
+          password: 'password123',
+          role: 'user',
+          phone: '+84 987 654 322',
+          address: '123 Le Loi, District 1, HCMC',
+          createdAt: new Date().toISOString()
+        });
+        modified = true;
+      }
+
       // 2. Demo Admin
       if (!usersList.some(u => u.email?.toLowerCase() === 'admin@lune.com' || u.username === 'admin')) {
         usersList.push({

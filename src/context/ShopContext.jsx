@@ -83,6 +83,15 @@ const sampleUsers = [
     role: "user",
     phone: "+84 987 654 321",
     address: "789 Nguyen Hue, District 1, HCMC"
+  },
+  {
+    id: "user-jane",
+    name: "Jane Doe",
+    email: "jane@example.com",
+    password: "password123",
+    role: "user",
+    phone: "+84 987 654 322",
+    address: "123 Le Loi, District 1, HCMC"
   }
 ];
 
@@ -799,7 +808,8 @@ export function ShopProvider({ children }) {
         return true;
       }
       // Customer demo fallback
-      if ((identNorm === 'customer@lune.com' || identNorm === 'user') && (password === 'user123' || password === 'Password@123')) {
+      if ((identNorm === 'customer@lune.com' || identNorm === 'jane@example.com' || identNorm === 'user' || identNorm === 'linhnguyen') && 
+          (password === 'user123' || password === 'Password@123' || password === 'password123')) {
         return true;
       }
       return false;
@@ -915,7 +925,7 @@ export function ShopProvider({ children }) {
     // Verify old password
     const isOldCorrect = targetUser.password === oldPassword ||
       (targetUser.role === 'admin' && (oldPassword === 'admin123' || oldPassword === 'Admin@123')) ||
-      (targetUser.role === 'user' && (oldPassword === 'user123' || oldPassword === 'Password@123'));
+      (targetUser.role === 'user' && (oldPassword === 'user123' || oldPassword === 'Password@123' || oldPassword === 'password123'));
 
     if (!isOldCorrect) {
       return { success: false, message: "Current password does not match." };
