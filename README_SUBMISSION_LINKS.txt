@@ -3,51 +3,38 @@
                  PROJECT: LUNE FASHION STORE (E-COMMERCE)
 ================================================================================
 
-1. GITHUB REPOSITORY LINK
+1. GITHUB REPOSITORY
 --------------------------------------------------------------------------------
-- Repository URL: https://github.com/khanhlinhz2k4-max/FER202_Group1_Project_Shop_Luna_Fashion_Store
-- Main Working Branches: main / linh
+https://github.com/khanhlinhz2k4-max/FER202_Group1_Project_Shop_Luna_Fashion_Store.git
 
-2. DEPLOYED WEB APPLICATION (IF APPLICABLE)
+2. DEPLOYED WEB APPLICATION (VERCEL)
 --------------------------------------------------------------------------------
-- Frontend Deployed URL: [Điền link Vercel / Netlify của nhóm nếu có, hoặc chạy trực tiếp từ Source Code theo hướng dẫn bên dưới]
-- Data Storage / Backend: Client-side persistent state via Browser LocalStorage (Zero external backend config required - runs out of the box)
+https://fer-202-group1-project-shop-luna-fa.vercel.app/
 
-3. DEMO ACCOUNTS FOR GRADING & TESTING
+3. UI/UX DESIGN PROTOTYPE (GOOGLE STITCH)
 --------------------------------------------------------------------------------
-* Admin Account (Full access to /admin portal):
-  - Email:    admin@lune.com
-  - Password: admin123
+https://stitch.withgoogle.com/projects/16824972523705715969
+
+4. OVERLEAF READ-ONLY LINK (LATEX PROJECT)
+--------------------------------------------------------------------------------
+https://www.overleaf.com/project/6ae61a51594dce22ead08f2e/share#b1eb5145d10f005d4d0ec24f13761d7f78b6b4bc60ec30b9
+
+5. DEMO ACCOUNTS FOR EVALUATION & TESTING
+--------------------------------------------------------------------------------
+* Administrator Account (Full access to /admin portal & analytics):
+  - Email / Username: admin@lune.com  (or 'admin' / 'admin123')
+  - Password:         Admin@123       (or 'admin123')
+  - Capabilities:     Dashboard KPI charts, Product CRUD & Eye/EyeOff toggle,
+                      Order status processing, User CRUD with master protection,
+                      Voucher CRUD, Customer reviews moderation & Atelier reply.
 
 * Customer Account (Storefront, Profile 5 Tabs, Order Tracking, Invoice Print):
-  - Email:    customer@lune.com
-  - Password: user123
-  (Quick-fill demo buttons are also available directly on the /login page)
+  - Email / Username: customer@lune.com  (or 'jane@example.com')
+  - Password:         Password@123       (or 'user123' / 'password123')
+  - Capabilities:     Product catalog browsing, multi-criteria filtering,
+                      Wishlist lookbook, sliding cart drawer, VietQR checkout,
+                      4-step order timeline tracking, boutique invoice printing,
+                      verified buyer reviews submission.
 
-4. HOW TO RUN THE SOURCE CODE LOCALLY
---------------------------------------------------------------------------------
-Prerequisites: Node.js >= 18.x, npm >= 9.x
-
-Step 1: Install dependencies
-  npm install
-
-Step 2: Start development server
-  npm run dev
-  (Open http://localhost:5173 in your browser)
-
-Step 3: Production build check
-  npm run build
-
-5. DELIVERABLES INCLUDED IN THIS SUBMISSION
---------------------------------------------------------------------------------
-- 01_Report/
-  + FER202_Group1_Report.pdf        (PDF generated from LaTeX)
-  + FER202_Group1_Report.docx       (Word / Docs Project Report)
-  + LaTeX_Source/main.tex           (LaTeX Source Files)
-- 02_Testing/
-  + KICH_BAN_KIEM_THU_TEST_CASES.md (Detailed Test Cases & Sign-off - 100% PASS)
-  + FER202_Group1_TestCases.csv     (Excel-compatible Test Cases spreadsheet)
-- 03_SourceCode/                    (Full React + Vite project source code)
-- README_SUBMISSION_LINKS.txt       (This file)
+(Note: Quick-fill demo account buttons are also integrated directly on the /login page).
 ================================================================================
-

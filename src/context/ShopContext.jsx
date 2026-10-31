@@ -804,7 +804,7 @@ export function ShopProvider({ children }) {
 
       if (u.password === password) return true;
       // Admin demo fallback
-      if ((identNorm === 'admin@lune.com' || identNorm === 'admin') && (password === 'admin123' || password === 'Admin@123')) {
+      if ((identNorm === 'admin@lune.com' || identNorm === 'admin' || identNorm === 'admin123') && (password === 'admin123' || password === 'Admin@123')) {
         return true;
       }
       // Customer demo fallback
